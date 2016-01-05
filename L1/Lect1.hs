@@ -29,8 +29,8 @@ hello =
      name <- getLine
      putStrLn ("Hi, " ++ name ++ "!")
 
-printTable1 :: [String] -> IO ()
-printTable1 = prnt 1  -- Note the use of partial application
+printTable :: [String] -> IO ()
+printTable = prnt 1  -- Note the use of partial application
  where
   prnt :: Int -> [String] -> IO ()
   prnt _i []      = return ()
@@ -41,17 +41,17 @@ lussekatter :: [String]
 lussekatter = ["1g saffran", "1kg (17dl) vetemjöl", "5dl mjölk",
                "250g mager kesella", "50g jäst", "1.5dl socker", "0.5tsk salt"]
 
-testTable1 :: IO ()
-testTable1 = printTable1 lussekatter
+testTable :: IO ()
+testTable = printTable lussekatter
 
-printTable2 :: [String] -> IO ()
-printTable2 xs =
+printTable' :: [String] -> IO ()
+printTable' xs =
   sequence_ [ putStrLn (show i ++ ":" ++ x)
             | (x,i) <- xs `zip` [1..length xs]
             ]
 
-testTable2 :: IO ()
-testTable2 = printTable2 lussekatter
+testTable' :: IO ()
+testTable' = printTable' lussekatter
 
 fun :: Maybe Int -> Int
 fun mx  | isNothing mx   = 0
