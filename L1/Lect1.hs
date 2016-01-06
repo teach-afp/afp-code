@@ -1,3 +1,5 @@
+{-# LANGUAGE BangPatterns #-}
+
 module Lect1 where
 import Data.Maybe (isNothing)
 
@@ -14,8 +16,11 @@ g xs = do putStrLn xs
           ys <- getLine
           return (f ys)
 
--- An IO action can be executed several times and can give different results
+-----------------------
+--- Programming with IO
+-----------------------
 
+-- An IO action can be executed several times and can give different results
 testg :: IO [Int]
 testg = let a = g "Shoesize?"
         in do s1 <- a
@@ -44,14 +49,26 @@ lussekatter = ["1g saffran", "1kg (17dl) vetemjöl", "5dl mjölk",
 testTable :: IO ()
 testTable = printTable lussekatter
 
-printTable' :: [String] -> IO ()
-printTable' xs =
+printTable2 :: [String] -> IO ()
+printTable2 xs =
   sequence_ [ putStrLn (show i ++ ":" ++ x)
             | (x,i) <- xs `zip` [1..length xs]
             ]
 
-testTable' :: IO ()
-testTable' = printTable' lussekatter
+testTable2 :: IO ()
+testTable2 = printTable2 lussekatter
+
+--------------------
+--- Evaluation order
+--------------------
+
+eager :: (Int, Int) -> Int
+eager (!_x,y) = y -- the function is strict on the first argument
+
+lazy :: (Int, Int) -> Int
+lazy (_x,y) = y
+
+
 
 fun :: Maybe Int -> Int
 fun mx  | isNothing mx   = 0
@@ -172,6 +189,7 @@ data Labyrinth
   , left  :: Labyrinth
   , right :: Labyrinth
   }
+
 labyrinth :: Labyrinth
 labyrinth = start
  where
