@@ -1,6 +1,6 @@
 # Lecture 2: (Embedded) Domain Specific Languages
 
-[Lecture slides](https://rawgit.com/patrikja/AFPcourse/master/L2/slides.html)
+[Lecture slides](http://www.cse.chalmers.se/edu/course/TDA342_Advanced_Functional_Programming/lecture2.html)
 
 Below is just a "table of contents" for the lecture.
 
@@ -42,7 +42,7 @@ course learning outcomes](http://www.cse.chalmers.se/edu/course/afp/index.html#g
     *  constructor functions, combinators, run functions
 * Implementation styles
     * Shallow: representation given by the semantics
-    * Deep: representation given by the syntax 
+    * Deep: representation given by the syntax
 * Remember
     * Compositionality
     * Abstraction
