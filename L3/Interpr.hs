@@ -257,3 +257,13 @@ interpS (Div e1 e2) = do
    dvs <- get
    put (dvs+1)
    return (i1 `div` i2)
+
+m_runS :: Expr -> IO ()
+m_runS e = do
+   putStr "Result: "
+   putStrLn $ show result
+   putStrLn "Number divisions:"
+   putStrLn $ show final_st
+
+   where MkSt f = interpS e
+         (result,final_st) = f 0
