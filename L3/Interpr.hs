@@ -1,3 +1,5 @@
+{-# LANGUAGE GADTs #-}
+
 {-|
   Several interpreters for a simple arithmetic expression language (inspired by
   the paper Monads for Functional Programming by Philip Wadler)
@@ -18,7 +20,7 @@ interp (Div e1 e2) = i1 `div` i2
           i2 = interp e2
 
 -- | Succesful division
-ex_ok    = Div (Con 10) (Con 5)
+ex  = Div (Div (Con 10) (Con 5)) (Con 2)
 
 -- | Crashing!
 ex_crash = Div (Con 1) (Con 0)
@@ -39,9 +41,17 @@ interpE (Div e1 e2) = case maybe_i1 of
                         Wrong -> Wrong
                         Value i1 -> case maybe_i2 of
                                     Wrong -> Wrong
-                                    Value i2 -> Value $ i1 `div` i2
+                                    Value i2 -> if i2 == 0 then Wrong
+                                                         else Value $ i1 `div` i2
     where maybe_i1 = interpE e1
           maybe_i2 = interpE e2
+
+
+runE :: Expr -> IO ()
+runE e = case interpE e of
+              Wrong -> putStrLn "Something went wrong!"
+              Value i -> putStrLn $ show i
+
 
 {-
    What if you have many other constructors in the language which you also check
@@ -57,12 +67,24 @@ instance Monad E where
     Wrong   >>= f = Wrong
     Value a >>= f = f a
 
+-- | Non-proper morphisism that makes the computation fails
+abort :: E a
+abort = Wrong
+
 m_interpE :: Expr -> E Int
 m_interpE (Con i)     = return i
 m_interpE (Div e1 e2) = m_interpE e1 >>= \i1 ->
                           m_interpE e2 >>= \i2 ->
-                            return (i1 `div` i2)
+                            if i2 == 0 then abort
+                                      else return (i1 `div` i2)
                         -- No more borring pattern matching!
+
+m_runE :: Expr -> IO ()
+m_runE e = case m_interpE e of
+                Wrong -> putStrLn "Something went wrong!"
+                Value i -> putStrLn $ show i
+
+
 
 -- Using the do-notation
 m_interpE' :: Expr -> E Int
@@ -70,54 +92,138 @@ m_interpE' (Con i)     = return i
 m_interpE' (Div e1 e2) =
    do i1 <- m_interpE' e1
       i2 <- m_interpE' e2
-      return (i1 `div` i2)
+      if i2 == 0 then abort
+                else return (i1 `div` i2)
+
+m_runE' :: Expr -> IO ()
+m_runE' e = case m_interpE' e of
+                 Wrong -> putStrLn "Something went wrong!"
+                 Value i -> putStrLn $ show i
+
 
 {-
-  --------------------
-  Debuggin information
-  --------------------
+  --------------
+  Simple logging
+  --------------
 
-  We should like to know how many division are performed. This information could
-  be later used to evaluate some optimizations.
+  We should like to send messages to a log. This information could be later used
+  to evaluate some optimizations.
 -}
 
 
-data L a = L (a, Int)
+data L a = L (a, [String])
 
 interpL :: Expr -> L Int
-interpL (Con i)      = L (i, 0)
-interpL (Div e1 e2)  = L (i1 `div` i2, divs1 + divs2)
-   where L (i1, divs1) = interpL e1
-         L (i2, divs2) = interpL e2
+interpL (Con i)      = L (i, ["-- Hit Con --\n"])
+interpL (Div e1 e2)  = L (i1 `div` i2,
+                          "-- Hit a Div --\n" :
+                          "** Left recursive call**\n" :
+                          msgs1 ++
+                          "** Right recursive call**\n" :
+                          msgs2 )
+   where L (i1, msgs1) = interpL e1
+         L (i2, msgs2) = interpL e2
+
+runL :: Expr -> IO ()
+runL e = do putStr "The result is:"
+            putStrLn $ show i
+            putStrLn "Log:"
+            putStrLn $ show msgs
+   where L (i,msgs) = interpL e
 
 {-
-   What if you have many other constructors in the language which you also need
-   to add up the number of divisions? Can we automatize that?
+   What if you have many other constructors in the language which you want to log
+   some information to? Can we automatize that?
 
    data Expr = ...
              | Mult Expr Expr
              | Exp Expr
 -}
 
+
 instance Monad L where
-  return x = L (x, 0)
-  L (x,ds) >>= f = case f x of
-                           L (y, ds') -> L (y, ds+ds')
+  return x   = L (x, [])  -- recall the identity laws!
+  L (x,msgs) >>= f = case f x of
+                     L (x,msgss) -> L (x, msgs ++ msgss)
+
+-- | Non-proper morphishm
+msg :: String -> L ()
+msg m = L ((), [m])
 
 
-m_interpL :: Expr -> L Int
-m_interpL (Con i)     = return i
-m_interpL (Div e1 e2) = m_interpL e1 >>= \i1 ->
-                          m_interpL e2 >>= \i2 ->
-                            return (i1 `div` i2)
-                        -- The same code as error handling!
-                        -- Different effects though!
+m_interpL (Con i) = do
+    msg "-- Hit Con --\n"
+    return i
+
+m_interpL (Div e1 e2) =
+   msg "-- Hit a Div --\n" >>= \_ ->
+       msg "** Left recursive call**\n" >>= \_ ->
+          m_interpL e1 >>= \i1 ->
+             msg "** Right recursive call**\n" >>= \_ ->
+                 m_interpL e2 >>= \i2 ->
+                       return (i1 `div` i2)
+
+m_runL :: Expr -> IO ()
+m_runL e = do  putStr "Result: "
+               putStrLn $ show result
+               putStrLn "Messages:"
+               putStrLn $ concat log
+   where L (result,log) = m_interpL e
 
 
--- Using the do-notation
+-- | Using the do notation
 m_interpL' :: Expr -> L Int
-m_interpL' (Con i)     = return i
-m_interpL' (Div e1 e2) =
-   do i1 <- m_interpL' e1
-      i2 <- m_interpL' e2
-      return (i1 `div` i2)
+m_interpL' (Con i)     = do
+   msg "-- Hit Con --\n"
+   return i
+
+m_interpL' (Div e1 e2) = do
+   msg "-- Hit a Div --\n"
+   msg "** Left recursive call**\n"
+   i1 <- m_interpL' e1
+   msg "** Right recursive call**\n"
+   i2 <- m_interpL' e2
+   return (i1 `div` i2)
+
+
+{--
+  --------------------------------------------
+  Deep embedding of a monad for error handling
+  --------------------------------------------
+
+  For this, it is required GADTs
+--}
+
+
+data E_deep a where
+   -- Constructors
+   Return :: a -> E_deep a
+   Abort  :: E_deep a
+   -- Combinators
+   Bind   :: E_deep a -> (a -> E_deep b) -> E_deep b
+
+instance Monad E_deep where
+   return = Return
+   (>>=) = Bind
+
+abort_deep = Abort
+
+interp_deep (Con i)     = return i
+interp_deep (Div e1 e2) = do
+   i1 <- interp_deep e1
+   i2 <- interp_deep e2
+   if i2 == 0 then abort_deep
+             else return (i1 `div`i2)
+
+run_deep :: Expr -> IO ()
+run_deep e = case (to_semantics (interp_deep e)) of
+                Wrong -> putStrLn "Something went wrong!"
+                Value i -> putStrLn $ show i
+  where
+        -- It will not accept E_deep Int -> E Int due to Bind
+        to_semantics :: E_deep a -> E a
+        to_semantics (Return i) = Value i
+        to_semantics Abort      = Wrong
+        to_semantics (Bind m f) = case to_semantics m of
+                                       Wrong   -> Wrong
+                                       Value i -> to_semantics (f i)
