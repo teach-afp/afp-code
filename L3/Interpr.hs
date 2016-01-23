@@ -227,3 +227,33 @@ run_deep e = case (to_semantics (interp_deep e)) of
         to_semantics (Bind m f) = case to_semantics m of
                                        Wrong   -> Wrong
                                        Value i -> to_semantics (f i)
+
+
+{--
+  ---------------
+  The state monad
+  ---------------
+--}
+
+data St s a = MkSt (s -> (a,s))
+
+get :: St s s
+get = MkSt $ \s -> (s,s)
+
+put :: s -> St s ()
+put s = MkSt $ \_ -> ((),s)
+
+instance Monad (St s) where
+  return x       = MkSt $ \s -> (x,s)
+  (MkSt f) >>= k = MkSt $ \s -> let (a, s_f)  = f s
+                                    MkSt ff  = k a
+                               in ff s_f
+
+interpS :: Expr -> St Int Int
+interpS (Con i)     = return i
+interpS (Div e1 e2) = do
+   i1 <- interpS e1
+   i2 <- interpS e2
+   dvs <- get
+   put (dvs+1)
+   return (i1 `div` i2)
