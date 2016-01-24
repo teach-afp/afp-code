@@ -113,7 +113,7 @@ m_runE' e = case m_interpE' e of
 -}
 
 
-data L a = L (a, [String])
+newtype L a = L (a, [String])
 
 interpL :: Expr -> L Int
 interpL (Con i)      = L (i, ["-- Hit Con --\n"])
@@ -237,7 +237,7 @@ run_deep e = case (to_semantics (interp_deep e)) of
   ---------------
 --}
 
-data St s a = MkSt (s -> (a,s))
+newtype St s a = MkSt (s -> (a,s))
 
 get :: St s s
 get = MkSt $ \s -> (s,s)
