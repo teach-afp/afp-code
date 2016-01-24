@@ -4,10 +4,12 @@
   Several interpreters for a simple arithmetic expression language (inspired by
   the paper Monads for Functional Programming by Philip Wadler)
 
-  Note: This code works with GHC 7.8 and lower versions.
+  Note: This code works with GHC 7.8 and lower versions. There are a few lines
+  marked that you need them in case you work with GHC 7.10.
 -}
 module Interpr where
 
+import Control.Applicative -- GHC 7.10
 
 -- | Abstract syntax
 data Expr = Con Int | Div Expr Expr
@@ -267,3 +269,43 @@ m_runS e = do
 
    where MkSt f = interpS e
          (result,final_st) = f 0
+
+
+
+{--
+    GHC 7.10
+
+    The next lines are to make the code work in 7.10.
+    You do not need to understand the code until the
+    next lecture.
+--}
+
+-- Functor
+instance Functor E where
+   fmap f m = m >>= \a -> return (f a)
+
+instance Functor L where
+   fmap f m = m >>= \a -> return (f a)
+
+instance Functor E_deep where
+   fmap f m = m >>= \a -> return (f a)
+
+instance Functor (St s) where
+   fmap f m = m >>= \a -> return (f a)
+
+-- Applicative
+instance Applicative E where
+   pure  = return
+   (<*>) a_f a_x = a_f >>= \f -> a_x >>= \x -> pure $ f x
+
+instance Applicative L where
+   pure  = return
+   (<*>) a_f a_x = a_f >>= \f -> a_x >>= \x -> pure $ f x
+
+instance Applicative E_deep where
+   pure  = return
+   (<*>) a_f a_x = a_f >>= \f -> a_x >>= \x -> pure $ f x
+
+instance Applicative (St s) where
+   pure  = return
+   (<*>) a_f a_x = a_f >>= \f -> a_x >>= \x -> pure $ f x
