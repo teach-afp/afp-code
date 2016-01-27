@@ -2,7 +2,7 @@
 {-|
   A simple embedded language for input/output. Intermediate emb.
 -}
-module Program.Deep2 where
+module EDSL_Deep2 where
 import Control.Applicative (Applicative(..))
 import Control.Monad       (liftM, ap)
 
