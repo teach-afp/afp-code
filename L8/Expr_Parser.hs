@@ -14,6 +14,7 @@ data Language e =
        , lDeref  :: e -> e
        , lAssign :: e -> e -> e
        , lCatch  :: e -> e -> e
+       , lPrint  :: String -> e
        }
 
 tok :: TokenParser st
@@ -26,7 +27,7 @@ tok = makeTokenParser LanguageDef
   , identLetter     = satisfy (\c -> isAlphaNum c || c == '_')
   , opStart         = satisfy (`elem` "+:=!;")
   , opLetter        = satisfy (`elem` "=")
-  , reservedNames   = ["let", "new", "try", "catch"]
+  , reservedNames   = ["let", "new", "try", "catch", "print"]
   , reservedOpNames = ["+", ":=", "=", "!", ";"]
   , caseSensitive   = True
   }
@@ -67,6 +68,9 @@ parseExpr lang = parse exprP ""
       , do reserved tok "new"
            e <- expr4
            return (lNewref lang e)
+      , do reserved tok "print"
+           m <- message
+           return $ lPrint lang m
       ]
 
     atomP = choice
@@ -76,3 +80,8 @@ parseExpr lang = parse exprP ""
       ]
 
     plusP = reservedOp tok "+" >> return (lPlus lang)
+
+    message = do -- reservedOp tok "'"
+                 m <- stringLiteral tok
+                 --reservedOp tok "'"
+                 return m
