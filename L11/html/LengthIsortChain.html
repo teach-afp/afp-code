@@ -1,0 +1,931 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >LengthIsortChain</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Comment"
+      >-- Advanced Functional Programming course 2016 Chalmers/GU</a
+      ><a name="59"
+      >
+</a
+      ><a name="60" class="Comment"
+      >--</a
+      ><a name="62"
+      >
+</a
+      ><a name="63" class="Comment"
+      >-- 2016-02-25 Guest lecture by Andreas Abel</a
+      ><a name="106"
+      >
+</a
+      ><a name="107" class="Comment"
+      >--</a
+      ><a name="109"
+      >
+</a
+      ><a name="110" class="Comment"
+      >-- Introduction to Agda</a
+      ><a name="133"
+      >
+</a
+      ><a name="134" class="Comment"
+      >--</a
+      ><a name="136"
+      >
+</a
+      ><a name="137" class="Comment"
+      >-- File 3: insertion sort preserves length, proved using equality chains</a
+      ><a name="209"
+      >
+
+</a
+      ><a name="211" class="Keyword"
+      >module</a
+      ><a name="217"
+      > </a
+      ><a name="218" href="LengthIsortChain.html#1" class="Module"
+      >LengthIsortChain</a
+      ><a name="234"
+      > </a
+      ><a name="235" class="Keyword"
+      >where</a
+      ><a name="240"
+      >
+
+</a
+      ><a name="242" class="Keyword"
+      >open</a
+      ><a name="246"
+      > </a
+      ><a name="247" class="Keyword"
+      >import</a
+      ><a name="253"
+      > </a
+      ><a name="254" href="InsertionSortBool.html#1" class="Module"
+      >InsertionSortBool</a
+      ><a name="271"
+      >
+</a
+      ><a name="272" class="Keyword"
+      >open</a
+      ><a name="276"
+      > </a
+      ><a name="277" class="Keyword"
+      >import</a
+      ><a name="283"
+      > </a
+      ><a name="284" href="Relation.Binary.PropositionalEquality.html#1" class="Module"
+      >Relation.Binary.PropositionalEquality</a
+      ><a name="321"
+      >
+
+</a
+      ><a name="323" class="Comment"
+      >-- &#8801;-Reasoning gives us a defined (!) notation to write equality chains.</a
+      ><a name="395"
+      >
+
+</a
+      ><a name="397" class="Keyword"
+      >open</a
+      ><a name="401"
+      > </a
+      ><a name="402" href="Relation.Binary.PropositionalEquality.html#5706" class="Module"
+      >&#8801;-Reasoning</a
+      ><a name="413"
+      >
+
+</a
+      ><a name="415" class="Comment"
+      >-- Lemma: insertion increases the length of a list by one.</a
+      ><a name="473"
+      >
+</a
+      ><a name="474" class="Comment"
+      >-- Proof by induction on ys.</a
+      ><a name="502"
+      >
+
+</a
+      ><a name="504" href="LengthIsortChain.html#504" class="Function"
+      >length-insert</a
+      ><a name="517"
+      > </a
+      ><a name="518" class="Symbol"
+      >:</a
+      ><a name="519"
+      > </a
+      ><a name="520" class="Symbol"
+      >&#8704;</a
+      ><a name="521"
+      > </a
+      ><a name="522" href="LengthIsortChain.html#522" class="Bound"
+      >x</a
+      ><a name="523"
+      > </a
+      ><a name="524" href="LengthIsortChain.html#524" class="Bound"
+      >ys</a
+      ><a name="526"
+      > </a
+      ><a name="527" class="Symbol"
+      >&#8594;</a
+      ><a name="528"
+      > </a
+      ><a name="529" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="535"
+      > </a
+      ><a name="536" class="Symbol"
+      >(</a
+      ><a name="537" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="543"
+      > </a
+      ><a name="544" href="LengthIsortChain.html#522" class="Bound"
+      >x</a
+      ><a name="545"
+      > </a
+      ><a name="546" href="LengthIsortChain.html#524" class="Bound"
+      >ys</a
+      ><a name="548" class="Symbol"
+      >)</a
+      ><a name="549"
+      > </a
+      ><a name="550" href="Agda.Builtin.Equality.html#55" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="551"
+      > </a
+      ><a name="552" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="555"
+      > </a
+      ><a name="556" class="Symbol"
+      >(</a
+      ><a name="557" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="563"
+      > </a
+      ><a name="564" href="LengthIsortChain.html#524" class="Bound"
+      >ys</a
+      ><a name="566" class="Symbol"
+      >)</a
+      ><a name="567"
+      >
+
+</a
+      ><a name="569" class="Comment"
+      >-- Case: empty list</a
+      ><a name="588"
+      >
+</a
+      ><a name="589" href="LengthIsortChain.html#504" class="Function"
+      >length-insert</a
+      ><a name="602"
+      > </a
+      ><a name="603" href="LengthIsortChain.html#603" class="Bound"
+      >x</a
+      ><a name="604"
+      > </a
+      ><a name="605" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="607"
+      > </a
+      ><a name="608" class="Symbol"
+      >=</a
+      ><a name="609"
+      > </a
+      ><a name="610" href="Agda.Builtin.Equality.html#112" class="InductiveConstructor"
+      >refl</a
+      ><a name="614"
+      >
+
+</a
+      ><a name="616" class="Comment"
+      >-- Case: cons list (y &#8759; ys)</a
+      ><a name="643"
+      >
+</a
+      ><a name="644" href="LengthIsortChain.html#504" class="Function"
+      >length-insert</a
+      ><a name="657"
+      > </a
+      ><a name="658" href="LengthIsortChain.html#658" class="Bound"
+      >x</a
+      ><a name="659"
+      > </a
+      ><a name="660" class="Symbol"
+      >(</a
+      ><a name="661" href="LengthIsortChain.html#661" class="Bound"
+      >y</a
+      ><a name="662"
+      > </a
+      ><a name="663" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="664"
+      > </a
+      ><a name="665" href="LengthIsortChain.html#665" class="Bound"
+      >ys</a
+      ><a name="667" class="Symbol"
+      >)</a
+      ><a name="668"
+      > </a
+      ><a name="669" class="Keyword"
+      >with</a
+      ><a name="673"
+      > </a
+      ><a name="674" href="LengthIsortChain.html#658" class="Bound"
+      >x</a
+      ><a name="675"
+      > </a
+      ><a name="676" href="InsertionSortBool.html#1061" class="Function Operator"
+      >&lt;=</a
+      ><a name="678"
+      > </a
+      ><a name="679" href="LengthIsortChain.html#661" class="Bound"
+      >y</a
+      ><a name="680"
+      >
+
+</a
+      ><a name="682" class="Comment"
+      >-- Subcase: x &lt;= y is true</a
+      ><a name="708"
+      >
+</a
+      ><a name="709" class="Symbol"
+      >...</a
+      ><a name="712"
+      > </a
+      ><a name="713" class="Symbol"
+      >|</a
+      ><a name="714"
+      > </a
+      ><a name="715" href="InsertionSortBool.html#856" class="InductiveConstructor"
+      >true</a
+      ><a name="719"
+      >  </a
+      ><a name="721" class="Symbol"
+      >=</a
+      ><a name="722"
+      > </a
+      ><a name="723" href="Relation.Binary.PropositionalEquality.html#5807" class="Function Operator"
+      >begin</a
+      ><a name="728"
+      >
+
+  </a
+      ><a name="732" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="738"
+      > </a
+      ><a name="739" class="Symbol"
+      >(</a
+      ><a name="740" href="LengthIsortChain.html#658" class="Bound"
+      >x</a
+      ><a name="741"
+      > </a
+      ><a name="742" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="743"
+      > </a
+      ><a name="744" href="LengthIsortChain.html#661" class="Bound"
+      >y</a
+      ><a name="745"
+      > </a
+      ><a name="746" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="747"
+      > </a
+      ><a name="748" href="LengthIsortChain.html#665" class="Bound"
+      >ys</a
+      ><a name="750" class="Symbol"
+      >)</a
+      ><a name="751"
+      >   </a
+      ><a name="754" href="Relation.Binary.PropositionalEquality.html#5865" class="Function Operator"
+      >&#8801;&#10216;&#10217;</a
+      ><a name="757"
+      >
+  </a
+      ><a name="760" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="763"
+      > </a
+      ><a name="764" class="Symbol"
+      >(</a
+      ><a name="765" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="771"
+      > </a
+      ><a name="772" class="Symbol"
+      >(</a
+      ><a name="773" href="LengthIsortChain.html#661" class="Bound"
+      >y</a
+      ><a name="774"
+      > </a
+      ><a name="775" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="776"
+      > </a
+      ><a name="777" href="LengthIsortChain.html#665" class="Bound"
+      >ys</a
+      ><a name="779" class="Symbol"
+      >))</a
+      ><a name="781"
+      >
+  </a
+      ><a name="784" href="Relation.Binary.PropositionalEquality.html#6105" class="Function Operator"
+      >&#8718;</a
+      ><a name="785"
+      >
+
+</a
+      ><a name="787" class="Comment"
+      >-- Subcase: x &lt;= y is false</a
+      ><a name="814"
+      >
+</a
+      ><a name="815" class="Symbol"
+      >...</a
+      ><a name="818"
+      > </a
+      ><a name="819" class="Symbol"
+      >|</a
+      ><a name="820"
+      > </a
+      ><a name="821" href="InsertionSortBool.html#861" class="InductiveConstructor"
+      >false</a
+      ><a name="826"
+      > </a
+      ><a name="827" class="Symbol"
+      >=</a
+      ><a name="828"
+      > </a
+      ><a name="829" href="Relation.Binary.PropositionalEquality.html#5807" class="Function Operator"
+      >begin</a
+      ><a name="834"
+      >
+
+  </a
+      ><a name="838" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="844"
+      > </a
+      ><a name="845" class="Symbol"
+      >(</a
+      ><a name="846" href="LengthIsortChain.html#661" class="Bound"
+      >y</a
+      ><a name="847"
+      > </a
+      ><a name="848" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="849"
+      > </a
+      ><a name="850" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="856"
+      > </a
+      ><a name="857" href="LengthIsortChain.html#658" class="Bound"
+      >x</a
+      ><a name="858"
+      > </a
+      ><a name="859" href="LengthIsortChain.html#665" class="Bound"
+      >ys</a
+      ><a name="861" class="Symbol"
+      >)</a
+      ><a name="862"
+      >     </a
+      ><a name="867" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#8801;&#10216;</a
+      ><a name="869"
+      > </a
+      ><a name="870" href="Agda.Builtin.Equality.html#112" class="InductiveConstructor"
+      >refl</a
+      ><a name="874"
+      > </a
+      ><a name="875" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#10217;</a
+      ><a name="876"
+      >
+  </a
+      ><a name="879" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="882"
+      > </a
+      ><a name="883" class="Symbol"
+      >(</a
+      ><a name="884" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="890"
+      > </a
+      ><a name="891" class="Symbol"
+      >(</a
+      ><a name="892" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="898"
+      > </a
+      ><a name="899" href="LengthIsortChain.html#658" class="Bound"
+      >x</a
+      ><a name="900"
+      > </a
+      ><a name="901" href="LengthIsortChain.html#665" class="Bound"
+      >ys</a
+      ><a name="903" class="Symbol"
+      >))</a
+      ><a name="905"
+      >   </a
+      ><a name="908" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#8801;&#10216;</a
+      ><a name="910"
+      > </a
+      ><a name="911" href="Relation.Binary.PropositionalEquality.html#1036" class="Function"
+      >cong</a
+      ><a name="915"
+      > </a
+      ><a name="916" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="919"
+      > </a
+      ><a name="920" class="Symbol"
+      >(</a
+      ><a name="921" href="LengthIsortChain.html#504" class="Function"
+      >length-insert</a
+      ><a name="934"
+      > </a
+      ><a name="935" href="LengthIsortChain.html#658" class="Bound"
+      >x</a
+      ><a name="936"
+      > </a
+      ><a name="937" href="LengthIsortChain.html#665" class="Bound"
+      >ys</a
+      ><a name="939" class="Symbol"
+      >)</a
+      ><a name="940"
+      > </a
+      ><a name="941" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#10217;</a
+      ><a name="942"
+      >
+  </a
+      ><a name="945" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="948"
+      > </a
+      ><a name="949" class="Symbol"
+      >(</a
+      ><a name="950" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="953"
+      > </a
+      ><a name="954" class="Symbol"
+      >(</a
+      ><a name="955" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="961"
+      > </a
+      ><a name="962" href="LengthIsortChain.html#665" class="Bound"
+      >ys</a
+      ><a name="964" class="Symbol"
+      >))</a
+      ><a name="966"
+      >        </a
+      ><a name="974" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#8801;&#10216;</a
+      ><a name="976"
+      > </a
+      ><a name="977" href="Agda.Builtin.Equality.html#112" class="InductiveConstructor"
+      >refl</a
+      ><a name="981"
+      > </a
+      ><a name="982" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#10217;</a
+      ><a name="983"
+      >
+  </a
+      ><a name="986" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="989"
+      > </a
+      ><a name="990" class="Symbol"
+      >(</a
+      ><a name="991" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="997"
+      > </a
+      ><a name="998" class="Symbol"
+      >(</a
+      ><a name="999" href="LengthIsortChain.html#661" class="Bound"
+      >y</a
+      ><a name="1000"
+      > </a
+      ><a name="1001" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1002"
+      > </a
+      ><a name="1003" href="LengthIsortChain.html#665" class="Bound"
+      >ys</a
+      ><a name="1005" class="Symbol"
+      >))</a
+      ><a name="1007"
+      >
+  </a
+      ><a name="1010" href="Relation.Binary.PropositionalEquality.html#6105" class="Function Operator"
+      >&#8718;</a
+      ><a name="1011"
+      >
+
+
+</a
+      ><a name="1014" class="Comment"
+      >-- Theorem: sorting preserves the length</a
+      ><a name="1054"
+      >
+</a
+      ><a name="1055" class="Comment"
+      >-- By induction on the xs.</a
+      ><a name="1081"
+      >
+
+</a
+      ><a name="1083" href="LengthIsortChain.html#1083" class="Function"
+      >length-isort</a
+      ><a name="1095"
+      > </a
+      ><a name="1096" class="Symbol"
+      >:</a
+      ><a name="1097"
+      > </a
+      ><a name="1098" class="Symbol"
+      >&#8704;</a
+      ><a name="1099"
+      > </a
+      ><a name="1100" href="LengthIsortChain.html#1100" class="Bound"
+      >xs</a
+      ><a name="1102"
+      > </a
+      ><a name="1103" class="Symbol"
+      >&#8594;</a
+      ><a name="1104"
+      > </a
+      ><a name="1105" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1111"
+      > </a
+      ><a name="1112" class="Symbol"
+      >(</a
+      ><a name="1113" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1118"
+      > </a
+      ><a name="1119" href="LengthIsortChain.html#1100" class="Bound"
+      >xs</a
+      ><a name="1121" class="Symbol"
+      >)</a
+      ><a name="1122"
+      > </a
+      ><a name="1123" href="Agda.Builtin.Equality.html#55" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="1124"
+      > </a
+      ><a name="1125" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1131"
+      > </a
+      ><a name="1132" href="LengthIsortChain.html#1100" class="Bound"
+      >xs</a
+      ><a name="1134"
+      >
+
+</a
+      ><a name="1136" class="Comment"
+      >-- Case: empty list</a
+      ><a name="1155"
+      >
+</a
+      ><a name="1156" href="LengthIsortChain.html#1083" class="Function"
+      >length-isort</a
+      ><a name="1168"
+      > </a
+      ><a name="1169" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="1171"
+      > </a
+      ><a name="1172" class="Symbol"
+      >=</a
+      ><a name="1173"
+      > </a
+      ><a name="1174" href="Relation.Binary.PropositionalEquality.html#5807" class="Function Operator"
+      >begin</a
+      ><a name="1179"
+      >
+  </a
+      ><a name="1182" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1188"
+      > </a
+      ><a name="1189" class="Symbol"
+      >(</a
+      ><a name="1190" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1195"
+      > </a
+      ><a name="1196" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="1198" class="Symbol"
+      >)</a
+      ><a name="1199"
+      >  </a
+      ><a name="1201" href="Relation.Binary.PropositionalEquality.html#5865" class="Function Operator"
+      >&#8801;&#10216;&#10217;</a
+      ><a name="1204"
+      >
+  </a
+      ><a name="1207" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1213"
+      > </a
+      ><a name="1214" class="Symbol"
+      >{</a
+      ><a name="1215" class="Argument"
+      >A</a
+      ><a name="1216"
+      > </a
+      ><a name="1217" class="Symbol"
+      >=</a
+      ><a name="1218"
+      > </a
+      ><a name="1219" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="1220" class="Symbol"
+      >}</a
+      ><a name="1221"
+      > </a
+      ><a name="1222" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="1224"
+      >  </a
+      ><a name="1226" href="Relation.Binary.PropositionalEquality.html#5865" class="Function Operator"
+      >&#8801;&#10216;&#10217;</a
+      ><a name="1229"
+      >
+  </a
+      ><a name="1232" href="InsertionSortBool.html#504" class="InductiveConstructor"
+      >zero</a
+      ><a name="1236"
+      >               </a
+      ><a name="1251" href="Relation.Binary.PropositionalEquality.html#5865" class="Function Operator"
+      >&#8801;&#10216;&#10217;</a
+      ><a name="1254"
+      >
+  </a
+      ><a name="1257" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1263"
+      > </a
+      ><a name="1264" class="Symbol"
+      >{</a
+      ><a name="1265" class="Argument"
+      >A</a
+      ><a name="1266"
+      > </a
+      ><a name="1267" class="Symbol"
+      >=</a
+      ><a name="1268"
+      > </a
+      ><a name="1269" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="1270" class="Symbol"
+      >}</a
+      ><a name="1271"
+      > </a
+      ><a name="1272" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="1274"
+      >
+  </a
+      ><a name="1277" href="Relation.Binary.PropositionalEquality.html#6105" class="Function Operator"
+      >&#8718;</a
+      ><a name="1278"
+      >
+
+</a
+      ><a name="1280" class="Comment"
+      >-- Case: cons list (y &#8759; ys)</a
+      ><a name="1307"
+      >
+</a
+      ><a name="1308" href="LengthIsortChain.html#1083" class="Function"
+      >length-isort</a
+      ><a name="1320"
+      > </a
+      ><a name="1321" class="Symbol"
+      >(</a
+      ><a name="1322" href="LengthIsortChain.html#1322" class="Bound"
+      >x</a
+      ><a name="1323"
+      > </a
+      ><a name="1324" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1325"
+      > </a
+      ><a name="1326" href="LengthIsortChain.html#1326" class="Bound"
+      >xs</a
+      ><a name="1328" class="Symbol"
+      >)</a
+      ><a name="1329"
+      > </a
+      ><a name="1330" class="Symbol"
+      >=</a
+      ><a name="1331"
+      > </a
+      ><a name="1332" href="Relation.Binary.PropositionalEquality.html#5807" class="Function Operator"
+      >begin</a
+      ><a name="1337"
+      >
+  </a
+      ><a name="1340" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1346"
+      > </a
+      ><a name="1347" class="Symbol"
+      >(</a
+      ><a name="1348" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1353"
+      > </a
+      ><a name="1354" class="Symbol"
+      >(</a
+      ><a name="1355" href="LengthIsortChain.html#1322" class="Bound"
+      >x</a
+      ><a name="1356"
+      > </a
+      ><a name="1357" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1358"
+      > </a
+      ><a name="1359" href="LengthIsortChain.html#1326" class="Bound"
+      >xs</a
+      ><a name="1361" class="Symbol"
+      >))</a
+      ><a name="1363"
+      >       </a
+      ><a name="1370" href="Relation.Binary.PropositionalEquality.html#5865" class="Function Operator"
+      >&#8801;&#10216;&#10217;</a
+      ><a name="1373"
+      >
+  </a
+      ><a name="1376" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1382"
+      > </a
+      ><a name="1383" class="Symbol"
+      >(</a
+      ><a name="1384" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="1390"
+      > </a
+      ><a name="1391" href="LengthIsortChain.html#1322" class="Bound"
+      >x</a
+      ><a name="1392"
+      > </a
+      ><a name="1393" class="Symbol"
+      >(</a
+      ><a name="1394" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1399"
+      > </a
+      ><a name="1400" href="LengthIsortChain.html#1326" class="Bound"
+      >xs</a
+      ><a name="1402" class="Symbol"
+      >))</a
+      ><a name="1404"
+      >  </a
+      ><a name="1406" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#8801;&#10216;</a
+      ><a name="1408"
+      > </a
+      ><a name="1409" href="LengthIsortChain.html#504" class="Function"
+      >length-insert</a
+      ><a name="1422"
+      > </a
+      ><a name="1423" class="Symbol"
+      >_</a
+      ><a name="1424"
+      > </a
+      ><a name="1425" class="Symbol"
+      >_</a
+      ><a name="1426"
+      > </a
+      ><a name="1427" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#10217;</a
+      ><a name="1428"
+      >
+  </a
+      ><a name="1431" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="1434"
+      > </a
+      ><a name="1435" class="Symbol"
+      >(</a
+      ><a name="1436" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1442"
+      > </a
+      ><a name="1443" class="Symbol"
+      >(</a
+      ><a name="1444" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1449"
+      > </a
+      ><a name="1450" href="LengthIsortChain.html#1326" class="Bound"
+      >xs</a
+      ><a name="1452" class="Symbol"
+      >))</a
+      ><a name="1454"
+      >       </a
+      ><a name="1461" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#8801;&#10216;</a
+      ><a name="1463"
+      > </a
+      ><a name="1464" href="Relation.Binary.PropositionalEquality.html#1036" class="Function"
+      >cong</a
+      ><a name="1468"
+      > </a
+      ><a name="1469" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="1472"
+      > </a
+      ><a name="1473" class="Symbol"
+      >(</a
+      ><a name="1474" href="LengthIsortChain.html#1083" class="Function"
+      >length-isort</a
+      ><a name="1486"
+      > </a
+      ><a name="1487" href="LengthIsortChain.html#1326" class="Bound"
+      >xs</a
+      ><a name="1489" class="Symbol"
+      >)</a
+      ><a name="1490"
+      > </a
+      ><a name="1491" href="Relation.Binary.PropositionalEquality.html#5924" class="Function Operator"
+      >&#10217;</a
+      ><a name="1492"
+      >
+  </a
+      ><a name="1495" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="1498"
+      > </a
+      ><a name="1499" class="Symbol"
+      >(</a
+      ><a name="1500" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1506"
+      > </a
+      ><a name="1507" href="LengthIsortChain.html#1326" class="Bound"
+      >xs</a
+      ><a name="1509" class="Symbol"
+      >)</a
+      ><a name="1510"
+      >               </a
+      ><a name="1525" href="Relation.Binary.PropositionalEquality.html#5865" class="Function Operator"
+      >&#8801;&#10216;&#10217;</a
+      ><a name="1528"
+      >
+  </a
+      ><a name="1531" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1537"
+      > </a
+      ><a name="1538" class="Symbol"
+      >(</a
+      ><a name="1539" href="LengthIsortChain.html#1322" class="Bound"
+      >x</a
+      ><a name="1540"
+      > </a
+      ><a name="1541" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1542"
+      > </a
+      ><a name="1543" href="LengthIsortChain.html#1326" class="Bound"
+      >xs</a
+      ><a name="1545" class="Symbol"
+      >)</a
+      ><a name="1546"
+      >
+  </a
+      ><a name="1549" href="Relation.Binary.PropositionalEquality.html#6105" class="Function Operator"
+      >&#8718;</a
+      ><a name="1550"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

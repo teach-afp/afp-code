@@ -1,0 +1,1156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >Logic</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Comment"
+      >-- Advanced Functional Programming course 2016 Chalmers/GU</a
+      ><a name="59"
+      >
+</a
+      ><a name="60" class="Comment"
+      >--</a
+      ><a name="62"
+      >
+</a
+      ><a name="63" class="Comment"
+      >-- 2016-02-25 Guest lecture by Andreas Abel</a
+      ><a name="106"
+      >
+</a
+      ><a name="107" class="Comment"
+      >--</a
+      ><a name="109"
+      >
+</a
+      ><a name="110" class="Comment"
+      >-- Introduction to Agda</a
+      ><a name="133"
+      >
+</a
+      ><a name="134" class="Comment"
+      >--</a
+      ><a name="136"
+      >
+</a
+      ><a name="137" class="Comment"
+      >-- File 4: Logic via the Curry-Howard isomorphism</a
+      ><a name="186"
+      >
+
+</a
+      ><a name="188" class="Keyword"
+      >module</a
+      ><a name="194"
+      > </a
+      ><a name="195" href="Logic.html#1" class="Module"
+      >Logic</a
+      ><a name="200"
+      > </a
+      ><a name="201" class="Keyword"
+      >where</a
+      ><a name="206"
+      >
+
+</a
+      ><a name="208" class="Comment"
+      >-- Agda is based on constructive type theory &#224; la Martin-L&#246;f.</a
+      ><a name="269"
+      >
+</a
+      ><a name="270" class="Comment"
+      >-- It relies on the Curry-Howard corresponence between programming and proving.</a
+      ><a name="349"
+      >
+
+</a
+      ><a name="351" class="Comment"
+      >-- A proposition is a set (or type).</a
+      ><a name="387"
+      >
+</a
+      ><a name="388" class="Comment"
+      >-- A proof of a proposition is an element of that set (type).</a
+      ><a name="449"
+      >
+
+</a
+      ><a name="451" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="455"
+      > </a
+      ><a name="456" class="Symbol"
+      >=</a
+      ><a name="457"
+      > </a
+      ><a name="458" class="PrimitiveType"
+      >Set</a
+      ><a name="461"
+      >
+
+</a
+      ><a name="463" class="Comment"
+      >-- The proposition that is unconditionally true is a non-empty set</a
+      ><a name="529"
+      >
+</a
+      ><a name="530" class="Comment"
+      >-- whose in habitant can be constructed effortlessly.</a
+      ><a name="583"
+      >
+
+</a
+      ><a name="585" class="Keyword"
+      >data</a
+      ><a name="589"
+      > </a
+      ><a name="590" href="Logic.html#590" class="Datatype"
+      >&#8868;</a
+      ><a name="591"
+      > </a
+      ><a name="592" class="Symbol"
+      >:</a
+      ><a name="593"
+      > </a
+      ><a name="594" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="598"
+      > </a
+      ><a name="599" class="Keyword"
+      >where</a
+      ><a name="604"
+      >
+  </a
+      ><a name="607" href="Logic.html#607" class="InductiveConstructor"
+      >trivial</a
+      ><a name="614"
+      > </a
+      ><a name="615" class="Symbol"
+      >:</a
+      ><a name="616"
+      > </a
+      ><a name="617" href="Logic.html#590" class="Datatype"
+      >&#8868;</a
+      ><a name="618"
+      >
+
+</a
+      ><a name="620" class="Comment"
+      >-- The proposition that is unconditionally false is the empty set.</a
+      ><a name="686"
+      >
+</a
+      ><a name="687" class="Comment"
+      >-- The data type has no constructors.</a
+      ><a name="724"
+      >
+
+</a
+      ><a name="726" class="Keyword"
+      >data</a
+      ><a name="730"
+      > </a
+      ><a name="731" href="Logic.html#731" class="Datatype"
+      >&#8869;</a
+      ><a name="732"
+      > </a
+      ><a name="733" class="Symbol"
+      >:</a
+      ><a name="734"
+      > </a
+      ><a name="735" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="739"
+      > </a
+      ><a name="740" class="Keyword"
+      >where</a
+      ><a name="745"
+      >
+
+</a
+      ><a name="747" class="Comment"
+      >-- &quot;Ex falsum quod libet&quot;:</a
+      ><a name="773"
+      >
+</a
+      ><a name="774" class="Comment"
+      >-- Assuming the absurd statement everything is provable.</a
+      ><a name="830"
+      >
+</a
+      ><a name="831" class="Comment"
+      >-- We have reached an impossible situation, so we do need to continue our proof.</a
+      ><a name="911"
+      >
+
+</a
+      ><a name="913" href="Logic.html#913" class="Function"
+      >&#8869;-elim</a
+      ><a name="919"
+      > </a
+      ><a name="920" class="Symbol"
+      >:</a
+      ><a name="921"
+      > </a
+      ><a name="922" class="Symbol"
+      >&#8704;{</a
+      ><a name="924" href="Logic.html#924" class="Bound"
+      >A</a
+      ><a name="925"
+      > </a
+      ><a name="926" class="Symbol"
+      >:</a
+      ><a name="927"
+      > </a
+      ><a name="928" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="932" class="Symbol"
+      >}</a
+      ><a name="933"
+      > </a
+      ><a name="934" class="Symbol"
+      >&#8594;</a
+      ><a name="935"
+      > </a
+      ><a name="936" href="Logic.html#731" class="Datatype"
+      >&#8869;</a
+      ><a name="937"
+      > </a
+      ><a name="938" class="Symbol"
+      >&#8594;</a
+      ><a name="939"
+      > </a
+      ><a name="940" href="Logic.html#924" class="Bound"
+      >A</a
+      ><a name="941"
+      >
+</a
+      ><a name="942" href="Logic.html#913" class="Function"
+      >&#8869;-elim</a
+      ><a name="948"
+      > </a
+      ><a name="949" class="Symbol"
+      >()</a
+      ><a name="951"
+      >
+
+</a
+      ><a name="953" class="Comment"
+      >-- Implication is just the function space.</a
+      ><a name="995"
+      >
+</a
+      ><a name="996" class="Comment"
+      >-- A proof of A &#8594; B turns a proof of A into a proof of B.</a
+      ><a name="1053"
+      >
+
+</a
+      ><a name="1055" class="Comment"
+      >-- Implication is transitive.</a
+      ><a name="1084"
+      >
+
+</a
+      ><a name="1086" href="Logic.html#1086" class="Function"
+      >comp</a
+      ><a name="1090"
+      > </a
+      ><a name="1091" class="Symbol"
+      >:</a
+      ><a name="1092"
+      > </a
+      ><a name="1093" class="Symbol"
+      >&#8704;{</a
+      ><a name="1095" href="Logic.html#1095" class="Bound"
+      >A</a
+      ><a name="1096"
+      > </a
+      ><a name="1097" href="Logic.html#1097" class="Bound"
+      >B</a
+      ><a name="1098"
+      > </a
+      ><a name="1099" href="Logic.html#1099" class="Bound"
+      >C</a
+      ><a name="1100"
+      > </a
+      ><a name="1101" class="Symbol"
+      >:</a
+      ><a name="1102"
+      > </a
+      ><a name="1103" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1107" class="Symbol"
+      >}</a
+      ><a name="1108"
+      > </a
+      ><a name="1109" class="Symbol"
+      >&#8594;</a
+      ><a name="1110"
+      > </a
+      ><a name="1111" class="Symbol"
+      >(</a
+      ><a name="1112" href="Logic.html#1095" class="Bound"
+      >A</a
+      ><a name="1113"
+      > </a
+      ><a name="1114" class="Symbol"
+      >&#8594;</a
+      ><a name="1115"
+      > </a
+      ><a name="1116" href="Logic.html#1097" class="Bound"
+      >B</a
+      ><a name="1117" class="Symbol"
+      >)</a
+      ><a name="1118"
+      > </a
+      ><a name="1119" class="Symbol"
+      >&#8594;</a
+      ><a name="1120"
+      > </a
+      ><a name="1121" class="Symbol"
+      >(</a
+      ><a name="1122" href="Logic.html#1097" class="Bound"
+      >B</a
+      ><a name="1123"
+      > </a
+      ><a name="1124" class="Symbol"
+      >&#8594;</a
+      ><a name="1125"
+      > </a
+      ><a name="1126" href="Logic.html#1099" class="Bound"
+      >C</a
+      ><a name="1127" class="Symbol"
+      >)</a
+      ><a name="1128"
+      > </a
+      ><a name="1129" class="Symbol"
+      >&#8594;</a
+      ><a name="1130"
+      > </a
+      ><a name="1131" class="Symbol"
+      >(</a
+      ><a name="1132" href="Logic.html#1095" class="Bound"
+      >A</a
+      ><a name="1133"
+      > </a
+      ><a name="1134" class="Symbol"
+      >&#8594;</a
+      ><a name="1135"
+      > </a
+      ><a name="1136" href="Logic.html#1099" class="Bound"
+      >C</a
+      ><a name="1137" class="Symbol"
+      >)</a
+      ><a name="1138"
+      >
+</a
+      ><a name="1139" href="Logic.html#1086" class="Function"
+      >comp</a
+      ><a name="1143"
+      > </a
+      ><a name="1144" href="Logic.html#1144" class="Bound"
+      >f</a
+      ><a name="1145"
+      > </a
+      ><a name="1146" href="Logic.html#1146" class="Bound"
+      >g</a
+      ><a name="1147"
+      > </a
+      ><a name="1148" class="Symbol"
+      >=</a
+      ><a name="1149"
+      > </a
+      ><a name="1150" class="Symbol"
+      >&#955;</a
+      ><a name="1151"
+      > </a
+      ><a name="1152" href="Logic.html#1152" class="Bound"
+      >a</a
+      ><a name="1153"
+      > </a
+      ><a name="1154" class="Symbol"
+      >&#8594;</a
+      ><a name="1155"
+      > </a
+      ><a name="1156" href="Logic.html#1146" class="Bound"
+      >g</a
+      ><a name="1157"
+      > </a
+      ><a name="1158" class="Symbol"
+      >(</a
+      ><a name="1159" href="Logic.html#1144" class="Bound"
+      >f</a
+      ><a name="1160"
+      > </a
+      ><a name="1161" href="Logic.html#1152" class="Bound"
+      >a</a
+      ><a name="1162" class="Symbol"
+      >)</a
+      ><a name="1163"
+      >
+
+</a
+      ><a name="1165" class="Comment"
+      >-- Negation is implication of absurdity.</a
+      ><a name="1205"
+      >
+
+</a
+      ><a name="1207" href="Logic.html#1207" class="Function"
+      >&#172;</a
+      ><a name="1208"
+      > </a
+      ><a name="1209" class="Symbol"
+      >:</a
+      ><a name="1210"
+      > </a
+      ><a name="1211" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1215"
+      > </a
+      ><a name="1216" class="Symbol"
+      >&#8594;</a
+      ><a name="1217"
+      > </a
+      ><a name="1218" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1222"
+      >
+</a
+      ><a name="1223" href="Logic.html#1207" class="Function"
+      >&#172;</a
+      ><a name="1224"
+      > </a
+      ><a name="1225" href="Logic.html#1225" class="Bound"
+      >A</a
+      ><a name="1226"
+      > </a
+      ><a name="1227" class="Symbol"
+      >=</a
+      ><a name="1228"
+      > </a
+      ><a name="1229" href="Logic.html#1225" class="Bound"
+      >A</a
+      ><a name="1230"
+      > </a
+      ><a name="1231" class="Symbol"
+      >&#8594;</a
+      ><a name="1232"
+      > </a
+      ><a name="1233" href="Logic.html#731" class="Datatype"
+      >&#8869;</a
+      ><a name="1234"
+      >
+
+</a
+      ><a name="1236" class="Comment"
+      >-- The contraposition law becomes a special case of transitivity.</a
+      ><a name="1301"
+      >
+
+</a
+      ><a name="1303" href="Logic.html#1303" class="Function"
+      >contraposition</a
+      ><a name="1317"
+      > </a
+      ><a name="1318" class="Symbol"
+      >:</a
+      ><a name="1319"
+      > </a
+      ><a name="1320" class="Symbol"
+      >&#8704;{</a
+      ><a name="1322" href="Logic.html#1322" class="Bound"
+      >A</a
+      ><a name="1323"
+      > </a
+      ><a name="1324" href="Logic.html#1324" class="Bound"
+      >B</a
+      ><a name="1325"
+      > </a
+      ><a name="1326" class="Symbol"
+      >:</a
+      ><a name="1327"
+      > </a
+      ><a name="1328" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1332" class="Symbol"
+      >}</a
+      ><a name="1333"
+      > </a
+      ><a name="1334" class="Symbol"
+      >&#8594;</a
+      ><a name="1335"
+      > </a
+      ><a name="1336" class="Symbol"
+      >(</a
+      ><a name="1337" href="Logic.html#1322" class="Bound"
+      >A</a
+      ><a name="1338"
+      > </a
+      ><a name="1339" class="Symbol"
+      >&#8594;</a
+      ><a name="1340"
+      > </a
+      ><a name="1341" href="Logic.html#1324" class="Bound"
+      >B</a
+      ><a name="1342" class="Symbol"
+      >)</a
+      ><a name="1343"
+      > </a
+      ><a name="1344" class="Symbol"
+      >&#8594;</a
+      ><a name="1345"
+      > </a
+      ><a name="1346" href="Logic.html#1207" class="Function"
+      >&#172;</a
+      ><a name="1347"
+      > </a
+      ><a name="1348" href="Logic.html#1324" class="Bound"
+      >B</a
+      ><a name="1349"
+      > </a
+      ><a name="1350" class="Symbol"
+      >&#8594;</a
+      ><a name="1351"
+      > </a
+      ><a name="1352" href="Logic.html#1207" class="Function"
+      >&#172;</a
+      ><a name="1353"
+      > </a
+      ><a name="1354" href="Logic.html#1322" class="Bound"
+      >A</a
+      ><a name="1355"
+      >
+</a
+      ><a name="1356" href="Logic.html#1303" class="Function"
+      >contraposition</a
+      ><a name="1370"
+      > </a
+      ><a name="1371" class="Symbol"
+      >=</a
+      ><a name="1372"
+      > </a
+      ><a name="1373" href="Logic.html#1086" class="Function"
+      >comp</a
+      ><a name="1377"
+      >
+
+</a
+      ><a name="1379" class="Comment"
+      >-- To prove a conjunction, we need to provide proofs of both conjuncts.</a
+      ><a name="1450"
+      >
+</a
+      ><a name="1451" class="Comment"
+      >-- Thus, conjunction is pairing.</a
+      ><a name="1483"
+      >
+
+</a
+      ><a name="1485" class="Keyword"
+      >data</a
+      ><a name="1489"
+      > </a
+      ><a name="1490" href="Logic.html#1490" class="Datatype Operator"
+      >_&#8743;_</a
+      ><a name="1493"
+      > </a
+      ><a name="1494" class="Symbol"
+      >(</a
+      ><a name="1495" href="Logic.html#1495" class="Bound"
+      >A</a
+      ><a name="1496"
+      > </a
+      ><a name="1497" href="Logic.html#1497" class="Bound"
+      >B</a
+      ><a name="1498"
+      > </a
+      ><a name="1499" class="Symbol"
+      >:</a
+      ><a name="1500"
+      > </a
+      ><a name="1501" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1505" class="Symbol"
+      >)</a
+      ><a name="1506"
+      > </a
+      ><a name="1507" class="Symbol"
+      >:</a
+      ><a name="1508"
+      > </a
+      ><a name="1509" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1513"
+      > </a
+      ><a name="1514" class="Keyword"
+      >where</a
+      ><a name="1519"
+      >
+  </a
+      ><a name="1522" href="Logic.html#1522" class="InductiveConstructor"
+      >pair</a
+      ><a name="1526"
+      > </a
+      ><a name="1527" class="Symbol"
+      >:</a
+      ><a name="1528"
+      > </a
+      ><a name="1529" class="Symbol"
+      >(</a
+      ><a name="1530" href="Logic.html#1530" class="Bound"
+      >p</a
+      ><a name="1531"
+      > </a
+      ><a name="1532" class="Symbol"
+      >:</a
+      ><a name="1533"
+      > </a
+      ><a name="1534" href="Logic.html#1495" class="Bound"
+      >A</a
+      ><a name="1535" class="Symbol"
+      >)</a
+      ><a name="1536"
+      > </a
+      ><a name="1537" class="Symbol"
+      >(</a
+      ><a name="1538" href="Logic.html#1538" class="Bound"
+      >q</a
+      ><a name="1539"
+      > </a
+      ><a name="1540" class="Symbol"
+      >:</a
+      ><a name="1541"
+      > </a
+      ><a name="1542" href="Logic.html#1497" class="Bound"
+      >B</a
+      ><a name="1543" class="Symbol"
+      >)</a
+      ><a name="1544"
+      > </a
+      ><a name="1545" class="Symbol"
+      >&#8594;</a
+      ><a name="1546"
+      > </a
+      ><a name="1547" href="Logic.html#1495" class="Bound"
+      >A</a
+      ><a name="1548"
+      > </a
+      ><a name="1549" href="Logic.html#1490" class="Datatype Operator"
+      >&#8743;</a
+      ><a name="1550"
+      > </a
+      ><a name="1551" href="Logic.html#1497" class="Bound"
+      >B</a
+      ><a name="1552"
+      >
+
+</a
+      ><a name="1554" class="Comment"
+      >-- Conjunction is commutative (of course).</a
+      ><a name="1596"
+      >
+
+</a
+      ><a name="1598" href="Logic.html#1598" class="Function"
+      >commute</a
+      ><a name="1605"
+      > </a
+      ><a name="1606" class="Symbol"
+      >:</a
+      ><a name="1607"
+      > </a
+      ><a name="1608" class="Symbol"
+      >&#8704;{</a
+      ><a name="1610" href="Logic.html#1610" class="Bound"
+      >A</a
+      ><a name="1611"
+      > </a
+      ><a name="1612" href="Logic.html#1612" class="Bound"
+      >B</a
+      ><a name="1613"
+      > </a
+      ><a name="1614" class="Symbol"
+      >:</a
+      ><a name="1615"
+      > </a
+      ><a name="1616" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1620" class="Symbol"
+      >}</a
+      ><a name="1621"
+      > </a
+      ><a name="1622" class="Symbol"
+      >&#8594;</a
+      ><a name="1623"
+      > </a
+      ><a name="1624" href="Logic.html#1610" class="Bound"
+      >A</a
+      ><a name="1625"
+      > </a
+      ><a name="1626" href="Logic.html#1490" class="Datatype Operator"
+      >&#8743;</a
+      ><a name="1627"
+      > </a
+      ><a name="1628" href="Logic.html#1612" class="Bound"
+      >B</a
+      ><a name="1629"
+      > </a
+      ><a name="1630" class="Symbol"
+      >&#8594;</a
+      ><a name="1631"
+      > </a
+      ><a name="1632" href="Logic.html#1612" class="Bound"
+      >B</a
+      ><a name="1633"
+      > </a
+      ><a name="1634" href="Logic.html#1490" class="Datatype Operator"
+      >&#8743;</a
+      ><a name="1635"
+      > </a
+      ><a name="1636" href="Logic.html#1610" class="Bound"
+      >A</a
+      ><a name="1637"
+      >
+</a
+      ><a name="1638" href="Logic.html#1598" class="Function"
+      >commute</a
+      ><a name="1645"
+      > </a
+      ><a name="1646" class="Symbol"
+      >(</a
+      ><a name="1647" href="Logic.html#1522" class="InductiveConstructor"
+      >pair</a
+      ><a name="1651"
+      > </a
+      ><a name="1652" href="Logic.html#1652" class="Bound"
+      >p</a
+      ><a name="1653"
+      > </a
+      ><a name="1654" href="Logic.html#1654" class="Bound"
+      >q</a
+      ><a name="1655" class="Symbol"
+      >)</a
+      ><a name="1656"
+      > </a
+      ><a name="1657" class="Symbol"
+      >=</a
+      ><a name="1658"
+      > </a
+      ><a name="1659" href="Logic.html#1522" class="InductiveConstructor"
+      >pair</a
+      ><a name="1663"
+      > </a
+      ><a name="1664" href="Logic.html#1654" class="Bound"
+      >q</a
+      ><a name="1665"
+      > </a
+      ><a name="1666" href="Logic.html#1652" class="Bound"
+      >p</a
+      ><a name="1667"
+      >
+
+</a
+      ><a name="1669" class="Comment"
+      >-- A and &#172; A cannot hold at the same time</a
+      ><a name="1710"
+      >
+
+</a
+      ><a name="1712" href="Logic.html#1712" class="Function"
+      >contradiction</a
+      ><a name="1725"
+      > </a
+      ><a name="1726" class="Symbol"
+      >:</a
+      ><a name="1727"
+      > </a
+      ><a name="1728" class="Symbol"
+      >&#8704;{</a
+      ><a name="1730" href="Logic.html#1730" class="Bound"
+      >A</a
+      ><a name="1731"
+      > </a
+      ><a name="1732" class="Symbol"
+      >:</a
+      ><a name="1733"
+      > </a
+      ><a name="1734" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1738" class="Symbol"
+      >}</a
+      ><a name="1739"
+      > </a
+      ><a name="1740" class="Symbol"
+      >&#8594;</a
+      ><a name="1741"
+      > </a
+      ><a name="1742" href="Logic.html#1207" class="Function"
+      >&#172;</a
+      ><a name="1743" class="Symbol"
+      >(</a
+      ><a name="1744" href="Logic.html#1730" class="Bound"
+      >A</a
+      ><a name="1745"
+      > </a
+      ><a name="1746" href="Logic.html#1490" class="Datatype Operator"
+      >&#8743;</a
+      ><a name="1747"
+      > </a
+      ><a name="1748" href="Logic.html#1207" class="Function"
+      >&#172;</a
+      ><a name="1749"
+      > </a
+      ><a name="1750" href="Logic.html#1730" class="Bound"
+      >A</a
+      ><a name="1751" class="Symbol"
+      >)</a
+      ><a name="1752"
+      >
+</a
+      ><a name="1753" href="Logic.html#1712" class="Function"
+      >contradiction</a
+      ><a name="1766"
+      > </a
+      ><a name="1767" class="Symbol"
+      >(</a
+      ><a name="1768" href="Logic.html#1522" class="InductiveConstructor"
+      >pair</a
+      ><a name="1772"
+      > </a
+      ><a name="1773" href="Logic.html#1773" class="Bound"
+      >a</a
+      ><a name="1774"
+      > </a
+      ><a name="1775" href="Logic.html#1775" class="Bound"
+      >&#172;a</a
+      ><a name="1777" class="Symbol"
+      >)</a
+      ><a name="1778"
+      > </a
+      ><a name="1779" class="Symbol"
+      >=</a
+      ><a name="1780"
+      > </a
+      ><a name="1781" href="Logic.html#1775" class="Bound"
+      >&#172;a</a
+      ><a name="1783"
+      > </a
+      ><a name="1784" href="Logic.html#1773" class="Bound"
+      >a</a
+      ><a name="1785"
+      >
+
+</a
+      ><a name="1787" class="Comment"
+      >-- To prove a disjunction A &#8744; B,</a
+      ><a name="1819"
+      >
+</a
+      ><a name="1820" class="Comment"
+      >-- we need to provide either a proof of A or a proof of B.</a
+      ><a name="1878"
+      >
+
+</a
+      ><a name="1880" class="Keyword"
+      >data</a
+      ><a name="1884"
+      > </a
+      ><a name="1885" href="Logic.html#1885" class="Datatype Operator"
+      >_&#8744;_</a
+      ><a name="1888"
+      > </a
+      ><a name="1889" class="Symbol"
+      >(</a
+      ><a name="1890" href="Logic.html#1890" class="Bound"
+      >A</a
+      ><a name="1891"
+      > </a
+      ><a name="1892" href="Logic.html#1892" class="Bound"
+      >B</a
+      ><a name="1893"
+      > </a
+      ><a name="1894" class="Symbol"
+      >:</a
+      ><a name="1895"
+      > </a
+      ><a name="1896" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1900" class="Symbol"
+      >)</a
+      ><a name="1901"
+      > </a
+      ><a name="1902" class="Symbol"
+      >:</a
+      ><a name="1903"
+      > </a
+      ><a name="1904" href="Logic.html#451" class="Function"
+      >prop</a
+      ><a name="1908"
+      > </a
+      ><a name="1909" class="Keyword"
+      >where</a
+      ><a name="1914"
+      >
+  </a
+      ><a name="1917" href="Logic.html#1917" class="InductiveConstructor"
+      >inl</a
+      ><a name="1920"
+      > </a
+      ><a name="1921" class="Symbol"
+      >:</a
+      ><a name="1922"
+      > </a
+      ><a name="1923" class="Symbol"
+      >(</a
+      ><a name="1924" href="Logic.html#1924" class="Bound"
+      >q</a
+      ><a name="1925"
+      > </a
+      ><a name="1926" class="Symbol"
+      >:</a
+      ><a name="1927"
+      > </a
+      ><a name="1928" href="Logic.html#1890" class="Bound"
+      >A</a
+      ><a name="1929" class="Symbol"
+      >)</a
+      ><a name="1930"
+      > </a
+      ><a name="1931" class="Symbol"
+      >&#8594;</a
+      ><a name="1932"
+      > </a
+      ><a name="1933" href="Logic.html#1890" class="Bound"
+      >A</a
+      ><a name="1934"
+      > </a
+      ><a name="1935" href="Logic.html#1885" class="Datatype Operator"
+      >&#8744;</a
+      ><a name="1936"
+      > </a
+      ><a name="1937" href="Logic.html#1892" class="Bound"
+      >B</a
+      ><a name="1938"
+      >
+  </a
+      ><a name="1941" href="Logic.html#1941" class="InductiveConstructor"
+      >inr</a
+      ><a name="1944"
+      > </a
+      ><a name="1945" class="Symbol"
+      >:</a
+      ><a name="1946"
+      > </a
+      ><a name="1947" class="Symbol"
+      >(</a
+      ><a name="1948" href="Logic.html#1948" class="Bound"
+      >q</a
+      ><a name="1949"
+      > </a
+      ><a name="1950" class="Symbol"
+      >:</a
+      ><a name="1951"
+      > </a
+      ><a name="1952" href="Logic.html#1892" class="Bound"
+      >B</a
+      ><a name="1953" class="Symbol"
+      >)</a
+      ><a name="1954"
+      > </a
+      ><a name="1955" class="Symbol"
+      >&#8594;</a
+      ><a name="1956"
+      > </a
+      ><a name="1957" href="Logic.html#1890" class="Bound"
+      >A</a
+      ><a name="1958"
+      > </a
+      ><a name="1959" href="Logic.html#1885" class="Datatype Operator"
+      >&#8744;</a
+      ><a name="1960"
+      > </a
+      ><a name="1961" href="Logic.html#1892" class="Bound"
+      >B</a
+      ><a name="1962"
+      >
+
+</a
+      ><a name="1964" class="Comment"
+      >-- If either &#172;A or B, then the implication A &#8594; B must hold</a
+      ><a name="2022"
+      >
+
+</a
+      ><a name="2024" href="Logic.html#2024" class="Function"
+      >impl</a
+      ><a name="2028"
+      > </a
+      ><a name="2029" class="Symbol"
+      >:</a
+      ><a name="2030"
+      > </a
+      ><a name="2031" class="Symbol"
+      >&#8704;{</a
+      ><a name="2033" href="Logic.html#2033" class="Bound"
+      >A</a
+      ><a name="2034"
+      > </a
+      ><a name="2035" href="Logic.html#2035" class="Bound"
+      >B</a
+      ><a name="2036" class="Symbol"
+      >}</a
+      ><a name="2037"
+      > </a
+      ><a name="2038" class="Symbol"
+      >&#8594;</a
+      ><a name="2039"
+      > </a
+      ><a name="2040" href="Logic.html#1207" class="Function"
+      >&#172;</a
+      ><a name="2041"
+      > </a
+      ><a name="2042" href="Logic.html#2033" class="Bound"
+      >A</a
+      ><a name="2043"
+      > </a
+      ><a name="2044" href="Logic.html#1885" class="Datatype Operator"
+      >&#8744;</a
+      ><a name="2045"
+      > </a
+      ><a name="2046" href="Logic.html#2035" class="Bound"
+      >B</a
+      ><a name="2047"
+      > </a
+      ><a name="2048" class="Symbol"
+      >&#8594;</a
+      ><a name="2049"
+      > </a
+      ><a name="2050" class="Symbol"
+      >(</a
+      ><a name="2051" href="Logic.html#2033" class="Bound"
+      >A</a
+      ><a name="2052"
+      > </a
+      ><a name="2053" class="Symbol"
+      >&#8594;</a
+      ><a name="2054"
+      > </a
+      ><a name="2055" href="Logic.html#2035" class="Bound"
+      >B</a
+      ><a name="2056" class="Symbol"
+      >)</a
+      ><a name="2057"
+      >
+</a
+      ><a name="2058" href="Logic.html#2024" class="Function"
+      >impl</a
+      ><a name="2062"
+      > </a
+      ><a name="2063" class="Symbol"
+      >(</a
+      ><a name="2064" href="Logic.html#1917" class="InductiveConstructor"
+      >inl</a
+      ><a name="2067"
+      > </a
+      ><a name="2068" href="Logic.html#2068" class="Bound"
+      >q</a
+      ><a name="2069" class="Symbol"
+      >)</a
+      ><a name="2070"
+      > </a
+      ><a name="2071" href="Logic.html#2071" class="Bound"
+      >a</a
+      ><a name="2072"
+      > </a
+      ><a name="2073" class="Symbol"
+      >=</a
+      ><a name="2074"
+      > </a
+      ><a name="2075" href="Logic.html#913" class="Function"
+      >&#8869;-elim</a
+      ><a name="2081"
+      > </a
+      ><a name="2082" class="Symbol"
+      >(</a
+      ><a name="2083" href="Logic.html#2068" class="Bound"
+      >q</a
+      ><a name="2084"
+      > </a
+      ><a name="2085" href="Logic.html#2071" class="Bound"
+      >a</a
+      ><a name="2086" class="Symbol"
+      >)</a
+      ><a name="2087"
+      >
+</a
+      ><a name="2088" href="Logic.html#2024" class="Function"
+      >impl</a
+      ><a name="2092"
+      > </a
+      ><a name="2093" class="Symbol"
+      >(</a
+      ><a name="2094" href="Logic.html#1941" class="InductiveConstructor"
+      >inr</a
+      ><a name="2097"
+      > </a
+      ><a name="2098" href="Logic.html#2098" class="Bound"
+      >q</a
+      ><a name="2099" class="Symbol"
+      >)</a
+      ><a name="2100"
+      > </a
+      ><a name="2101" href="Logic.html#2101" class="Bound"
+      >a</a
+      ><a name="2102"
+      > </a
+      ><a name="2103" class="Symbol"
+      >=</a
+      ><a name="2104"
+      > </a
+      ><a name="2105" href="Logic.html#2098" class="Bound"
+      >q</a
+      ><a name="2106"
+      >
+
+</a
+      ><a name="2108" class="Comment"
+      >-- The converse is not provable constructively, as A &#8594; B neither implies &#172; A nor B.</a
+      ><a name="2191"
+      >
+
+</a
+      ><a name="2193" class="Comment"
+      >-- The excluded middle &#172; A &#8744; A is also not provable in general.</a
+      ><a name="2256"
+      >
+
+</a
+      ><a name="2258" class="Comment"
+      >-- Propositions that fulfill the excluded middle are called &quot;decidable&quot;.</a
+      ><a name="2330"
+      >
+
+</a
+      ><a name="2332" class="Comment"
+      >-- Exercise: prove the double negation of the excluded middle:</a
+      ><a name="2394"
+      >
+</a
+      ><a name="2395" class="Comment"
+      >-- &#172; (&#172; (&#172; A &#8744; A))</a
+      ><a name="2413"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

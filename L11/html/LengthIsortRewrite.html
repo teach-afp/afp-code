@@ -1,0 +1,582 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >LengthIsortRewrite</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Comment"
+      >-- Advanced Functional Programming course 2016 Chalmers/GU</a
+      ><a name="59"
+      >
+</a
+      ><a name="60" class="Comment"
+      >--</a
+      ><a name="62"
+      >
+</a
+      ><a name="63" class="Comment"
+      >-- 2016-02-25 Guest lecture by Andreas Abel</a
+      ><a name="106"
+      >
+</a
+      ><a name="107" class="Comment"
+      >--</a
+      ><a name="109"
+      >
+</a
+      ><a name="110" class="Comment"
+      >-- Introduction to Agda</a
+      ><a name="133"
+      >
+</a
+      ><a name="134" class="Comment"
+      >--</a
+      ><a name="136"
+      >
+</a
+      ><a name="137" class="Comment"
+      >-- File 2: insertion sort preserves length</a
+      ><a name="179"
+      >
+
+</a
+      ><a name="181" class="Keyword"
+      >module</a
+      ><a name="187"
+      > </a
+      ><a name="188" href="LengthIsortRewrite.html#1" class="Module"
+      >LengthIsortRewrite</a
+      ><a name="206"
+      > </a
+      ><a name="207" class="Keyword"
+      >where</a
+      ><a name="212"
+      >
+
+</a
+      ><a name="214" class="Keyword"
+      >open</a
+      ><a name="218"
+      > </a
+      ><a name="219" class="Keyword"
+      >import</a
+      ><a name="225"
+      > </a
+      ><a name="226" href="InsertionSortBool.html#1" class="Module"
+      >InsertionSortBool</a
+      ><a name="243"
+      >
+
+</a
+      ><a name="245" class="Comment"
+      >-- We import the equality type from the standard library.</a
+      ><a name="302"
+      >
+</a
+      ><a name="303" class="Comment"
+      >-- Equality is the smallest equivalence relation</a
+      ><a name="351"
+      >
+</a
+      ><a name="352" class="Comment"
+      >--</a
+      ><a name="354"
+      >
+</a
+      ><a name="355" class="Comment"
+      >-- refl  : &#8704;{x} &#8594; x &#8801; x</a
+      ><a name="378"
+      >
+</a
+      ><a name="379" class="Comment"
+      >-- sym   : &#8704;{x y} &#8594; x &#8801; y &#8594; y &#8801; x</a
+      ><a name="412"
+      >
+</a
+      ><a name="413" class="Comment"
+      >-- trans : &#8704;{x y z} &#8594; x &#8801; y &#8594; y &#8801; z &#8594; x &#8801; z</a
+      ><a name="456"
+      >
+</a
+      ><a name="457" class="Comment"
+      >-- cong  : &#8704;{x y} f &#8594; x &#8801; y &#8594; f x &#8801; f y</a
+      ><a name="496"
+      >
+
+</a
+      ><a name="498" class="Keyword"
+      >open</a
+      ><a name="502"
+      > </a
+      ><a name="503" class="Keyword"
+      >import</a
+      ><a name="509"
+      > </a
+      ><a name="510" href="Relation.Binary.PropositionalEquality.html#1" class="Module"
+      >Relation.Binary.PropositionalEquality</a
+      ><a name="547"
+      >
+
+</a
+      ><a name="549" class="Comment"
+      >-- Lemma: insertion increases the length of a list by one.</a
+      ><a name="607"
+      >
+</a
+      ><a name="608" class="Comment"
+      >--</a
+      ><a name="610"
+      >
+</a
+      ><a name="611" class="Comment"
+      >-- The logical statement is simply a type signature.</a
+      ><a name="663"
+      >
+</a
+      ><a name="664" class="Comment"
+      >-- The proof is a terminating program of the correct type</a
+      ><a name="721"
+      >
+
+</a
+      ><a name="723" href="LengthIsortRewrite.html#723" class="Function"
+      >length-insert</a
+      ><a name="736"
+      > </a
+      ><a name="737" class="Symbol"
+      >:</a
+      ><a name="738"
+      > </a
+      ><a name="739" class="Symbol"
+      >&#8704;</a
+      ><a name="740"
+      > </a
+      ><a name="741" href="LengthIsortRewrite.html#741" class="Bound"
+      >x</a
+      ><a name="742"
+      > </a
+      ><a name="743" href="LengthIsortRewrite.html#743" class="Bound"
+      >ys</a
+      ><a name="745"
+      > </a
+      ><a name="746" class="Symbol"
+      >&#8594;</a
+      ><a name="747"
+      > </a
+      ><a name="748" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="754"
+      > </a
+      ><a name="755" class="Symbol"
+      >(</a
+      ><a name="756" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="762"
+      > </a
+      ><a name="763" href="LengthIsortRewrite.html#741" class="Bound"
+      >x</a
+      ><a name="764"
+      > </a
+      ><a name="765" href="LengthIsortRewrite.html#743" class="Bound"
+      >ys</a
+      ><a name="767" class="Symbol"
+      >)</a
+      ><a name="768"
+      > </a
+      ><a name="769" href="Agda.Builtin.Equality.html#55" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="770"
+      > </a
+      ><a name="771" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="774"
+      > </a
+      ><a name="775" class="Symbol"
+      >(</a
+      ><a name="776" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="782"
+      > </a
+      ><a name="783" href="LengthIsortRewrite.html#743" class="Bound"
+      >ys</a
+      ><a name="785" class="Symbol"
+      >)</a
+      ><a name="786"
+      >
+
+</a
+      ><a name="788" class="Comment"
+      >-- Case: empty list</a
+      ><a name="807"
+      >
+</a
+      ><a name="808" class="Comment"
+      >-- Show: length (insert x []) &#8801; 1</a
+      ><a name="841"
+      >
+
+</a
+      ><a name="843" href="LengthIsortRewrite.html#723" class="Function"
+      >length-insert</a
+      ><a name="856"
+      > </a
+      ><a name="857" href="LengthIsortRewrite.html#857" class="Bound"
+      >x</a
+      ><a name="858"
+      > </a
+      ><a name="859" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="861"
+      > </a
+      ><a name="862" class="Symbol"
+      >=</a
+      ><a name="863"
+      > </a
+      ><a name="864" href="Agda.Builtin.Equality.html#112" class="InductiveConstructor"
+      >refl</a
+      ><a name="868"
+      >
+
+</a
+      ><a name="870" class="Comment"
+      >-- Case: cons list (y &#8759; ys)</a
+      ><a name="897"
+      >
+</a
+      ><a name="898" class="Comment"
+      >-- Show: length (insert x (y &#8759; ys)) = suc (suc (length ys))</a
+      ><a name="957"
+      >
+
+</a
+      ><a name="959" href="LengthIsortRewrite.html#723" class="Function"
+      >length-insert</a
+      ><a name="972"
+      > </a
+      ><a name="973" href="LengthIsortRewrite.html#973" class="Bound"
+      >x</a
+      ><a name="974"
+      > </a
+      ><a name="975" class="Symbol"
+      >(</a
+      ><a name="976" href="LengthIsortRewrite.html#976" class="Bound"
+      >y</a
+      ><a name="977"
+      > </a
+      ><a name="978" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="979"
+      > </a
+      ><a name="980" href="LengthIsortRewrite.html#980" class="Bound"
+      >ys</a
+      ><a name="982" class="Symbol"
+      >)</a
+      ><a name="983"
+      > </a
+      ><a name="984" class="Keyword"
+      >with</a
+      ><a name="988"
+      > </a
+      ><a name="989" href="LengthIsortRewrite.html#973" class="Bound"
+      >x</a
+      ><a name="990"
+      > </a
+      ><a name="991" href="InsertionSortBool.html#1061" class="Function Operator"
+      >&lt;=</a
+      ><a name="993"
+      > </a
+      ><a name="994" href="LengthIsortRewrite.html#976" class="Bound"
+      >y</a
+      ><a name="995"
+      >
+
+</a
+      ><a name="997" class="Comment"
+      >-- Subcase: x &lt;= y is true</a
+      ><a name="1023"
+      >
+</a
+      ><a name="1024" class="Comment"
+      >-- Show: length (x &#8759; y &#8759; ys) = suc (suc (length ys))</a
+      ><a name="1076"
+      >
+</a
+      ><a name="1077" class="Symbol"
+      >...</a
+      ><a name="1080"
+      > </a
+      ><a name="1081" class="Symbol"
+      >|</a
+      ><a name="1082"
+      > </a
+      ><a name="1083" href="InsertionSortBool.html#856" class="InductiveConstructor"
+      >true</a
+      ><a name="1087"
+      >                             </a
+      ><a name="1116" class="Symbol"
+      >=</a
+      ><a name="1117"
+      > </a
+      ><a name="1118" href="Agda.Builtin.Equality.html#112" class="InductiveConstructor"
+      >refl</a
+      ><a name="1122"
+      >
+
+</a
+      ><a name="1124" class="Comment"
+      >-- Subcase: x &lt;= y is false</a
+      ><a name="1151"
+      >
+</a
+      ><a name="1152" class="Comment"
+      >-- Show: length (y &#8759; insert x ys) = suc (suc (length ys))</a
+      ><a name="1209"
+      >
+</a
+      ><a name="1210" class="Symbol"
+      >...</a
+      ><a name="1213"
+      > </a
+      ><a name="1214" class="Symbol"
+      >|</a
+      ><a name="1215"
+      > </a
+      ><a name="1216" href="InsertionSortBool.html#861" class="InductiveConstructor"
+      >false</a
+      ><a name="1221"
+      > </a
+      ><a name="1222" class="Keyword"
+      >rewrite</a
+      ><a name="1229"
+      > </a
+      ><a name="1230" href="LengthIsortRewrite.html#723" class="Function"
+      >length-insert</a
+      ><a name="1243"
+      > </a
+      ><a name="1244" href="LengthIsortRewrite.html#973" class="Bound"
+      >x</a
+      ><a name="1245"
+      > </a
+      ><a name="1246" href="LengthIsortRewrite.html#980" class="Bound"
+      >ys</a
+      ><a name="1248"
+      > </a
+      ><a name="1249" class="Symbol"
+      >=</a
+      ><a name="1250"
+      > </a
+      ><a name="1251" href="Agda.Builtin.Equality.html#112" class="InductiveConstructor"
+      >refl</a
+      ><a name="1255"
+      >
+
+</a
+      ><a name="1257" class="Comment"
+      >-- We use the induction hypothesis</a
+      ><a name="1291"
+      >
+</a
+      ><a name="1292" class="Comment"
+      >-- length-insert x ys : length (insert x ys) &#8801; suc (length ys)</a
+      ><a name="1354"
+      >
+
+
+</a
+      ><a name="1357" class="Comment"
+      >-- Theorem: sorting preserves the length</a
+      ><a name="1397"
+      >
+</a
+      ><a name="1398" class="Comment"
+      >-- By induction on the list.</a
+      ><a name="1426"
+      >
+
+</a
+      ><a name="1428" href="LengthIsortRewrite.html#1428" class="Function"
+      >length-isort</a
+      ><a name="1440"
+      > </a
+      ><a name="1441" class="Symbol"
+      >:</a
+      ><a name="1442"
+      > </a
+      ><a name="1443" class="Symbol"
+      >&#8704;</a
+      ><a name="1444"
+      > </a
+      ><a name="1445" href="LengthIsortRewrite.html#1445" class="Bound"
+      >xs</a
+      ><a name="1447"
+      > </a
+      ><a name="1448" class="Symbol"
+      >&#8594;</a
+      ><a name="1449"
+      > </a
+      ><a name="1450" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1456"
+      > </a
+      ><a name="1457" class="Symbol"
+      >(</a
+      ><a name="1458" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1463"
+      > </a
+      ><a name="1464" href="LengthIsortRewrite.html#1445" class="Bound"
+      >xs</a
+      ><a name="1466" class="Symbol"
+      >)</a
+      ><a name="1467"
+      > </a
+      ><a name="1468" href="Agda.Builtin.Equality.html#55" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="1469"
+      > </a
+      ><a name="1470" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="1476"
+      > </a
+      ><a name="1477" href="LengthIsortRewrite.html#1445" class="Bound"
+      >xs</a
+      ><a name="1479"
+      >
+
+</a
+      ><a name="1481" class="Comment"
+      >-- Case empty list</a
+      ><a name="1499"
+      >
+</a
+      ><a name="1500" class="Comment"
+      >-- Show: length [] &#8801; length []</a
+      ><a name="1530"
+      >
+</a
+      ><a name="1531" href="LengthIsortRewrite.html#1428" class="Function"
+      >length-isort</a
+      ><a name="1543"
+      > </a
+      ><a name="1544" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="1546"
+      >
+        </a
+      ><a name="1555" class="Symbol"
+      >=</a
+      ><a name="1556"
+      > </a
+      ><a name="1557" href="Agda.Builtin.Equality.html#112" class="InductiveConstructor"
+      >refl</a
+      ><a name="1561"
+      >
+
+</a
+      ><a name="1563" class="Comment"
+      >-- Case cons list (x &#8759; xs)</a
+      ><a name="1589"
+      >
+</a
+      ><a name="1590" class="Comment"
+      >-- Show: length (insert x (isort xs) &#8801; suc (length xs)</a
+      ><a name="1644"
+      >
+
+</a
+      ><a name="1646" href="LengthIsortRewrite.html#1428" class="Function"
+      >length-isort</a
+      ><a name="1658"
+      > </a
+      ><a name="1659" class="Symbol"
+      >(</a
+      ><a name="1660" href="LengthIsortRewrite.html#1660" class="Bound"
+      >x</a
+      ><a name="1661"
+      > </a
+      ><a name="1662" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1663"
+      > </a
+      ><a name="1664" href="LengthIsortRewrite.html#1664" class="Bound"
+      >xs</a
+      ><a name="1666" class="Symbol"
+      >)</a
+      ><a name="1667"
+      >
+  </a
+      ><a name="1670" class="Keyword"
+      >rewrite</a
+      ><a name="1677"
+      > </a
+      ><a name="1678" href="LengthIsortRewrite.html#723" class="Function"
+      >length-insert</a
+      ><a name="1691"
+      > </a
+      ><a name="1692" href="LengthIsortRewrite.html#1660" class="Bound"
+      >x</a
+      ><a name="1693"
+      > </a
+      ><a name="1694" class="Symbol"
+      >(</a
+      ><a name="1695" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1700"
+      > </a
+      ><a name="1701" href="LengthIsortRewrite.html#1664" class="Bound"
+      >xs</a
+      ><a name="1703" class="Symbol"
+      >)</a
+      ><a name="1704"
+      >  </a
+      ><a name="1706" class="Comment"
+      >-- length (insert x (isort xs)) = suc (length (isort xs))</a
+      ><a name="1763"
+      >
+        </a
+      ><a name="1772" class="Symbol"
+      >|</a
+      ><a name="1773"
+      > </a
+      ><a name="1774" href="LengthIsortRewrite.html#1428" class="Function"
+      >length-isort</a
+      ><a name="1786"
+      > </a
+      ><a name="1787" href="LengthIsortRewrite.html#1664" class="Bound"
+      >xs</a
+      ><a name="1789"
+      >             </a
+      ><a name="1802" class="Comment"
+      >-- induction hypothesis</a
+      ><a name="1825"
+      >
+        </a
+      ><a name="1834" class="Symbol"
+      >=</a
+      ><a name="1835"
+      > </a
+      ><a name="1836" href="Agda.Builtin.Equality.html#112" class="InductiveConstructor"
+      >refl</a
+      ><a name="1840"
+      >
+
+</a
+      ><a name="1842" class="Comment"
+      >-- Without comments, it is hard to understand the proof.</a
+      ><a name="1898"
+      >
+</a
+      ><a name="1899" class="Comment"
+      >-- One only gets an idea what has been used to show the theorem.</a
+      ><a name="1963"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

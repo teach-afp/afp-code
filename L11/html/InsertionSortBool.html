@@ -1,0 +1,994 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >InsertionSortBool</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Comment"
+      >-- Advanced Functional Programming course 2016 Chalmers/GU</a
+      ><a name="59"
+      >
+</a
+      ><a name="60" class="Comment"
+      >--</a
+      ><a name="62"
+      >
+</a
+      ><a name="63" class="Comment"
+      >-- 2016-02-25 Guest lecture by Andreas Abel</a
+      ><a name="106"
+      >
+</a
+      ><a name="107" class="Comment"
+      >--</a
+      ><a name="109"
+      >
+</a
+      ><a name="110" class="Comment"
+      >-- Introduction to Agda</a
+      ><a name="133"
+      >
+</a
+      ><a name="134" class="Comment"
+      >--</a
+      ><a name="136"
+      >
+</a
+      ><a name="137" class="Comment"
+      >-- File 1: definition of insertion sort</a
+      ><a name="176"
+      >
+
+</a
+      ><a name="178" class="Keyword"
+      >module</a
+      ><a name="184"
+      > </a
+      ><a name="185" href="InsertionSortBool.html#1" class="Module"
+      >InsertionSortBool</a
+      ><a name="202"
+      > </a
+      ><a name="203" class="Keyword"
+      >where</a
+      ><a name="208"
+      >
+
+</a
+      ><a name="210" class="Comment"
+      >-- Agda is a Haskell-like language</a
+      ><a name="244"
+      >
+</a
+      ><a name="245" class="Comment"
+      >-- comes with little primitives</a
+      ><a name="276"
+      >
+</a
+      ><a name="277" class="Comment"
+      >-- lists are definable</a
+      ><a name="299"
+      >
+
+</a
+      ><a name="301" class="Keyword"
+      >data</a
+      ><a name="305"
+      > </a
+      ><a name="306" href="InsertionSortBool.html#306" class="Datatype"
+      >List</a
+      ><a name="310"
+      > </a
+      ><a name="311" class="Symbol"
+      >(</a
+      ><a name="312" href="InsertionSortBool.html#312" class="Bound"
+      >A</a
+      ><a name="313"
+      > </a
+      ><a name="314" class="Symbol"
+      >:</a
+      ><a name="315"
+      > </a
+      ><a name="316" class="PrimitiveType"
+      >Set</a
+      ><a name="319" class="Symbol"
+      >)</a
+      ><a name="320"
+      > </a
+      ><a name="321" class="Symbol"
+      >:</a
+      ><a name="322"
+      > </a
+      ><a name="323" class="PrimitiveType"
+      >Set</a
+      ><a name="326"
+      > </a
+      ><a name="327" class="Keyword"
+      >where</a
+      ><a name="332"
+      >
+  </a
+      ><a name="335" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="337"
+      >  </a
+      ><a name="339" class="Symbol"
+      >:</a
+      ><a name="340"
+      > </a
+      ><a name="341" href="InsertionSortBool.html#306" class="Datatype"
+      >List</a
+      ><a name="345"
+      > </a
+      ><a name="346" href="InsertionSortBool.html#312" class="Bound"
+      >A</a
+      ><a name="347"
+      >
+  </a
+      ><a name="350" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >_&#8759;_</a
+      ><a name="353"
+      > </a
+      ><a name="354" class="Symbol"
+      >:</a
+      ><a name="355"
+      > </a
+      ><a name="356" class="Symbol"
+      >(</a
+      ><a name="357" href="InsertionSortBool.html#357" class="Bound"
+      >x</a
+      ><a name="358"
+      > </a
+      ><a name="359" class="Symbol"
+      >:</a
+      ><a name="360"
+      > </a
+      ><a name="361" href="InsertionSortBool.html#312" class="Bound"
+      >A</a
+      ><a name="362" class="Symbol"
+      >)</a
+      ><a name="363"
+      > </a
+      ><a name="364" class="Symbol"
+      >(</a
+      ><a name="365" href="InsertionSortBool.html#365" class="Bound"
+      >xs</a
+      ><a name="367"
+      > </a
+      ><a name="368" class="Symbol"
+      >:</a
+      ><a name="369"
+      > </a
+      ><a name="370" href="InsertionSortBool.html#306" class="Datatype"
+      >List</a
+      ><a name="374"
+      > </a
+      ><a name="375" href="InsertionSortBool.html#312" class="Bound"
+      >A</a
+      ><a name="376" class="Symbol"
+      >)</a
+      ><a name="377"
+      > </a
+      ><a name="378" class="Symbol"
+      >&#8594;</a
+      ><a name="379"
+      > </a
+      ><a name="380" href="InsertionSortBool.html#306" class="Datatype"
+      >List</a
+      ><a name="384"
+      > </a
+      ><a name="385" href="InsertionSortBool.html#312" class="Bound"
+      >A</a
+      ><a name="386"
+      >
+
+</a
+      ><a name="388" class="Keyword"
+      >infixr</a
+      ><a name="394"
+      > </a
+      ><a name="395" class="Number"
+      >5</a
+      ><a name="396"
+      > _&#8759;_
+
+</a
+      ><a name="402" class="Comment"
+      >-- Similar, there are no primitive numbers</a
+      ><a name="444"
+      >
+</a
+      ><a name="445" class="Comment"
+      >-- We define (Peano) natural numbers</a
+      ><a name="481"
+      >
+
+</a
+      ><a name="483" class="Keyword"
+      >data</a
+      ><a name="487"
+      > </a
+      ><a name="488" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="489"
+      > </a
+      ><a name="490" class="Symbol"
+      >:</a
+      ><a name="491"
+      > </a
+      ><a name="492" class="PrimitiveType"
+      >Set</a
+      ><a name="495"
+      > </a
+      ><a name="496" class="Keyword"
+      >where</a
+      ><a name="501"
+      >
+  </a
+      ><a name="504" href="InsertionSortBool.html#504" class="InductiveConstructor"
+      >zero</a
+      ><a name="508"
+      > </a
+      ><a name="509" class="Symbol"
+      >:</a
+      ><a name="510"
+      > </a
+      ><a name="511" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="512"
+      >
+  </a
+      ><a name="515" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="518"
+      >  </a
+      ><a name="520" class="Symbol"
+      >:</a
+      ><a name="521"
+      > </a
+      ><a name="522" class="Symbol"
+      >(</a
+      ><a name="523" href="InsertionSortBool.html#523" class="Bound"
+      >n</a
+      ><a name="524"
+      > </a
+      ><a name="525" class="Symbol"
+      >:</a
+      ><a name="526"
+      > </a
+      ><a name="527" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="528" class="Symbol"
+      >)</a
+      ><a name="529"
+      > </a
+      ><a name="530" class="Symbol"
+      >&#8594;</a
+      ><a name="531"
+      > </a
+      ><a name="532" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="533"
+      >
+
+</a
+      ><a name="535" class="Comment"
+      >-- The tools of choice for defining functions are pattern matching and recursion.</a
+      ><a name="616"
+      >
+</a
+      ><a name="617" class="Comment"
+      >-- Each function must be terminating.</a
+      ><a name="654"
+      >
+
+</a
+      ><a name="656" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="662"
+      > </a
+      ><a name="663" class="Symbol"
+      >:</a
+      ><a name="664"
+      > </a
+      ><a name="665" class="Symbol"
+      >&#8704;{</a
+      ><a name="667" href="InsertionSortBool.html#667" class="Bound"
+      >A</a
+      ><a name="668" class="Symbol"
+      >}</a
+      ><a name="669"
+      > </a
+      ><a name="670" class="Symbol"
+      >&#8594;</a
+      ><a name="671"
+      > </a
+      ><a name="672" href="InsertionSortBool.html#306" class="Datatype"
+      >List</a
+      ><a name="676"
+      > </a
+      ><a name="677" href="InsertionSortBool.html#667" class="Bound"
+      >A</a
+      ><a name="678"
+      > </a
+      ><a name="679" class="Symbol"
+      >&#8594;</a
+      ><a name="680"
+      > </a
+      ><a name="681" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="682"
+      >
+</a
+      ><a name="683" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="689"
+      > </a
+      ><a name="690" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="692"
+      >       </a
+      ><a name="699" class="Symbol"
+      >=</a
+      ><a name="700"
+      > </a
+      ><a name="701" href="InsertionSortBool.html#504" class="InductiveConstructor"
+      >zero</a
+      ><a name="705"
+      >
+</a
+      ><a name="706" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="712"
+      > </a
+      ><a name="713" class="Symbol"
+      >(</a
+      ><a name="714" href="InsertionSortBool.html#714" class="Bound"
+      >x</a
+      ><a name="715"
+      > </a
+      ><a name="716" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="717"
+      > </a
+      ><a name="718" href="InsertionSortBool.html#718" class="Bound"
+      >xs</a
+      ><a name="720" class="Symbol"
+      >)</a
+      ><a name="721"
+      > </a
+      ><a name="722" class="Symbol"
+      >=</a
+      ><a name="723"
+      > </a
+      ><a name="724" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="727"
+      > </a
+      ><a name="728" class="Symbol"
+      >(</a
+      ><a name="729" href="InsertionSortBool.html#656" class="Function"
+      >length</a
+      ><a name="735"
+      > </a
+      ><a name="736" href="InsertionSortBool.html#718" class="Bound"
+      >xs</a
+      ><a name="738" class="Symbol"
+      >)</a
+      ><a name="739"
+      >
+
+</a
+      ><a name="741" class="Comment"
+      >-- As in Haskell, Booleans need not be primitive, since we have call-by-name evaluation.</a
+      ><a name="829"
+      >
+
+</a
+      ><a name="831" class="Keyword"
+      >data</a
+      ><a name="835"
+      > </a
+      ><a name="836" href="InsertionSortBool.html#836" class="Datatype"
+      >Bool</a
+      ><a name="840"
+      > </a
+      ><a name="841" class="Symbol"
+      >:</a
+      ><a name="842"
+      >  </a
+      ><a name="844" class="PrimitiveType"
+      >Set</a
+      ><a name="847"
+      > </a
+      ><a name="848" class="Keyword"
+      >where</a
+      ><a name="853"
+      >
+  </a
+      ><a name="856" href="InsertionSortBool.html#856" class="InductiveConstructor"
+      >true</a
+      ><a name="860"
+      > </a
+      ><a name="861" href="InsertionSortBool.html#861" class="InductiveConstructor"
+      >false</a
+      ><a name="866"
+      > </a
+      ><a name="867" class="Symbol"
+      >:</a
+      ><a name="868"
+      > </a
+      ><a name="869" href="InsertionSortBool.html#836" class="Datatype"
+      >Bool</a
+      ><a name="873"
+      >
+
+</a
+      ><a name="875" href="InsertionSortBool.html#875" class="Function Operator"
+      >if_then_else_</a
+      ><a name="888"
+      > </a
+      ><a name="889" class="Symbol"
+      >:</a
+      ><a name="890"
+      > </a
+      ><a name="891" class="Symbol"
+      >&#8704;{</a
+      ><a name="893" href="InsertionSortBool.html#893" class="Bound"
+      >A</a
+      ><a name="894"
+      > </a
+      ><a name="895" class="Symbol"
+      >:</a
+      ><a name="896"
+      > </a
+      ><a name="897" class="PrimitiveType"
+      >Set</a
+      ><a name="900" class="Symbol"
+      >}</a
+      ><a name="901"
+      > </a
+      ><a name="902" class="Symbol"
+      >(</a
+      ><a name="903" href="InsertionSortBool.html#903" class="Bound"
+      >b</a
+      ><a name="904"
+      > </a
+      ><a name="905" class="Symbol"
+      >:</a
+      ><a name="906"
+      > </a
+      ><a name="907" href="InsertionSortBool.html#836" class="Datatype"
+      >Bool</a
+      ><a name="911" class="Symbol"
+      >)</a
+      ><a name="912"
+      > </a
+      ><a name="913" class="Symbol"
+      >(</a
+      ><a name="914" href="InsertionSortBool.html#914" class="Bound"
+      >x</a
+      ><a name="915"
+      > </a
+      ><a name="916" href="InsertionSortBool.html#916" class="Bound"
+      >y</a
+      ><a name="917"
+      > </a
+      ><a name="918" class="Symbol"
+      >:</a
+      ><a name="919"
+      > </a
+      ><a name="920" href="InsertionSortBool.html#893" class="Bound"
+      >A</a
+      ><a name="921" class="Symbol"
+      >)</a
+      ><a name="922"
+      > </a
+      ><a name="923" class="Symbol"
+      >&#8594;</a
+      ><a name="924"
+      > </a
+      ><a name="925" href="InsertionSortBool.html#893" class="Bound"
+      >A</a
+      ><a name="926"
+      >
+</a
+      ><a name="927" href="InsertionSortBool.html#875" class="Function Operator"
+      >if</a
+      ><a name="929"
+      > </a
+      ><a name="930" href="InsertionSortBool.html#856" class="InductiveConstructor"
+      >true</a
+      ><a name="934"
+      >  </a
+      ><a name="936" href="InsertionSortBool.html#875" class="Function Operator"
+      >then</a
+      ><a name="940"
+      > </a
+      ><a name="941" href="InsertionSortBool.html#941" class="Bound"
+      >x</a
+      ><a name="942"
+      > </a
+      ><a name="943" href="InsertionSortBool.html#875" class="Function Operator"
+      >else</a
+      ><a name="947"
+      > </a
+      ><a name="948" href="InsertionSortBool.html#948" class="Bound"
+      >y</a
+      ><a name="949"
+      > </a
+      ><a name="950" class="Symbol"
+      >=</a
+      ><a name="951"
+      > </a
+      ><a name="952" href="InsertionSortBool.html#941" class="Bound"
+      >x</a
+      ><a name="953"
+      >
+</a
+      ><a name="954" href="InsertionSortBool.html#875" class="Function Operator"
+      >if</a
+      ><a name="956"
+      > </a
+      ><a name="957" href="InsertionSortBool.html#861" class="InductiveConstructor"
+      >false</a
+      ><a name="962"
+      > </a
+      ><a name="963" href="InsertionSortBool.html#875" class="Function Operator"
+      >then</a
+      ><a name="967"
+      > </a
+      ><a name="968" href="InsertionSortBool.html#968" class="Bound"
+      >x</a
+      ><a name="969"
+      > </a
+      ><a name="970" href="InsertionSortBool.html#875" class="Function Operator"
+      >else</a
+      ><a name="974"
+      > </a
+      ><a name="975" href="InsertionSortBool.html#975" class="Bound"
+      >y</a
+      ><a name="976"
+      > </a
+      ><a name="977" class="Symbol"
+      >=</a
+      ><a name="978"
+      > </a
+      ><a name="979" href="InsertionSortBool.html#975" class="Bound"
+      >y</a
+      ><a name="980"
+      >
+
+</a
+      ><a name="982" class="Keyword"
+      >infix</a
+      ><a name="987"
+      > </a
+      ><a name="988" class="Number"
+      >0</a
+      ><a name="989"
+      > if_then_else_
+
+</a
+      ><a name="1005" class="Comment"
+      >-- Comparison of natural numbers (like Ord in Haskell)</a
+      ><a name="1059"
+      >
+
+</a
+      ><a name="1061" href="InsertionSortBool.html#1061" class="Function Operator"
+      >_&lt;=_</a
+      ><a name="1065"
+      > </a
+      ><a name="1066" class="Symbol"
+      >:</a
+      ><a name="1067"
+      > </a
+      ><a name="1068" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="1069"
+      > </a
+      ><a name="1070" class="Symbol"
+      >&#8594;</a
+      ><a name="1071"
+      > </a
+      ><a name="1072" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="1073"
+      > </a
+      ><a name="1074" class="Symbol"
+      >&#8594;</a
+      ><a name="1075"
+      > </a
+      ><a name="1076" href="InsertionSortBool.html#836" class="Datatype"
+      >Bool</a
+      ><a name="1080"
+      >
+</a
+      ><a name="1081" href="InsertionSortBool.html#504" class="InductiveConstructor"
+      >zero</a
+      ><a name="1085"
+      >  </a
+      ><a name="1087" href="InsertionSortBool.html#1061" class="Function Operator"
+      >&lt;=</a
+      ><a name="1089"
+      > </a
+      ><a name="1090" href="InsertionSortBool.html#1090" class="Bound"
+      >m</a
+      ><a name="1091"
+      >     </a
+      ><a name="1096" class="Symbol"
+      >=</a
+      ><a name="1097"
+      > </a
+      ><a name="1098" href="InsertionSortBool.html#856" class="InductiveConstructor"
+      >true</a
+      ><a name="1102"
+      >
+</a
+      ><a name="1103" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="1106"
+      > </a
+      ><a name="1107" href="InsertionSortBool.html#1107" class="Bound"
+      >n</a
+      ><a name="1108"
+      > </a
+      ><a name="1109" href="InsertionSortBool.html#1061" class="Function Operator"
+      >&lt;=</a
+      ><a name="1111"
+      > </a
+      ><a name="1112" href="InsertionSortBool.html#504" class="InductiveConstructor"
+      >zero</a
+      ><a name="1116"
+      >  </a
+      ><a name="1118" class="Symbol"
+      >=</a
+      ><a name="1119"
+      > </a
+      ><a name="1120" href="InsertionSortBool.html#861" class="InductiveConstructor"
+      >false</a
+      ><a name="1125"
+      >
+</a
+      ><a name="1126" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="1129"
+      > </a
+      ><a name="1130" href="InsertionSortBool.html#1130" class="Bound"
+      >n</a
+      ><a name="1131"
+      > </a
+      ><a name="1132" href="InsertionSortBool.html#1061" class="Function Operator"
+      >&lt;=</a
+      ><a name="1134"
+      > </a
+      ><a name="1135" href="InsertionSortBool.html#515" class="InductiveConstructor"
+      >suc</a
+      ><a name="1138"
+      > </a
+      ><a name="1139" href="InsertionSortBool.html#1139" class="Bound"
+      >m</a
+      ><a name="1140"
+      > </a
+      ><a name="1141" class="Symbol"
+      >=</a
+      ><a name="1142"
+      > </a
+      ><a name="1143" href="InsertionSortBool.html#1130" class="Bound"
+      >n</a
+      ><a name="1144"
+      > </a
+      ><a name="1145" href="InsertionSortBool.html#1061" class="Function Operator"
+      >&lt;=</a
+      ><a name="1147"
+      > </a
+      ><a name="1148" href="InsertionSortBool.html#1139" class="Bound"
+      >m</a
+      ><a name="1149"
+      >
+
+</a
+      ><a name="1151" class="Comment"
+      >-- Insertion into an ascending list.</a
+      ><a name="1187"
+      >
+
+</a
+      ><a name="1189" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="1195"
+      > </a
+      ><a name="1196" class="Symbol"
+      >:</a
+      ><a name="1197"
+      > </a
+      ><a name="1198" class="Symbol"
+      >(</a
+      ><a name="1199" href="InsertionSortBool.html#1199" class="Bound"
+      >x</a
+      ><a name="1200"
+      > </a
+      ><a name="1201" class="Symbol"
+      >:</a
+      ><a name="1202"
+      > </a
+      ><a name="1203" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="1204" class="Symbol"
+      >)</a
+      ><a name="1205"
+      > </a
+      ><a name="1206" class="Symbol"
+      >(</a
+      ><a name="1207" href="InsertionSortBool.html#1207" class="Bound"
+      >ys</a
+      ><a name="1209"
+      > </a
+      ><a name="1210" class="Symbol"
+      >:</a
+      ><a name="1211"
+      > </a
+      ><a name="1212" href="InsertionSortBool.html#306" class="Datatype"
+      >List</a
+      ><a name="1216"
+      > </a
+      ><a name="1217" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="1218" class="Symbol"
+      >)</a
+      ><a name="1219"
+      > </a
+      ><a name="1220" class="Symbol"
+      >&#8594;</a
+      ><a name="1221"
+      > </a
+      ><a name="1222" href="InsertionSortBool.html#306" class="Datatype"
+      >List</a
+      ><a name="1226"
+      > </a
+      ><a name="1227" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="1228"
+      >
+</a
+      ><a name="1229" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="1235"
+      > </a
+      ><a name="1236" href="InsertionSortBool.html#1236" class="Bound"
+      >x</a
+      ><a name="1237"
+      > </a
+      ><a name="1238" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="1240"
+      >       </a
+      ><a name="1247" class="Symbol"
+      >=</a
+      ><a name="1248"
+      > </a
+      ><a name="1249" href="InsertionSortBool.html#1236" class="Bound"
+      >x</a
+      ><a name="1250"
+      > </a
+      ><a name="1251" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1252"
+      > </a
+      ><a name="1253" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="1255"
+      >
+</a
+      ><a name="1256" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="1262"
+      > </a
+      ><a name="1263" href="InsertionSortBool.html#1263" class="Bound"
+      >x</a
+      ><a name="1264"
+      > </a
+      ><a name="1265" class="Symbol"
+      >(</a
+      ><a name="1266" href="InsertionSortBool.html#1266" class="Bound"
+      >y</a
+      ><a name="1267"
+      > </a
+      ><a name="1268" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1269"
+      > </a
+      ><a name="1270" href="InsertionSortBool.html#1270" class="Bound"
+      >ys</a
+      ><a name="1272" class="Symbol"
+      >)</a
+      ><a name="1273"
+      > </a
+      ><a name="1274" class="Symbol"
+      >=</a
+      ><a name="1275"
+      > </a
+      ><a name="1276" href="InsertionSortBool.html#875" class="Function Operator"
+      >if</a
+      ><a name="1278"
+      > </a
+      ><a name="1279" href="InsertionSortBool.html#1263" class="Bound"
+      >x</a
+      ><a name="1280"
+      > </a
+      ><a name="1281" href="InsertionSortBool.html#1061" class="Function Operator"
+      >&lt;=</a
+      ><a name="1283"
+      > </a
+      ><a name="1284" href="InsertionSortBool.html#1266" class="Bound"
+      >y</a
+      ><a name="1285"
+      > </a
+      ><a name="1286" href="InsertionSortBool.html#875" class="Function Operator"
+      >then</a
+      ><a name="1290"
+      > </a
+      ><a name="1291" href="InsertionSortBool.html#1263" class="Bound"
+      >x</a
+      ><a name="1292"
+      > </a
+      ><a name="1293" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1294"
+      > </a
+      ><a name="1295" href="InsertionSortBool.html#1266" class="Bound"
+      >y</a
+      ><a name="1296"
+      > </a
+      ><a name="1297" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1298"
+      > </a
+      ><a name="1299" href="InsertionSortBool.html#1270" class="Bound"
+      >ys</a
+      ><a name="1301"
+      > </a
+      ><a name="1302" href="InsertionSortBool.html#875" class="Function Operator"
+      >else</a
+      ><a name="1306"
+      > </a
+      ><a name="1307" href="InsertionSortBool.html#1266" class="Bound"
+      >y</a
+      ><a name="1308"
+      > </a
+      ><a name="1309" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1310"
+      > </a
+      ><a name="1311" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="1317"
+      > </a
+      ><a name="1318" href="InsertionSortBool.html#1263" class="Bound"
+      >x</a
+      ><a name="1319"
+      > </a
+      ><a name="1320" href="InsertionSortBool.html#1270" class="Bound"
+      >ys</a
+      ><a name="1322"
+      >
+
+</a
+      ><a name="1324" class="Comment"
+      >-- Insertion sort.</a
+      ><a name="1342"
+      >
+
+</a
+      ><a name="1344" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1349"
+      > </a
+      ><a name="1350" class="Symbol"
+      >:</a
+      ><a name="1351"
+      > </a
+      ><a name="1352" class="Symbol"
+      >(</a
+      ><a name="1353" href="InsertionSortBool.html#1353" class="Bound"
+      >xs</a
+      ><a name="1355"
+      > </a
+      ><a name="1356" class="Symbol"
+      >:</a
+      ><a name="1357"
+      > </a
+      ><a name="1358" href="InsertionSortBool.html#306" class="Datatype"
+      >List</a
+      ><a name="1362"
+      > </a
+      ><a name="1363" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="1364" class="Symbol"
+      >)</a
+      ><a name="1365"
+      > </a
+      ><a name="1366" class="Symbol"
+      >&#8594;</a
+      ><a name="1367"
+      > </a
+      ><a name="1368" href="InsertionSortBool.html#306" class="Datatype"
+      >List</a
+      ><a name="1372"
+      > </a
+      ><a name="1373" href="InsertionSortBool.html#488" class="Datatype"
+      >&#8469;</a
+      ><a name="1374"
+      >
+</a
+      ><a name="1375" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1380"
+      > </a
+      ><a name="1381" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="1383"
+      >       </a
+      ><a name="1390" class="Symbol"
+      >=</a
+      ><a name="1391"
+      > </a
+      ><a name="1392" href="InsertionSortBool.html#335" class="InductiveConstructor"
+      >[]</a
+      ><a name="1394"
+      >
+</a
+      ><a name="1395" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1400"
+      > </a
+      ><a name="1401" class="Symbol"
+      >(</a
+      ><a name="1402" href="InsertionSortBool.html#1402" class="Bound"
+      >x</a
+      ><a name="1403"
+      > </a
+      ><a name="1404" href="InsertionSortBool.html#350" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1405"
+      > </a
+      ><a name="1406" href="InsertionSortBool.html#1406" class="Bound"
+      >xs</a
+      ><a name="1408" class="Symbol"
+      >)</a
+      ><a name="1409"
+      > </a
+      ><a name="1410" class="Symbol"
+      >=</a
+      ><a name="1411"
+      > </a
+      ><a name="1412" href="InsertionSortBool.html#1189" class="Function"
+      >insert</a
+      ><a name="1418"
+      > </a
+      ><a name="1419" href="InsertionSortBool.html#1402" class="Bound"
+      >x</a
+      ><a name="1420"
+      > </a
+      ><a name="1421" class="Symbol"
+      >(</a
+      ><a name="1422" href="InsertionSortBool.html#1344" class="Function"
+      >isort</a
+      ><a name="1427"
+      > </a
+      ><a name="1428" href="InsertionSortBool.html#1406" class="Bound"
+      >xs</a
+      ><a name="1430" class="Symbol"
+      >)</a
+      ><a name="1431"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>
