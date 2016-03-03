@@ -1,6 +1,8 @@
+{-# LANGUAGE FlexibleInstances #-}
 module Functos where
 
 import Control.Applicative
+import Data.Monoid
 
 data Tree a = Leaf a | Node (Tree a) (Tree a)
               deriving Show
@@ -10,7 +12,6 @@ mapTree :: (a -> b) -> Tree a -> Tree b
 mapTree f (Leaf a) = Leaf (f a)
 mapTree f (Node t1 t2) = Node (mapTree f t1)
                               (mapTree f t2)
-
 
 tree = Node (Leaf 2) ((Node (Node (Leaf 3) (Leaf 4)) (Leaf 5)))
 
@@ -109,35 +110,65 @@ instance Applicative (Pair r) where
 {----------------------------------------}
 {-- Applicative functor, but not a monad --}
 {----------------------------------------}
-data AppNotMonad a = AppNotMonad Bool
 
-instance Functor AppNotMonad where
-   fmap f (AppNotMonad b) = AppNotMonad b
+data Nat = Zero | Suc Nat
+           deriving Show
+
+instance Monoid Nat where
+   mempty = Zero
+   mappend Zero    m = m
+   mappend (Suc n) m = Suc (mappend n m)
+
+
+newtype Phanton o a =  Phanton o
+                       deriving Show
+
+instance Functor (Phanton o) where
+   fmap f (Phanton o) = Phanton o
+
+instance Monoid o => Applicative (Phanton o) where
+   pure x = Phanton mempty
+   Phanton o1 <*> Phanton o2 = Phanton (mappend o1 o2)
+
+instance Monad (Phanton Nat) where
+    return x        = Phanton Zero
+                    -- Here, you can choose any Nat
+    Phanton n >>= k = Phanton n
+                    {- There is no value of type `a` to
+                       pass to `k`!
+                       So, we ignore it and we can return
+                       a constant Phanton value!
+                    -}
+
+onePhanton :: Phanton Nat Int
+onePhanton = Phanton (Suc Zero)
+
+exPhanton :: Phanton Nat Int
+exPhanton = pure (\x y z -> z) <*> onePhanton <*> onePhanton <*> onePhanton
+
+
+instance Monad (Phanton Nat) where
+   return = pure
+   (Phanton n) >>= k = Phanton Zero
+
 
 {-
-   Here, AppNotMonad b :: a or AppNotMonad b:: b. So, the
-   definition of fmap goes through.
+   Observe that, by the left identity law,
 
-   Exercise: check that AppNotMonad satisfies the functor rules
+   return x >>= k == k x
+
+   We know that
+
+   return x >>= k == return x (by definition of >>=)
+
+   So, the monadic law says
+
+   return x == k x
+
+   However, it is easy to come up with a function k which falsifies
+   the equation. For example,
+
+   k = \_ -> exPhanton
+
+   Observe that ex1P was created with applicative functors!
 -}
-
-instance Applicative AppNotMonad where
-   pure x = AppNotMonad True -- You choose either True or False
-   AppNotMonad b1 <*> AppNotMonad b2 = AppNotMonad (b1 == b2)
-                                    -- AppNotMonad b1
-                                    -- AppNotMonad b2
-
-   {- Observe that AppNotMonad True is the only value handled by
-      the applicative functor
-
-      Exercise: check that AppNotMonad satisfies the applicative laws
-   -}
-
-instance Monad AppNotMonad where
-    return x = AppNotMonad True
-            -- AppNotMonad False
-    (AppNotMonad t) >>= f = error "Hopeless!"
-    {-
-       f needs to be applied to a polymorphic type a, but
-       it is applied to a boolean!
-    -}
