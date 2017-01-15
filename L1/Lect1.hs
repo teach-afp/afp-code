@@ -90,8 +90,8 @@ expn n | n <= 1    = 1
        | otherwise = expn (n-1) + expn (n-2)
 
 choice :: Bool -> a -> a -> a
-choice False  fn  _t  =  fn
-choice True   _fn  t  =  t
+choice True  fn  _t  =  fn
+choice False _fn  t  =  t
 
 testChoice1 :: Integer
 testChoice1 = choice False 17 (expn 99)
