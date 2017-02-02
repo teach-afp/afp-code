@@ -140,10 +140,10 @@ instance Monad Phanton where
                        a constant Phanton value!
                     -}
 
-onePhanton :: Phanton Int
+onePhanton :: Phanton ()
 onePhanton = Phanton (Suc Zero)
 
-exPhanton :: Phanton Int
+exPhanton :: Phanton ()
 exPhanton = pure (\x y z -> z) <*> onePhanton <*> onePhanton <*> onePhanton
 
 
