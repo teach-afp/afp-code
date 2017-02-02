@@ -120,17 +120,17 @@ instance Monoid Nat where
    mappend (Suc n) m = Suc (mappend n m)
 
 
-newtype Phanton o a =  Phanton o
+newtype Phanton a =  Phanton Nat
                        deriving Show
 
-instance Functor (Phanton o) where
-   fmap f (Phanton o) = Phanton o
+instance Functor Phanton where
+   fmap f (Phanton n) = Phanton n
 
-instance Monoid o => Applicative (Phanton o) where
+instance Applicative Phanton where
    pure x = Phanton mempty
-   Phanton o1 <*> Phanton o2 = Phanton (mappend o1 o2)
+   Phanton n1 <*> Phanton n2 = Phanton (mappend n1 n2)
 
-instance Monad (Phanton Nat) where
+instance Monad Phanton where
     return x        = Phanton Zero
                     -- Here, you can choose any Nat
     Phanton n >>= k = Phanton n
@@ -140,16 +140,11 @@ instance Monad (Phanton Nat) where
                        a constant Phanton value!
                     -}
 
-onePhanton :: Phanton Nat Int
+onePhanton :: Phanton Int
 onePhanton = Phanton (Suc Zero)
 
-exPhanton :: Phanton Nat Int
+exPhanton :: Phanton Int
 exPhanton = pure (\x y z -> z) <*> onePhanton <*> onePhanton <*> onePhanton
-
-
-instance Monad (Phanton Nat) where
-   return = pure
-   (Phanton n) >>= k = Phanton Zero
 
 
 {-
