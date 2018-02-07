@@ -1,8 +1,10 @@
 dist
+dist-newstyle
 *.o
 *.hi
 *.dyn_o
 *.dyn_hi
 .cabal-sandbox/
 cabal.sandbox.config
+cabal.project.local
 .stack-work/
