@@ -76,5 +76,5 @@ testCases =
   ]
 
 -- | Running all the test cases.
+runTests :: IO [Bool]
 runTests = mapM checkTestCase testCases
-
