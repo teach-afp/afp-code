@@ -1,8 +1,9 @@
 module Main where
 
-import Data.IORef
+import Data.IORef  (newIORef, readIORef, modifyIORef)
+import System.Exit (exitFailure)
+
 import Replay
-import System.Exit
 
 -- | Runs the test suite for the replay library
 main :: IO ()
