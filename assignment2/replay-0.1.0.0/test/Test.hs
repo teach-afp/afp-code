@@ -1,7 +1,7 @@
 module Main where
 
 import Data.IORef  (newIORef, readIORef, modifyIORef)
-import System.Exit (exitFailure)
+import System.Exit (exitSuccess, exitFailure)
 
 import Replay
 
@@ -10,7 +10,7 @@ main :: IO ()
 main = do
   results <- runTests
   if and results
-    then return ()
+    then exitSuccess
     else exitFailure
 
 -- | Programs are parameterised over a 'tick' action.
