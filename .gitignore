@@ -8,3 +8,4 @@ dist-newstyle
 cabal.sandbox.config
 cabal.project.local
 .stack-work/
+*.agdai
