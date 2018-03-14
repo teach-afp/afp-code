@@ -43,7 +43,9 @@ runProgram p inp = do
     play prog t inp = do
       r <- run prog t
       case r of
-        Right x      -> return x
+        Right x      -> case inp of
+          []       -> return x
+          _        -> error "too many inputs"
         Left (_, t') -> case inp of
           []       -> error "too few inputs"
           a : inp' -> play prog (addAnswer t' a) inp'
