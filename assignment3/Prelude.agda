@@ -10,6 +10,7 @@ open import Agda.Builtin.Nat      using (Nat; _+_; _-_; _*_)                    
 open import Agda.Builtin.Unit                                renaming (⊤ to Unit; tt to ⟨⟩)        public
 
 -- Function
+infix 0 case_return_of_ case_of_
 case_return_of_ : ∀ {ℓ₁ ℓ₂} {A : Set ℓ₁} → (x : A) → (B : A → Set ℓ₂) → ((x : A) → B x) → B x
 case x return B of f = f x
 
@@ -32,6 +33,7 @@ const a = λ _ → a
 -- /Function
 
 -- Data.Product
+infixr 2 _×_
 infixr 4 _,_
 record _×_ {ℓ₁ ℓ₂} (A : Set ℓ₁) (B : Set ℓ₂) : Set (ℓ₁ ⊔ ℓ₂) where
   constructor _,_
@@ -135,6 +137,7 @@ open ∃ public
 
 syntax ∃ (λ x → B) = ∃[ x ] B
 
+infix 3 _↔_
 record _↔_ {ℓ₁ ℓ₂} (A : Set ℓ₁) (B : Set ℓ₂) : Set (ℓ₁ ⊔ ℓ₂) where
   constructor _,_
   field

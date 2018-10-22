@@ -22,6 +22,8 @@ record Monad (M : Set → Set) : Set₁ where
 
 open Monad {{...}} public
 
+infixl 3 _>>_
+
 _>>_ : ∀ {M} {{_ : Monad M}} {A B} → M A → M B → M B
 ma >> mb = ma >>= λ _ → mb
 
