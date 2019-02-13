@@ -66,6 +66,21 @@ checkTestCase (TestCase name i r p) = do
 testCases :: [TestCase]
 testCases =
   [ TestCase
+    { testName    = "example"
+    , testInput   = [59,65]
+    , testResult  = (2^59 * 3^65, 6)
+    , testProgram = \tick -> do
+        io tick        -- getCurrentTime
+        io tick        -- putStrLn "Hello!"
+        age  <- ask () -- "What is your age?"
+        io tick        -- putStrLn ("You are " ++ age)
+        name <- ask () -- "What is your name?"
+        io tick        -- putStrLn (name ++ " is " ++ age ++ " years old")
+        io tick        -- getCurrentTime
+        io tick        -- putStrLn ("Total time: " ++ show (diffUTCTime t1 t0))
+        return (2^age * 3^name)
+    }
+  , TestCase
     { testName    = "test1"
     , testInput   = [3,4]
     , testResult  = (8, 1)
