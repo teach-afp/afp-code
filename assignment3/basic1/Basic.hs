@@ -85,12 +85,12 @@ language = P.Lang
   , P.lPlus   = (:+:)
   , P.lLet    = Let
   , P.lVar    = Var
-  , P.lNewSecretexp = undefined
-  , P.lNewSecretref = undefined
-  , P.lNewref = undefined
-  , P.lDeref  = undefined
-  , P.lAssign = undefined
-  , P.lCatch  = undefined
+  , P.lNewSecretexp = id
+  , P.lNewSecretref = error "Not yet defined"
+  , P.lNewref = error "Not yet defined"
+  , P.lDeref  = error "Not yet defined"
+  , P.lAssign = error "Not yet defined"
+  , P.lCatch  = error "Not yet defined"
   }
 
 parse :: String -> Expr
