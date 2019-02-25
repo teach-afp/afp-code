@@ -3,12 +3,10 @@
 -- | Version 2 of the interpreter
 module Basic where
 
-import Control.Applicative
-import Control.Monad
 import Control.Monad.Identity
 import Control.Monad.Reader
 
-import Data.Map (Map)
+import           Data.Map        (Map)
 import qualified Data.Map as Map
 
 import qualified Expr_Parser as P (parseExpr, Language (..))
@@ -21,8 +19,8 @@ data Expr = Lit Integer
   deriving (Show)
 
 -- | Preliminaries for (immutable) local bindings
-type Name   = String
-type Value  = Integer
+type Name  = String
+type Value = Integer
 
 -- | An environment maps variables to values.
 type Env = Map Name Value
@@ -31,7 +29,7 @@ emptyEnv :: Env
 emptyEnv = Map.empty
 
 newtype Eval a = MkEval (ReaderT Env Identity a)
-  deriving (Functor, Applicative,Monad, MonadReader Env)
+  deriving (Functor, Applicative, Monad, MonadReader Env)
 
 runEval :: Eval a -> a
 runEval (MkEval rd) = runIdentity (runReaderT rd emptyEnv)
@@ -52,29 +50,28 @@ localScope n v = local (Map.insert n v)
 -- | As before we only need to add cases for the new con-
 -- structors to the evaluator. No need to change the old stuff.
 eval :: Expr -> Eval Value
-eval (Lit n)        = return n
-eval (a :+: b)       = (+) <$> eval a <*> eval b
-eval (Var x)        = lookupVar x
+eval (Lit n)       = return n
+eval (a :+: b)     = (+) <$> eval a <*> eval b
+eval (Var x)       = lookupVar x
 eval (Let n e1 e2) = do v <- eval e1
                         localScope n v (eval e2)
 
 -- * Utilities: testing and parsing
 
 -- Test for variables declaration
-test1 :: Expr
-test1 = parse "let x=10; x"
+test1, test2, test3, test4 :: Expr
+runtest1, runtest2, runtest3, runtest4 :: Value
+
+test1    = parse "let x=10; x"
 runtest1 = runEval $ eval test1
 
-test2 :: Expr
-test2 = parse "let x=secret 10; x"
+test2    = parse "let x=secret 10; x"
 runtest2 = runEval $ eval test2
 
-test3 :: Expr
-test3 = parse "let x=secret 10; let y = 20; x+y"
+test3    = parse "let x=secret 10; let y = 20; x+y"
 runtest3 = runEval $ eval test3
 
-test4 :: Expr
-test4 = parse "let x= 10; let y = 20; x+y"
+test4    = parse "let x=10; let y=20; x+y"
 runtest4 = runEval $ eval test4
 
 

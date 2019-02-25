@@ -1,6 +1,5 @@
 module Expr_Parser where
 
-import Control.Applicative hiding ((<|>))
 import Data.Char
 import Text.ParserCombinators.Parsec.Token
 import Text.ParserCombinators.Parsec
