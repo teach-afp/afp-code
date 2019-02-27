@@ -154,7 +154,7 @@ test8    = parse "let s=secret 42; let p=new 10; p := s"
 runtest8 = runEval $ eval test8
 
 -- It should succeed!
-test9    = parse "let s=new (secret 42); let p=new 10; s := !p"
+test9    = parse "let s=new (secret 42); let p=new 10; s := !p ; !s"
 runtest9 = runEval $ eval test9
 
 -- It should fail!
