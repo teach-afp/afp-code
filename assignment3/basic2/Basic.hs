@@ -165,6 +165,11 @@ test9 :: Expr
 test9 = parse "let s=secret 42; let p=new 10; s := !p"
 runtest9 = runEval $ eval test9
 
+-- It should fail!
+test10 :: Expr
+test10 = parse "let s=new (secret 42); let p=new 10; p := !s"
+runtest10 = runEval $ eval test10
+
 
 -- | The parser is parameterised over the abstract syntax.
 language :: P.Language Expr
