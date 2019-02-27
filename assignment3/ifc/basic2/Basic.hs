@@ -146,7 +146,7 @@ runtest5 = runEval $ eval test5
 test6    = parse "let p=secret 42; !p"
 runtest6 = runEval $ eval test6
 
-test7    = parse "let s=secret 42; let p=new 10; !s+!p"
+test7    = parse "let s=new (secret 42); let p=new 10; !s+!p"
 runtest7 = runEval $ eval test7
 
 -- It should fail!
@@ -171,7 +171,7 @@ language = P.Lang
   , P.lLet    = Let
   , P.lVar    = Var
   , P.lNewref = NewRef
-  , P.lNewSecretref = NewRef
+  , P.lNewSecretref = id
   , P.lDeref  = Deref
   , P.lAssign = (:=)
   , P.lCatch  = \_ _ -> Var "language: not implemented: catch"
