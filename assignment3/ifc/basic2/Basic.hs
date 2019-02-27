@@ -143,18 +143,18 @@ runtest5, runtest6, runtest7, runtest8, runtest9 :: Value
 test5    = parse "let p=new 1; !p"
 runtest5 = runEval $ eval test5
 
-test6    = parse "let p=secret 42; !p"
+test6    = parse "let p=secret 42; p"
 runtest6 = runEval $ eval test6
 
 test7    = parse "let s=new (secret 42); let p=new 10; !s+!p"
 runtest7 = runEval $ eval test7
 
 -- It should fail!
-test8    = parse "let s=secret 42; let p=new 10; p := !s"
+test8    = parse "let s=secret 42; let p=new 10; p := s"
 runtest8 = runEval $ eval test8
 
 -- It should succeed!
-test9    = parse "let s=secret 42; let p=new 10; s := !p"
+test9    = parse "let s=new (secret 42); let p=new 10; s := !p"
 runtest9 = runEval $ eval test9
 
 -- It should fail!
