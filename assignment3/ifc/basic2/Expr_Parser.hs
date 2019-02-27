@@ -1,6 +1,5 @@
 module Expr_Parser where
 
-import Control.Applicative hiding ((<|>))
 import Data.Char
 import Text.ParserCombinators.Parsec.Token
 import Text.ParserCombinators.Parsec
@@ -12,7 +11,6 @@ data Language e =
        , lVar    :: String -> e
        , lNewref :: e -> e
        , lNewSecretref :: e -> e
-       , lNewSecretexp :: e -> e
        , lDeref  :: e -> e
        , lAssign :: e -> e -> e
        , lCatch  :: e -> e -> e
@@ -28,7 +26,7 @@ tok = makeTokenParser LanguageDef
   , identLetter     = satisfy (\c -> isAlphaNum c || c == '_')
   , opStart         = satisfy (`elem` "+:=!;")
   , opLetter        = satisfy (`elem` "=")
-  , reservedNames   = ["let", "new", "try", "catch","secret_ref","secret"]
+  , reservedNames   = ["let", "new", "try", "catch","secret"]
   , reservedOpNames = ["+", ":=", "=", "!", ";"]
   , caseSensitive   = True
   }
@@ -69,12 +67,9 @@ parseExpr lang = parse exprP ""
       , do reserved tok "new"
            e <- expr4
            return (lNewref lang e)
-      , do reserved tok "secret_ref"
-           e <- expr4
-           return (lNewSecretref lang e)
       , do reserved tok "secret"
            e <- expr4
-           return (lNewSecretexp lang e)
+           return (lNewSecretref lang e)
       ]
 
     atomP = choice

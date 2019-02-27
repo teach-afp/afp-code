@@ -5,8 +5,6 @@
 -- | Version 2 of the interpreter
 module Basic where
 
-import Control.Applicative
-import Control.Monad
 import Control.Monad.Identity
 import Control.Monad.Reader
 import Control.Monad.State
@@ -27,8 +25,8 @@ data Expr = Lit Integer
   deriving (Show)
 
 -- | Preliminaries for (immutable) local bindings
-type Name   = String
-type Value  = Integer
+type Name  = String
+type Value = Integer
 
 -- | An environment maps variables to values.
 type Env = Map Name Value
@@ -107,62 +105,56 @@ p =: v = do store <- get
 -- | As before we only need to add cases for the new con-
 -- structors to the evaluator. No need to change the old stuff.
 eval :: Expr -> Eval Value
-eval (Lit n)        = return n
-eval (a :+: b)      = (+) <$> eval a <*> eval b
-eval (Var x)        = lookupVar x
+eval (Lit n)       = return n
+eval (a :+: b)     = (+) <$> eval a <*> eval b
+eval (Var x)       = lookupVar x
 eval (Let n e1 e2) = do v <- eval e1
                         localScope n v (eval e2)
-eval (NewRef e)     = do v <- eval e
-                         newRef v
-
-eval (Deref e)      = do p <- eval e
-                         deref p
-
-eval (pe := ve)     = do p <- eval pe
-                         v <- eval ve
-                         p =: v
+eval (NewRef e)    = do v <- eval e
+                        newRef v
+eval (Deref e)     = do p <- eval e
+                        deref p
+eval (pe := ve)    = do p <- eval pe
+                        v <- eval ve
+                        p =: v
 
 -- * Utilities: testing and parsing
 
 -- Test for variables declaration
-test1 :: Expr
-test1 = parse "let x=10; x"
+test1, test2, test3, test4 :: Expr
+runtest1, runtest2, runtest3, runtest4 :: Value
+
+test1    = parse "let x=10; x"
 runtest1 = runEval $ eval test1
 
-test2 :: Expr
-test2 = parse "let x=secret 10; x"
+test2    = parse "let x=secret 10; x"
 runtest2 = runEval $ eval test2
 
-test3 :: Expr
-test3 = parse "let x=secret 10; let y = 20; x+y"
+test3    = parse "let x=secret 10; let y=20; x+y"
 runtest3 = runEval $ eval test3
 
-test4 :: Expr
-test4 = parse "let x= 10; let y = 20; x+y"
+test4    = parse "let x=10; let y=20; x+y"
 runtest4 = runEval $ eval test4
 
 -- Test for references
+test5, test6, test7, test8, test9 :: Expr
+runtest5, runtest6, runtest7, runtest8, runtest9 :: Value
 
-test5 :: Expr
-test5 = parse "let p=new 1; !p"
+test5    = parse "let p=new 1; !p"
 runtest5 = runEval $ eval test5
 
-test6 :: Expr
-test6 = parse "let p=secret 42; !p"
+test6    = parse "let p=secret 42; !p"
 runtest6 = runEval $ eval test6
 
-test7 :: Expr
-test7 = parse "let s=secret 42; let p=new 10; !s+!p"
+test7    = parse "let s=secret 42; let p=new 10; !s+!p"
 runtest7 = runEval $ eval test7
 
 -- It should fail!
-test8 :: Expr
-test8 = parse "let s=secret 42; let p=new 10; p := !s"
+test8    = parse "let s=secret 42; let p=new 10; p := !s"
 runtest8 = runEval $ eval test8
 
--- It should fail!
-test9 :: Expr
-test9 = parse "let s=secret 42; let p=new 10; s := !p"
+-- It should succeed!
+test9    = parse "let s=secret 42; let p=new 10; s := !p"
 runtest9 = runEval $ eval test9
 
 -- It should fail!
