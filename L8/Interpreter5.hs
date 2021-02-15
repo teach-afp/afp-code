@@ -1,4 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleContexts #-}
 -- | Version 5 of the interpreter
@@ -54,20 +53,12 @@ data Err = SegmentationFault
          | OtherError String
   deriving Show
 
-newtype Eval a = MkEval
-                   (StateT Store
-                           (ReaderT Env (ExceptT Err IO)) -- new IO for Identity
-                           a)
-
-  deriving (Functor, Applicative,
-            Monad, MonadState  Store
-                 , MonadReader Env
-                 , MonadError  Err
-                 , MonadIO
-                 )
+type Eval a = (StateT Store
+                (ReaderT Env (ExceptT Err IO)) -- new IO for Identity
+              a)
 
 runEval :: Eval a -> IO (Either Err a)
-runEval (MkEval st) = runExceptT
+runEval st = runExceptT
                         (runReaderT
                             (evalStateT st emptyStore)
                          emptyEnv)

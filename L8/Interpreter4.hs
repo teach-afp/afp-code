@@ -1,4 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleContexts #-}
 -- | Version 4 of the interpreter
@@ -57,19 +56,13 @@ data Err = SegmentationFault
   deriving Show
 
 -- ExceptT on the inside (wrapped by the state monad)
-newtype Eval a = MkEval (ExceptT Err                              -- new
-                                 (StateT Store
-                                         (ReaderT Env Identity))
-                                 a)
-
-  deriving (Functor, Applicative,
-            Monad, MonadState  Store
-                 , MonadReader Env
-                 , MonadError  Err -- new
-                 )
+type Eval a = (ExceptT Err                              -- new
+                (StateT Store
+                  (ReaderT Env Identity))
+                a)
 
 runEval :: Eval a -> Either Err a
-runEval (MkEval err) = runIdentity
+runEval err  = runIdentity
                          (runReaderT
                             (evalStateT
                                         (runExceptT err) -- new
