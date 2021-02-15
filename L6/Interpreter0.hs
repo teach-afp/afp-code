@@ -4,6 +4,8 @@ module Interpreter0 where
 import Control.Applicative
 import Control.Monad.Identity
 
+-- data Identity a = Identity a
+
 import qualified Expr_Parser as P (parseExpr, Language (..))
 
 -- | The simplest expression language imaginable.

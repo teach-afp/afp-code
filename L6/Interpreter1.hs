@@ -30,12 +30,11 @@ emptyEnv = Map.empty
 
 -- | The evaluation monad now keeps track of passing around
 -- the environment.
-newtype Eval a = MkEval (ReaderT Env (Identity) a)
-  deriving (Functor, Applicative, Monad, MonadReader Env)
+type Eval a =  (ReaderT Env (Identity) a)
 -- Eval a ~= Env -> a
 
 runEval :: Eval a -> a
-runEval (MkEval reader) = runIdentity (runReaderT reader emptyEnv)
+runEval reader = runIdentity (runReaderT reader emptyEnv)
 
 -- * Environment manipulation
 
@@ -52,15 +51,16 @@ lookupVar x = do
 -- computation.  Since we're using a reader monad we can be sure
 -- that this binding does not escape outside its intended scope.
 localScope :: Name -> Value -> Eval a -> Eval a
-localScope n v = local (Map.insert n v)
+localScope n v comp = local (Map.insert n v) comp
 
 
 -- | The evaluator is extended by simply adding cases for the
 -- two new constructs. None of the old stuff has to change.
 eval :: Expr -> Eval Value
 eval (Lit n)     = return n
-eval (a :+: b)    = (+) <$> eval a <*> eval b
+eval (a :+: b)   = (+) <$> eval a <*> eval b
 eval (Var n)     = lookupVar n
+-- let x = e1 in e2
 eval (Let n e1 e2) = do v <- eval e1
                         localScope n v (eval e2)
 
@@ -68,7 +68,7 @@ eval (Let n e1 e2) = do v <- eval e1
 -- * Utilities: testing and parsing
 
 testExpr :: Expr
-testExpr = parse "let x=1+2; x+x"
+testExpr = parse "let x=1+2; 1+x"
 test :: Value
 test = runEval $ eval testExpr
 

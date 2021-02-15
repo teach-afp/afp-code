@@ -50,9 +50,7 @@ emptyStore = Store 0 Map.empty
 -- | The store needs to be updated globally in a program so we
 -- use a state monad to pass the store around.
 
-newtype Eval a = MkEval (StateT Store (ReaderT Env Identity) a)
-  deriving (Functor, Applicative,
-            Monad, MonadState Store, MonadReader Env)
+type Eval a = StateT Store (ReaderT Env Identity) a
 
 -- {- ^ Explaining and expanding the type
 --   CMS.StateT s m' a  ~=  s -> m' (a, s)
@@ -74,7 +72,7 @@ newtype Eval a = MkEval (StateT Store (ReaderT Env Identity) a)
 -- -}
 
 runEval :: Eval a -> a
-runEval (MkEval st) = runIdentity
+runEval st = runIdentity
                       (runReaderT
                           (evalStateT st emptyStore) -- new
                        emptyEnv)
@@ -116,9 +114,9 @@ deref p = do st <- get
 -- semantics... what would be a better one?)
 -- Map.adjust :: (Ord k) => (a -> a) -> k -> Map k a -> Map k a
 
-(=:) :: MonadState Store m => Ptr -> Value -> m Value
+(=:) :: Ptr -> Value -> Eval Value
 p =: v = do store <- get
-            let heap' = Map.adjust (const v) p (heap store)
+            let heap' = Map.adjust (\val -> v) p (heap store)
             put (store {heap = heap'})
             return v
 {-
