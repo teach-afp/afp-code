@@ -2,8 +2,12 @@
 module Resumption where
 
 
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+{- Literature:
+
+- A library for Removing Cache-based Attacks in Concurrent Information Flow Systems
+  by Buiras et al. (Section 3 and 4 of the paper)
+  http://www.cse.chalmers.se/~russo/publications_files/tgc2013-extended.pdf
+-}
 
 
 
