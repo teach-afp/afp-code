@@ -1,5 +1,5 @@
-dist
-dist-newstyle
+dist/
+dist-newstyle/
 *.o
 *.hi
 *.dyn_o
@@ -8,6 +8,7 @@ dist-newstyle
 cabal.sandbox.config
 cabal.project.local
 .stack-work/
+stack.yaml.lock
 *.agdai
 *~
 \#*\#

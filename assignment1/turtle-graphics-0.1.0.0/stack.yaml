@@ -1,3 +1,4 @@
-resolver: lts-10.4 # on Windows try: lts-9.21
+resolver: lts-21.25
+
 extra-deps:
-- HGL-3.2.3.1
+- HGL-3.2.3.2

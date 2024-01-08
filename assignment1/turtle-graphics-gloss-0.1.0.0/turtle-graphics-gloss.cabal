@@ -1,20 +1,23 @@
+cabal-version:       3.4
 name:                turtle-graphics-gloss
 version:             0.1.0.0
 synopsis:            A graphics library based on artistic turtles
-license:             BSD3
+license:             BSD-3-Clause
 license-file:        LICENSE
 category:            Graphics
 build-type:          Simple
-cabal-version:       >=1.8
 
 library
-  exposed-modules:     TurtleGraphics,
-                       Turtle
-  build-depends:       base >= 4 && < 5,
-                       gloss
+  exposed-modules:
+    TurtleGraphics
+    Turtle
+  build-depends:
+    , base >= 4 && < 5
+    , gloss
 
 executable coolturtle
   hs-source-dirs:      executable
-  build-depends:       base >= 4 && < 5,
-                       turtle-graphics-gloss
   main-is:             Example.hs
+  build-depends:
+    , base >= 4 && < 5
+    , turtle-graphics-gloss
