@@ -28,7 +28,7 @@ ReturnChoice x p +++ q = ReturnChoice x (p +++ q)
 p +++ ReturnChoice x q = ReturnChoice x (p +++ q)
 
 instance Monad (P s) where
-  return x = ReturnChoice x pfail
+  return = pure
   Fail             >>= f = Fail
   ReturnChoice x p >>= f = f x +++ (p >>= f)
   SymbolBind k     >>= f = SymbolBind (k >=> f)
@@ -37,7 +37,7 @@ instance Functor (P s) where
   fmap = liftM
 
 instance Applicative (P s) where
-  pure = return
+  pure x = ReturnChoice x pfail
   (<*>) = ap
 
 instance Alternative (P s) where
@@ -70,4 +70,3 @@ chainLeft op term = do
       o  <- op
       e' <- term
       chain (e `o` e')
-
