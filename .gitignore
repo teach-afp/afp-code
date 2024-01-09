@@ -8,7 +8,7 @@ dist-newstyle/
 cabal.sandbox.config
 cabal.project.local
 .stack-work/
-stack.yaml.lock
+stack*.yaml.lock
 *.agdai
 *~
 \#*\#

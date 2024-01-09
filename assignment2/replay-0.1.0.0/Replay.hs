@@ -14,11 +14,11 @@ import Control.Monad (ap)
 data Replay q r a
 
 instance Monad (Replay q r) where
-  return = undefined
+  return = pure
   (>>=)  = undefined
 
 instance Applicative (Replay q r) where
-  pure  = return
+  pure  = undefined
   (<*>) = ap
 
 instance Functor (Replay q r) where

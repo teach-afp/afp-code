@@ -1,8 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Main where
 
-import Web.Scotty     (ActionM, scotty, get, post, rescue, html, param)
-import Data.Text.Lazy (Text)
+import Control.Monad.Catch (SomeException, catch)
+import Data.Text.Lazy      (Text)
+import Web.Scotty          (ActionM, scotty, get, post, html, param)
 
 main :: IO ()
 main = scotty 3000 $ do
@@ -15,7 +18,7 @@ main = scotty 3000 $ do
         html (page i)
 
     getInput :: ActionM Text
-    getInput = param "text_input_id" `rescue` \ _ -> return ""
+    getInput = param "text_input_id" `catch` \ (_ :: SomeException) -> return ""
 
     page :: Text -> Text
     page s = mconcat $
