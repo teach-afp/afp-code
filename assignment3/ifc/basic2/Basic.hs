@@ -65,7 +65,7 @@ lookupVar :: Name -> Eval Value
 lookupVar x = do
   env <- ask
   case Map.lookup x env of
-    Nothing -> fail $ "Variable " ++ x ++ " not found."
+    Nothing -> error $ "Variable " ++ x ++ " not found."
     Just v  -> return v
 
 localScope :: Name -> Value -> Eval a -> Eval a
@@ -88,7 +88,7 @@ deref p = do
   st <- get
   let h = heap st
   case Map.lookup p h of
-    Nothing -> fail $ "Segmentation fault: " ++ show p ++ " is not bound"
+    Nothing -> error $ "Segmentation fault: " ++ show p ++ " is not bound"
     Just v  -> return v
 
 -- | Updating the value of a reference. Has no effect if the

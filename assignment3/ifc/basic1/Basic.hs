@@ -42,7 +42,7 @@ lookupVar :: Name -> Eval Value
 lookupVar x = do
   env <- ask
   case Map.lookup x env of
-    Nothing -> fail $ "Variable " ++ x ++ " not found."
+    Nothing -> error $ "Variable " ++ x ++ " not found."
     Just v  -> return v
 
 localScope :: Name -> Value -> Eval a -> Eval a
