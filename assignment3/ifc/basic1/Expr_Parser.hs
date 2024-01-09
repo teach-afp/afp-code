@@ -4,18 +4,18 @@ import Data.Char
 import Text.ParserCombinators.Parsec.Token
 import Text.ParserCombinators.Parsec
 
-data Language e =
-  Lang { lLit    :: Integer -> e
-       , lPlus   :: e -> e -> e
-       , lLet    :: String -> e -> e -> e
-       , lVar    :: String -> e
-       , lNewref :: e -> e
-       , lNewSecretref :: e -> e
-       , lNewSecretexp :: e -> e
-       , lDeref  :: e -> e
-       , lAssign :: e -> e -> e
-       , lCatch  :: e -> e -> e
-       }
+data Language e = Lang
+  { lLit    :: Integer -> e
+  , lPlus   :: e -> e -> e
+  , lLet    :: String -> e -> e -> e
+  , lVar    :: String -> e
+  , lNewref :: e -> e
+  , lNewSecretref :: e -> e
+  , lNewSecretexp :: e -> e
+  , lDeref  :: e -> e
+  , lAssign :: e -> e -> e
+  , lCatch  :: e -> e -> e
+  }
 
 tok :: TokenParser st
 tok = makeTokenParser LanguageDef
@@ -35,7 +35,6 @@ tok = makeTokenParser LanguageDef
 parseExpr :: Language e -> String -> Either ParseError e
 parseExpr lang = parse exprP ""
   where
-
     exprP = do
       e <- expr0
       eof

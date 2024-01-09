@@ -1,6 +1,8 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE FlexibleContexts #-}
+
 -- | Version 2 of the interpreter
+
 module Basic where
 
 import Control.Monad.Identity
@@ -12,10 +14,11 @@ import qualified Data.Map as Map
 import qualified Expr_Parser as P (parseExpr, Language (..))
 
 -- | Even more interesting stuff: mutable references!
-data Expr = Lit Integer
-          | Expr :+: Expr
-          | Var Name
-          | Let Name Expr Expr
+data Expr
+  = Lit Integer
+  | Expr :+: Expr
+  | Var Name
+  | Let Name Expr Expr
   deriving (Show)
 
 -- | Preliminaries for (immutable) local bindings
