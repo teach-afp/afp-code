@@ -1,6 +1,8 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleContexts #-}
+
 -- | Version 3 of the interpreter
+
 module Interpreter3 where
 
 import Control.Applicative
@@ -12,18 +14,19 @@ import Control.Monad.Except    -- new
 import Data.Map (Map)
 import qualified Data.Map as Map
 
-import qualified Expr_Parser as P(parseExpr, Language(..))
+import qualified Expr_Parser as P (parseExpr, Language(..))
 
 -- | Finally, we add a way to catch exceptions arising from
 -- unbound variables and dereferencing non-existent pointers.
-data Expr = Lit Integer
-          | Expr :+: Expr
-          | Var Name
-          | Let Name Expr Expr
-          | NewRef Expr
-          | Deref Expr
-          | Expr := Expr
-          | Catch Expr Expr      -- new
+data Expr
+  = Lit Integer
+  | Expr :+: Expr
+  | Var Name
+  | Let Name Expr Expr
+  | NewRef Expr
+  | Deref Expr
+  | Expr := Expr
+  | Catch Expr Expr      -- new
   deriving (Show)
 
 -- | Preliminaries for (immutable) local bindings
@@ -41,25 +44,27 @@ type Ptr    = Value
   -- ^ dangerous language: any 'Value' can be used as a 'Ptr'
 
 -- | Store
-data Store = Store { nextPtr :: Ptr
-                   , heap    :: Map Ptr Value
-                   }
+data Store = Store
+  { nextPtr :: Ptr
+  , heap    :: Map Ptr Value
+  }
 
 emptyStore :: Store
 emptyStore = Store 0 Map.empty
 
 
 -- | We add an exception type...
-data Err = SegmentationFault
-         | UnboundVariable String
-         | OtherError String
+data Err
+  = SegmentationFault
+  | UnboundVariable String
+  | OtherError String
   deriving Show
 
 -- ExceptT on the inside (wrapped by the state monad)
-type Eval a = (StateT Store
+type Eval a = StateT Store
                 (ReaderT Env
                   (ExceptT Err Identity)) -- new
-                a)
+                a
 
 runEval :: Eval a -> Either Err a      -- new type!
 runEval st = runIdentity
@@ -88,44 +93,51 @@ localScope n v = local (Map.insert n v)
 
 -- | Create a new reference containing the given value.
 newRef :: Value -> Eval Ptr
-newRef v = do store <- get
-              let ptr      = nextPtr store
-                  ptr'     = 1 + ptr
-                  newHeap  = Map.insert ptr v (heap store)
-              put (Store ptr' newHeap)
-              return ptr
+newRef v = do
+  store <- get
+  let ptr      = nextPtr store
+      ptr'     = 1 + ptr
+      newHeap  = Map.insert ptr v (heap store)
+  put (Store ptr' newHeap)
+  return ptr
 
 -- | Get the value of a reference. Crashes with our own
 -- "segfault" if given a non-existing pointer.
 deref :: Ptr -> Eval Value
-deref p = do st <- get
-             let h = heap st
-             case Map.lookup p h of
-               Nothing -> throwError SegmentationFault -- new
-               Just v  -> return v
+deref p = do
+  st <- get
+  let h = heap st
+  case Map.lookup p h of
+    Nothing -> throwError SegmentationFault -- new
+    Just v  -> return v
 
 (=:) :: MonadState Store m => Ptr -> Value -> m Value
-p =: v = do store <- get
-            let heap' = Map.adjust (const v) p (heap store)
-            put (store {heap = heap'})
-            return v
+p =: v = do
+  store <- get
+  let heap' = Map.adjust (const v) p (heap store)
+  put (store {heap = heap'})
+  return v
 
 -- | The case for 'Catch' simply uses the 'catchError' function
 -- from the error monad.
 eval :: Expr -> Eval Value
 eval (Lit n)        = return n
-eval (a :+: b)       = (+) <$> eval a <*> eval b
+eval (a :+: b)      = (+) <$> eval a <*> eval b
 eval (Var x)        = lookupVar x
-eval (Let n e1 e2) = do v <- eval e1
-                        localScope n v (eval e2)
-eval (NewRef e)     = do v <- eval e
-                         newRef v
-eval (Deref e)      = do r <- eval e
-                         deref r
-eval (pe := ve)     = do p <- eval pe
-                         v <- eval ve
-                         p =: v
-eval (Catch e1 e2)  = catchError (eval e1) (\_err -> eval e2)
+eval (Let n e1 e2)  = do
+  v <- eval e1
+  localScope n v (eval e2)
+eval (NewRef e)     = do
+  v <- eval e
+  newRef v
+eval (Deref e)      = do
+  r <- eval e
+  deref r
+eval (pe := ve)     = do
+  p <- eval pe
+  v <- eval ve
+  p =: v
+eval (Catch e1 e2)  = catchError (eval e1) (\ _err -> eval e2)
 --  catchError :: Eval Value -> (e -> Eval Value) -> Eval Value
 
 -- * Examples
