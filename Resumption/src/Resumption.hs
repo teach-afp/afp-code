@@ -11,9 +11,9 @@ module Resumption where
 
 
 
--- DSL for concurrency 
-{- 
-data Conc m a 
+-- DSL for concurrency
+{-
+data Conc m a
 Monad (Conc m)
 
 atom :: Monad m => m a -> Conc m a
@@ -23,63 +23,60 @@ run :: [Conc m ()] -> m ()
 -}
 
 
-data Conc m a where 
+data Conc m a where
     Done :: a -> Conc m a
-    Atom :: m (Conc m a) -> Conc m a 
-    Fork :: Conc m () -> Conc m a -> Conc m a 
+    Atom :: m (Conc m a) -> Conc m a
+    Fork :: Conc m () -> Conc m a -> Conc m a
 
 
 instance Functor (Conc m) where
-    fmap = undefined 
+    fmap = undefined
 
 instance Applicative (Conc m) where
-    pure = undefined 
-    (<*>) = undefined 
+    pure = undefined
+    (<*>) = undefined
 
 instance Monad m => Monad (Conc m) where
-    return = Done  
-    (Done a)     >>= f = f a   
-    
-    (Atom m)     >>= f = Atom $ do 
-                           next <- m
-                           return $ next >>= f 
+    return = Done
+    (Done a)     >>= f = f a
 
-    (Fork cf m)  >>= f = Fork cf (m >>= f) 
+    (Atom m)     >>= f = Atom $ do
+                           next <- m
+                           return $ next >>= f
+
+    (Fork cf m)  >>= f = Fork cf (m >>= f)
 
 atom :: Monad m => m a -> Conc m a
-atom m = Atom $ do 
-            a <- m 
-            return $ Done a 
+atom m = Atom $ do
+            a <- m
+            return $ Done a
 
 fork :: Monad m => Conc m () -> Conc m ()
 fork m = Fork m (return ())
 
 run :: Monad m => [Conc m ()] -> m ()
 run [] = return ()
-run (c : cs) = do 
-    case c of 
-        Done ()   -> run cs 
+run (c : cs) = do
+    case c of
+        Done ()   -> run cs
         Fork cf m -> run (cs ++ [cf,m])
-        Atom m    -> do 
-            next <- m 
+        Atom m    -> do
+            next <- m
             run (cs ++ [next])
 
 type Code a = IO a
 
 
-thread1 :: Conc IO () 
-thread1 = do 
+thread1 :: Conc IO ()
+thread1 = do
     atom $ putStrLn "Hello"
     atom $ putStrLn "Bye"
-    return () 
+    return ()
 
-thread2 :: Conc IO () 
-thread2 = do 
+thread2 :: Conc IO ()
+thread2 = do
     atom $ putStrLn "Hola" >> putStrLn "Hola2!"
     atom $ putStrLn "Adios"
     return ()
 
 test = run [thread1,thread2]
-
-
-
