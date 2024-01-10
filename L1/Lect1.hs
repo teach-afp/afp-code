@@ -1,6 +1,7 @@
 {-# LANGUAGE BangPatterns #-}
 
 module Lect1 where
+
 import Data.Maybe (isNothing)
 
 -- An example of a pure function returning an Int
@@ -12,9 +13,10 @@ f = read
 -- returns an Int). Sometimes called an "impure function returning an Int".
 
 g :: String -> IO Int
-g xs = do putStrLn xs
-          ys <- getLine
-          return (f ys)
+g xs = do
+  putStrLn xs
+  ys <- getLine
+  return (f ys)
 
 -----------------------
 --- Programming with IO
@@ -22,25 +24,30 @@ g xs = do putStrLn xs
 
 -- An IO action can be executed several times and can give different results
 testg :: IO [Int]
-testg = let a = g "Shoesize?"
-        in do s1 <- a
-              s2 <- a
-              s3 <- a
-              return [s1, s2, s3]
+testg = do
+  let a = g "Shoe size?"
+  s1 <- a
+  s2 <- a
+  s3 <- a
+  return [s1, s2, s3]
+
+testg' :: IO [Int]
+testg' = sequence $ replicate 3 $ g "Shoe size?"
 
 hello :: IO ()
-hello =
-  do putStrLn "Hello! What is your name?"
-     name <- getLine
-     putStrLn ("Hi, " ++ name ++ "!")
+hello = do
+  putStrLn "Hello! What is your name?"
+  name <- getLine
+  putStrLn ("Hi, " ++ name ++ "!")
 
 printTable :: [String] -> IO ()
 printTable = prnt 1  -- Note the use of partial application
  where
   prnt :: Int -> [String] -> IO ()
-  prnt _i []      = return ()
-  prnt i (x:xs)  = do  putStrLn (show i ++ ": " ++ x)
-                       prnt (i+1) xs
+  prnt _i []    = return ()
+  prnt i (x:xs) = do
+    putStrLn (show i ++ ": " ++ x)
+    prnt (i+1) xs
 
 lussekatter :: [String]
 lussekatter = ["1g saffran", "1kg (17dl) vetemjöl", "5dl mjölk",
@@ -63,10 +70,10 @@ testTable2 = printTable2 lussekatter
 --------------------
 
 eager :: (Int, Int) -> Int
-eager (!_x,y) = y -- the function is strict on the first argument
+eager (!_x, y) = y -- the function is strict on the first argument
 
 lazy :: (Int, Int) -> Int
-lazy (_x,y) = y
+lazy (_x, y) = y
 
 
 
@@ -142,7 +149,7 @@ testTable3 = printTable3 lussekatter
 
 ----------------
 
--- the real iterate is defined in the stadard prelude
+-- the real iterate is defined in the standard prelude
 iterate' :: (a -> a) -> a -> [a]
 iterate' f x = x : iterate' f (f x)
 
