@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FunctionalDependencies #-}
@@ -20,10 +21,11 @@ module MT
   )
 where
 
+import Control.Monad
 import Control.Monad.Except
 import Control.Monad.State.Lazy
 import Control.Applicative
-import Control.Monad.Reader(MonadReader(ask, local, reader))
+import Control.Monad.Reader (MonadReader(ask, local, reader))
 
 
 -- | Monad transformers support lifting of existing operations
@@ -39,33 +41,33 @@ class Monad m1 => MT m1 m2 | m2 -> m1 where
 data MyStateT s m a = MyStateT { st :: s -> m (a,s) }
 
 instance Monad m => Functor (MyStateT s m) where
-     fmap = liftM
+    fmap = liftM
 
-instance (Monad m) => Applicative (MyStateT s m) where
-     pure  = return
-     (<*>) = ap
+instance Monad m => Applicative (MyStateT s m) where
+    pure x = MyStateT $ \ s -> return (x, s)
+    (<*>)  = ap
 
 -- | (MyStateT s m a) is a monad
 instance Monad m => Monad (MyStateT s m) where
-    return x          = MyStateT $ \s -> return (x,s)
-    MyStateT  f >>= k = MyStateT $ \s -> f s >>= \(a, s') -> st (k a) s'
+    return = pure
+    MyStateT f >>= k = MyStateT $ \ s -> f s >>= \ (a, s') -> st (k a) s'
 
 -- | (MyStateT s m a) is a state monad
 instance Monad m => MonadState s (MyStateT s m) where
-   get     = MyStateT (\s -> return (s,s))
-   put s'  = MyStateT (\_s -> return ((),s'))
+    get    = MyStateT $ \ s -> return (s, s)
+    put s' = MyStateT $ \_s -> return ((),s')
 
 
 -- | Run function
 runST :: Monad m => MyStateT s m a -> s -> m a
-runST (MyStateT m) = \s -> m s >>= \(a,_) -> return a
+runST (MyStateT m) s = m s >>= \ (a, _) -> return a
 
 runSTInt :: Monad m => MyStateT s m a -> s -> m (a,s)
 runSTInt (MyStateT m) =  m
 
 -- | (MyStateT s) is a monad transformer
 instance Monad m => MT m (MyStateT s m) where
-    lift m = MyStateT $ \s -> m >>= \a -> return (a,s)
+    lift m = MyStateT $ \ s -> m >>= \ a -> return (a,s)
 
 
 {--------------------------
@@ -79,24 +81,25 @@ instance Monad m => Functor (MyExceptT e m) where
     fmap = liftM
 
 instance Monad m => Applicative (MyExceptT e m) where
-    pure  = return
+    pure  = MyExceptT . return . Right
     (<*>) = ap
 
 -- | (ExceptT e m a) is a monad
 instance Monad m => Monad (MyExceptT e m) where
-   return              = MyExceptT . return . Right
-   (MyExceptT m) >>= k = MyExceptT $ m >>= \a -> case a of
-                                                    Left e  -> return (Left e)
-                                                    Right x -> except (k x)
+    return            = pure
+    MyExceptT m >>= k = MyExceptT $ m >>= \case
+      Left e  -> return (Left e)
+      Right x -> except (k x)
 
 -- | (ExceptT e m a) is a error monad
 instance Monad m => MonadError e (MyExceptT e m) where
-   throwError              = MyExceptT . return . Left
+   throwError e            = MyExceptT $ return $ Left e
    catchError (MyExceptT m)
-              h            = MyExceptT $ do a <- m
-                                            case a of
-                                                Left e  -> except (h e)
-                                                Right x -> return (Right x)
+              h            = MyExceptT $ do
+     a <- m
+     case a of
+       Left e  -> except (h e)
+       Right x -> return (Right x)
 
 -- | (ExceptT e) is a monad transformer
 instance Monad m => MT m (MyExceptT e m) where
@@ -118,13 +121,13 @@ instance Monad m => Functor (MyEnvT r m) where
      fmap = liftM
 
 instance (Monad m) => Applicative (MyEnvT r m) where
-     pure  = return
-     (<*>) = ap
+     pure x = MyEnvT $ \ _r -> return x
+     (<*>)  = ap
 
 -- | (MyEnvT r m a) is a monad
 instance Monad m => Monad (MyEnvT r m) where
-   return x          = MyEnvT $ \_r -> return x
-   (MyEnvT m) >>= k  = MyEnvT $ \r -> m r >>= flip (env . k) r
+   return         = pure
+   MyEnvT m >>= k = MyEnvT $ \ r -> m r >>= flip (env . k) r
 
 -- | (MyEnvT r m a) is an environment monad
 instance Monad m => MonadReader r (MyEnvT r m) where
