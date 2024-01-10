@@ -4,7 +4,7 @@ module Example where
 import Control.Applicative
 
 import Signal  (Signal, constS, ($$), mapS, timeS)
-import Shape   (Shape, disc, square, difference, 
+import Shape   (Shape, disc, square, difference,
                 scale, translate, vec, rotate)
 import Animate (animate)
 import Render  (defaultWindow)
@@ -39,12 +39,12 @@ example = difference <$> rotatingSquare <*> bouncingBall
 {-
 -- Illustrate type error and finding the solution
 example2 = difference <$> one <*> two
-    where one :: Signal Shape 
+    where one :: Signal Shape
           one = example
           two :: Signal Shape
           two = scale (vec (-1) (0.5)) one
--}                        
-            
+-}
+
 runExample :: IO ()
 runExample = animate defaultWindow 0 endTime example
   where endTime = 15

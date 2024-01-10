@@ -12,11 +12,11 @@ import Shape.Deep as ShapeImpl
 -- | Derived combinators
 
 scale :: Vec -> Shape -> Shape
-scale v = transform (matrix  (vecX v)  0 
+scale v = transform (matrix  (vecX v)  0
                              0         (vecY v))
 
 rotate :: Angle -> Shape -> Shape
-rotate d = transform (matrix  c  (-s) 
+rotate d = transform (matrix  c  (-s)
                               s  c   )
   where  c = cos d
          s = sin d

@@ -14,7 +14,7 @@ main = magic $ sinS 0.3
 
 -- | Problem: averaging two signals?
 -- @
--- averageS :: Fractional a => 
+-- averageS :: Fractional a =>
 --             Signal a -> Signal a -> Signal a
 -- averageS = -- ... Fill in a definition here ...
 -- @
@@ -31,7 +31,7 @@ discretize = mapS round
 
 -- | convert to "analog"
 toBars :: Signal Int -> Signal String
-toBars = mapS (`replicate` '#') 
+toBars = mapS (`replicate` '#')
 
 displayLength = 100
 -- | display the signal at a number of points
@@ -40,7 +40,7 @@ display ss = forM_ [0..displayLength] $ \x ->
    putStrLn (sample ss x)
 
 -- | The display magic.
--- Note how we take advantage of function composition, 
+-- Note how we take advantage of function composition,
 -- types defined so far, etc.
 magic :: Signal Double -> IO ()
 magic = display . toBars . discretize . scale
@@ -50,16 +50,16 @@ magic = display . toBars . discretize . scale
 
 ----------------------------------------------------
 -- | Answer to exercise
-averageS :: Fractional a => 
+averageS :: Fractional a =>
             Signal a -> Signal a -> Signal a
 averageS xs ys = mapS average xs $$ ys
 
 -- | It can also be generalised to an arbitray Applicative functor
-averageA :: (Fractional a, Applicative f) => 
+averageA :: (Fractional a, Applicative f) =>
              f a -> f a -> f a
 averageA xs ys = average <$> xs <*> ys
 -- | or slightly shorter
-averageA' :: (Fractional a, Applicative f) => 
+averageA' :: (Fractional a, Applicative f) =>
              f a -> f a -> f a
 averageA' = liftA2 average
 

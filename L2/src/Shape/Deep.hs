@@ -33,7 +33,7 @@ union     :: Shape -> Shape -> Shape
 intersect :: Shape -> Shape -> Shape
 difference:: Shape -> Shape -> Shape
 
-Later scale, rotate, difference are derived 
+Later scale, rotate, difference are derived
 from invert and transform:
 
 invert    :: Shape -> Shape
@@ -69,7 +69,7 @@ empty  :: Shape
 empty  = Empty
 
 disc   :: Shape
-disc   = Disc  
+disc   = Disc
 
 square :: Shape
 square = Square

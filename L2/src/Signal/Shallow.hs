@@ -2,7 +2,7 @@
 module Signal.Shallow
   ( Time
   -- | the 'Signal' type is abstract
-  , Signal  
+  , Signal
   -- * Smart constructors
   , constS, timeS
   -- * Combinators
@@ -22,7 +22,7 @@ mapT   :: (Time -> Time)  -> Signal a -> Signal a
 -- * Derived operation
 mapS   :: (a -> b)        -> Signal a -> Signal b
 -- * Run function
-sample :: Signal a -> Time -> a  
+sample :: Signal a -> Time -> a
 
 type Time = Double
 newtype Signal a = Sig {unSig :: Time -> a}
