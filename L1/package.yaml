@@ -1,0 +1,10 @@
+name: AFPlecture1
+
+library:
+  source-dirs: .
+
+dependencies: base
+
+when:
+  condition: impl(ghc >= 9.8)
+  ghc-options: -Wno-x-partial
