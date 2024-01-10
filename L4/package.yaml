@@ -1,0 +1,6 @@
+name: AFPlecture4
+
+library:
+  source-dirs: .
+
+dependencies: base
