@@ -5,14 +5,12 @@
 {-# LANGUAGE TypeFamilies   #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
---              PolyKinds, FlexibleContexts,
---               #-}
 
 module TypeBasedM where
 
 data Nat where
-     Zero :: Nat
-     Suc  :: Nat -> Nat
+  Zero :: Nat
+  Suc  :: Nat -> Nat
 
 -- Datakinds
 data Vector a (n :: Nat) where   -- uses KindSignatures
@@ -45,7 +43,7 @@ append Nil       ys = ys
 -- Forget types
 toList :: Vector a n -> [a]
 toList Nil       = []
-toList (x :- xs) = x:toList xs
+toList (x :- xs) = x : toList xs
 
 -- -- Singletons to access an index
 data SNat (n :: Nat) where
@@ -58,7 +56,7 @@ toNat SZero    = 0
 toNat (SSuc n) = 1 + toNat n
 
 index :: Less n m => SNat n -> Vector a (Suc m :: Nat) -> a
-index tn vec = (toList vec) !! (toNat tn)
+index tn vec = toList vec !! toNat tn
 
 zero = SZero
 one  = SSuc SZero
