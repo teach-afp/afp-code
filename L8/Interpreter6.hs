@@ -67,7 +67,7 @@ runEval :: Eval a -> Either Err a
 runEval st = runIdentity
                   (runErr
                          (runEnv
-                               (runST st emptyStore)
+                               (evalST st emptyStore)
                           emptyEnv))
 
 -- * Environment manipulation (no changes from Interpreter1)
@@ -83,7 +83,7 @@ lookupVar x = do
 
 localScope :: Name -> Value -> Eval a -> Eval a
 localScope n v st = MyStateT \ s -> local (Map.insert n v) (env_m s)
-  where env_m s = runSTInt st s
+  where env_m s = runST st s
                    -- break abstraction when going "down" the stack
 
 -- -- * Store manipulation (new)
@@ -136,8 +136,8 @@ eval (pe := ve)     = do
   p =: v
 eval (Catch e1 e2)  = MyStateT \ s ->
   let
-     st1  = runSTInt (eval e1)
-     st2  = runSTInt (eval e2)
+     st1  = runST (eval e1)
+     st2  = runST (eval e2)
      env1 = runEnv (st1 s)
      env2 = runEnv (st2 s)
   in MyEnvT \ r -> catchError (env1 r) \ _err -> env2 r
