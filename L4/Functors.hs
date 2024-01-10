@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
-module Functos where
+
+module Functors where
 
 import Control.Applicative
 import Data.Monoid
@@ -7,9 +8,9 @@ import Data.Monoid
 data Tree a = Leaf a | Node (Tree a) (Tree a)
               deriving Show
 
-{-- A version of map for Trees --}
+-- | A version of map for Trees.
 mapTree :: (a -> b) -> Tree a -> Tree b
-mapTree f (Leaf a) = Leaf (f a)
+mapTree f (Leaf a)     = Leaf (f a)
 mapTree f (Node t1 t2) = Node (mapTree f t1)
                               (mapTree f t2)
 
@@ -60,7 +61,7 @@ mp_fmap2 f ma mb mc = case fmap f ma of
                                           Just fab -> fmap fab mc
 
 
--- I am defining my own Maybe type to show how to instancitate Applicative
+-- Define our own Maybe type to show how to instantiate Applicative:
 data MMaybe a = JJust a | NNothing
 
 instance Functor MMaybe where
@@ -75,6 +76,7 @@ instance Applicative MMaybe where
 {-------------------}
 {-- Not a functor --}
 {-------------------}
+
 type NotAFunctor = Equal
 newtype Equal a = Equal {runEqual :: a -> a -> Bool}
 
@@ -84,9 +86,10 @@ fmapEqual _f (Equal _op) = Equal $ \_b1 _b2 -> error "Hopeless!"
 -- Hopeless! The value of type a is in a negative position!
 
 
-{------------------------------}
+{--------------------------------}
 {-- A functor, not applicative --}
-{------------------------------}
+{--------------------------------}
+
 data Pair r a = P r a
 
 instance Functor (Pair r) where
@@ -107,44 +110,49 @@ instance Applicative (Pair r) where
    f <*> v = error "Hopeless!"
 
 
-{----------------------------------------}
+{------------------------------------------}
 {-- Applicative functor, but not a monad --}
-{----------------------------------------}
+{------------------------------------------}
 
-data Nat = Zero | Suc Nat
-           deriving Show
+data Nat
+  = Zero
+  | Suc Nat
+  deriving Show
+
+instance Semigroup Nat where
+  Zero  <> m = m
+  Suc n <> m = Suc (n <> m)
 
 instance Monoid Nat where
    mempty = Zero
-   mappend Zero    m = m
-   mappend (Suc n) m = Suc (mappend n m)
+   -- Inherited from Semigroup
+   -- mappend = (<>)
 
+newtype Phantom a = Phantom Nat
+  deriving Show
 
-newtype Phanton a =  Phanton Nat
-                       deriving Show
+instance Functor Phantom where
+   fmap f (Phantom n) = Phantom n
 
-instance Functor Phanton where
-   fmap f (Phanton n) = Phanton n
+instance Applicative Phantom where
+   pure _ = Phantom mempty
+   Phantom n1 <*> Phantom n2 = Phantom (n1 <> n2)
 
-instance Applicative Phanton where
-   pure x = Phanton mempty
-   Phanton n1 <*> Phanton n2 = Phanton (mappend n1 n2)
-
-instance Monad Phanton where
-    return x        = Phanton Zero
+instance Monad Phantom where
+    return          = pure
                     -- Here, you can choose any Nat
-    Phanton n >>= k = Phanton n
+    Phantom n >>= k = Phantom n
                     {- There is no value of type `a` to
                        pass to `k`!
                        So, we ignore it and we can return
-                       a constant Phanton value!
+                       a constant Phantom value!
                     -}
 
-onePhanton :: Phanton ()
-onePhanton = Phanton (Suc Zero)
+onePhantom :: Phantom ()
+onePhantom = Phantom (Suc Zero)
 
-exPhanton :: Phanton ()
-exPhanton = pure (\x y z -> z) <*> onePhanton <*> onePhanton <*> onePhanton
+exPhantom :: Phantom ()
+exPhantom = pure (\x y z -> z) <*> onePhantom <*> onePhantom <*> onePhantom
 
 
 {-
@@ -163,7 +171,7 @@ exPhanton = pure (\x y z -> z) <*> onePhanton <*> onePhanton <*> onePhanton
    However, it is easy to come up with a function k which falsifies
    the equation. For example,
 
-   k = \_ -> exPhanton
+   k = \_ -> exPhantom
 
    Observe that ex1P was created with applicative functors!
 -}

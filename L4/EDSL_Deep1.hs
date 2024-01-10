@@ -1,13 +1,18 @@
 {-# LANGUAGE GADTs #-}
+
+{-# OPTIONS_GHC -Wno-noncanonical-monad-instances #-}
+
 {-|
   A simple embedded language for input/output. Deep embedding.
 -}
+
 module EDSL_Deep1 where
+
 import Control.Applicative (Applicative(..))
 import Control.Monad       (liftM, ap)
 
-type Input   =  String
-type Output  =  String
+type Input  = String
+type Output = String
 
 data Program a where
   Put    :: Char -> Program ()
@@ -51,7 +56,8 @@ instance Monad Program where
   (>>=)   =  Bind
 
 
-{- GHC 7.10 -}
+{- Type class hierarchy Functor < Applicative < Monad -}
+
 -- | The following instances are valid for _all_ monads:
 instance Functor Program where
   fmap = liftM
