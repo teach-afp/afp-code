@@ -9,8 +9,9 @@ import Control.Monad.Identity
 import qualified Expr_Parser as P (parseExpr, Language (..))
 
 -- | The simplest expression language imaginable.
-data Expr = Lit Integer
-          | Expr :+: Expr
+data Expr
+  = Lit Integer
+  | Expr :+: Expr
   deriving (Show)
 
 type Value = Integer
@@ -25,8 +26,8 @@ runEval = runIdentity
 
 -- | A monadic evaluator.
 eval :: Expr  -> Eval Value
-eval (Lit n)    = return n
-eval (a :+: b)  = (+) <$> (eval a) <*> (eval b)
+eval (Lit n)   = return n
+eval (a :+: b) = (+) <$> (eval a) <*> (eval b)
 
 testExpr :: Expr
 testExpr = Lit 1700 :+: Lit 38

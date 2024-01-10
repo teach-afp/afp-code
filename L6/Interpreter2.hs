@@ -1,6 +1,8 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE FlexibleContexts #-}
+
 -- | Version 2 of the interpreter
+
 module Interpreter2 where
 
 import Control.Applicative
@@ -15,13 +17,14 @@ import qualified Data.Map as Map
 import qualified Expr_Parser as P (parseExpr, Language (..))
 
 -- | Even more interesting stuff: mutable references!
-data Expr = Lit Integer
-          | Expr :+: Expr
-          | Var Name
-          | Let Name Expr Expr
-          | NewRef Expr         -- new
-          | Deref Expr          -- new
-          | Expr := Expr        -- new
+data Expr
+  = Lit Integer
+  | Expr :+: Expr
+  | Var Name
+  | Let Name Expr Expr
+  | NewRef Expr         -- new
+  | Deref Expr          -- new
+  | Expr := Expr        -- new
   deriving (Show)
 
 -- | Preliminaries for (immutable) local bindings
@@ -35,14 +38,15 @@ emptyEnv :: Env
 emptyEnv = Map.empty
 
 -- | Preliminaries for mutuable references
-type Ptr    = Value
+type Ptr = Value
   -- ^ dangerous language: any 'Value' can be used as a 'Ptr'
 
 -- | We need to keep track of the store containing the values of
 -- our references. We also remember the next unused pointer.
-data Store = Store { nextPtr :: Ptr
-                   , heap    :: Map Ptr Value
-                   }
+data Store = Store
+  { nextPtr :: Ptr
+  , heap    :: Map Ptr Value
+  }
 
 emptyStore :: Store
 emptyStore = Store 0 Map.empty
@@ -83,7 +87,7 @@ lookupVar :: Name -> Eval Value
 lookupVar x = do
   env <- ask
   case Map.lookup x env of
-    Nothing -> fail $ "Variable " ++ x ++ " not found."
+    Nothing -> error $ "Variable " ++ x ++ " not found."
     Just v  -> return v
 
 localScope :: Name -> Value -> Eval a -> Eval a
@@ -93,21 +97,23 @@ localScope n v = local (Map.insert n v)
 
 -- | Create a new reference containing the given value.
 newRef :: Value -> Eval Ptr
-newRef v = do store <- get
-              let ptr      = nextPtr store
-                  ptr'     = 1 + ptr
-                  newHeap  = Map.insert ptr v (heap store)
-              put (Store ptr' newHeap)
-              return ptr
+newRef v = do
+  store <- get
+  let ptr      = nextPtr store
+      ptr'     = 1 + ptr
+      newHeap  = Map.insert ptr v (heap store)
+  put (Store ptr' newHeap)
+  return ptr
 
 -- | Get the value of a reference. Crashes with our own
 -- "segfault" if given a non-existing pointer.
 deref :: Ptr -> Eval Value
-deref p = do st <- get
-             let h = heap st
-             case Map.lookup p h of
-               Nothing -> fail ("Segmentation fault: "++show p++" is not bound")
-               Just v  -> return v
+deref p = do
+  st <- get
+  let h = heap st
+  case Map.lookup p h of
+     Nothing -> error $ "Segmentation fault: " ++ show p ++ " is not bound"
+     Just v  -> return v
 
 -- | Updating the value of a reference. Has no effect if the
 -- reference doesn't exist. (Exercise: Maybe that's not the best
@@ -115,10 +121,11 @@ deref p = do st <- get
 -- Map.adjust :: (Ord k) => (a -> a) -> k -> Map k a -> Map k a
 
 (=:) :: Ptr -> Value -> Eval Value
-p =: v = do store <- get
-            let heap' = Map.adjust (\val -> v) p (heap store)
-            put (store {heap = heap'})
-            return v
+p =: v = do
+  store <- get
+  let heap' = Map.adjust (\ _val -> v) p (heap store)
+  put (store {heap = heap'})
+  return v
 {-
 -- Alternative
 (=:) :: Ptr -> Value -> Eval Value
@@ -129,18 +136,22 @@ p =: v = do modify $ \s -> s { heap = Map.adjust (const v) p (heap s) }
 -- | As before we only need to add cases for the new con-
 -- structors to the evaluator. No need to change the old stuff.
 eval :: Expr -> Eval Value
-eval (Lit n)        = return n
-eval (a :+: b)       = (+) <$> eval a <*> eval b
-eval (Var x)        = lookupVar x
-eval (Let n e1 e2) = do v <- eval e1
-                        localScope n v (eval e2)
-eval (NewRef e)     = do v <- eval e
-                         newRef v
-eval (Deref e)      = do r <- eval e
-                         deref r
-eval (pe := ve)     = do p <- eval pe
-                         v <- eval ve
-                         p =: v
+eval (Lit n)       = return n
+eval (a :+: b)     = (+) <$> eval a <*> eval b
+eval (Var x)       = lookupVar x
+eval (Let n e1 e2) = do
+  v <- eval e1
+  localScope n v (eval e2)
+eval (NewRef e)    = do
+  v <- eval e
+  newRef v
+eval (Deref e)     = do
+  r <- eval e
+  deref r
+eval (pe := ve)    = do
+  p <- eval pe
+  v <- eval ve
+  p =: v
 
 -- * Utilities: testing and parsing
 
