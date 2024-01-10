@@ -167,6 +167,7 @@ language = P.Lang
   , P.lDeref  = Deref
   , P.lAssign = (:=)
   , P.lCatch  = Catch
+  , P.lPrint  = error "not implemented: printing"
   }
 
 parse :: String -> Expr
