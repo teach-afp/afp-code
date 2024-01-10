@@ -82,7 +82,7 @@ lookupVar x = do
     Just v  -> return v
 
 localScope :: Name -> Value -> Eval a -> Eval a
-localScope n v st = MyStateT $ \s -> local (Map.insert n v) (env_m s)
+localScope n v st = MyStateT \ s -> local (Map.insert n v) (env_m s)
   where env_m s = runSTInt st s
                    -- break abstraction when going "down" the stack
 
@@ -134,13 +134,13 @@ eval (pe := ve)     = do
   p <- eval pe
   v <- eval ve
   p =: v
-eval (Catch e1 e2)  = MyStateT $ \s ->
+eval (Catch e1 e2)  = MyStateT \ s ->
   let
      st1  = runSTInt (eval e1)
      st2  = runSTInt (eval e2)
      env1 = runEnv (st1 s)
      env2 = runEnv (st2 s)
-  in MyEnvT $ \ r -> catchError (env1 r) (\ _err -> env2 r)
+  in MyEnvT \ r -> catchError (env1 r) \ _err -> env2 r
   -- Here, catchError works at the level of error, but eval is at the level of state
   -- We need to break down the computation to get into the lower layers
 

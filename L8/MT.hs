@@ -1,3 +1,4 @@
+{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -44,18 +45,18 @@ instance Monad m => Functor (MyStateT s m) where
     fmap = liftM
 
 instance Monad m => Applicative (MyStateT s m) where
-    pure x = MyStateT $ \ s -> return (x, s)
+    pure x = MyStateT \ s -> return (x, s)
     (<*>)  = ap
 
 -- | (MyStateT s m a) is a monad
 instance Monad m => Monad (MyStateT s m) where
     return = pure
-    MyStateT f >>= k = MyStateT $ \ s -> f s >>= \ (a, s') -> st (k a) s'
+    MyStateT f >>= k = MyStateT \ s -> f s >>= \ (a, s') -> st (k a) s'
 
 -- | (MyStateT s m a) is a state monad
 instance Monad m => MonadState s (MyStateT s m) where
-    get    = MyStateT $ \ s -> return (s, s)
-    put s' = MyStateT $ \_s -> return ((),s')
+    get    = MyStateT \ s -> return (s, s)
+    put s' = MyStateT \_s -> return ((),s')
 
 
 -- | Run function
@@ -67,7 +68,7 @@ runSTInt (MyStateT m) =  m
 
 -- | (MyStateT s) is a monad transformer
 instance Monad m => MT m (MyStateT s m) where
-    lift m = MyStateT $ \ s -> m >>= \ a -> return (a,s)
+    lift m = MyStateT \ s -> m >>= \ a -> return (a,s)
 
 
 {--------------------------
@@ -121,13 +122,13 @@ instance Monad m => Functor (MyEnvT r m) where
      fmap = liftM
 
 instance (Monad m) => Applicative (MyEnvT r m) where
-     pure x = MyEnvT $ \ _r -> return x
+     pure x = MyEnvT \ _r -> return x
      (<*>)  = ap
 
 -- | (MyEnvT r m a) is a monad
 instance Monad m => Monad (MyEnvT r m) where
    return         = pure
-   MyEnvT m >>= k = MyEnvT $ \ r -> m r >>= flip (env . k) r
+   MyEnvT m >>= k = MyEnvT \ r -> m r >>= flip (env . k) r
 
 -- | (MyEnvT r m a) is an environment monad
 instance Monad m => MonadReader r (MyEnvT r m) where

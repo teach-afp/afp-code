@@ -137,7 +137,7 @@ eval (pe := ve)     = do
   p <- eval pe
   v <- eval ve
   p =: v
-eval (Catch e1 e2)  = catchError (eval e1) (\ _err -> eval e2)
+eval (Catch e1 e2)  = catchError (eval e1) \ _err -> eval e2
 --  catchError :: Eval Value -> (e -> Eval Value) -> Eval Value
 
 -- * Examples

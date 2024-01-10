@@ -8,6 +8,9 @@ build-type:          Simple
 library
   hs-source-dirs: .
   default-language:    Haskell2010
+  default-extensions:
+    BlockArguments
+    LambdaCase
   exposed-modules:
     Interpreter3
     Interpreter4
