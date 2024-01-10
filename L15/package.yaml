@@ -1,0 +1,7 @@
+name: AFPlecture15
+
+library:
+  source-dirs: .
+
+dependencies: base
+default-extensions: BlockArguments
