@@ -1,0 +1,6 @@
+name: AFPlecture3
+
+library:
+  source-dirs: .
+
+dependencies: base
