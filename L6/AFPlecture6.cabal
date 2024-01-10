@@ -1,0 +1,28 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           AFPlecture6
+version:        0.0.0
+build-type:     Simple
+
+library
+  exposed-modules:
+      Expr_Parser
+      Interpreter0
+      Interpreter1
+      Interpreter2
+  other-modules:
+      Paths_AFPlecture6
+  hs-source-dirs:
+      ./
+  default-extensions:
+      BlockArguments
+  build-depends:
+      base
+    , containers
+    , mtl
+    , parsec
+  default-language: Haskell2010

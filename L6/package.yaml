@@ -1,0 +1,7 @@
+name: AFPlecture6
+
+library:
+  source-dirs: .
+
+dependencies: [base, containers, mtl, parsec]
+default-extensions: BlockArguments
