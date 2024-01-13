@@ -13,10 +13,11 @@ import qualified Data.Map as Map
 import qualified Expr_Parser as P (parseExpr, Language (..))
 
 -- | A more interesting language with variables and let bindings.
-data Expr = Lit Integer
-          | Expr :+: Expr
-          | Var Name            -- new
-          | Let Name Expr Expr  -- new
+data Expr
+  = Lit Integer
+  | Expr :+: Expr
+  | Var Name            -- new
+  | Let Name Expr Expr  -- new
   deriving (Show)
 
 type Name  = String
@@ -30,7 +31,7 @@ emptyEnv = Map.empty
 
 -- | The evaluation monad now keeps track of passing around
 -- the environment.
-type Eval a =  (ReaderT Env (Identity) a)
+type Eval a = ReaderT Env (Identity) a
 -- Eval a ~= Env -> a
 
 runEval :: Eval a -> a
@@ -61,9 +62,9 @@ eval (Lit n)     = return n
 eval (a :+: b)   = (+) <$> eval a <*> eval b
 eval (Var n)     = lookupVar n
 -- let x = e1 in e2
-eval (Let n e1 e2) = do v <- eval e1
-                        localScope n v (eval e2)
-
+eval (Let n e1 e2) = do
+  v <- eval e1
+  localScope n v (eval e2)
 
 -- * Utilities: testing and parsing
 

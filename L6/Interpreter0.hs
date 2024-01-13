@@ -1,4 +1,5 @@
 -- | Version 0 of the interpreter
+
 module Interpreter0 where
 
 import Control.Applicative
@@ -37,6 +38,7 @@ testRun = runEval $ eval testExpr
 
 
 -- * Utilities: testing and parsing
+
 -- | The parser is parameterised over the abstract syntax.
 language :: P.Language Expr
 language = P.Lang
@@ -52,7 +54,7 @@ language = P.Lang
 
 parse :: String -> Expr
 parse s = case  P.parseExpr language s  of
-  Left err  -> error (show err)
-  Right x   -> x
+  Left err -> error (show err)
+  Right x  -> x
 
 testParse = eval $ parse "(1+2)+3"
