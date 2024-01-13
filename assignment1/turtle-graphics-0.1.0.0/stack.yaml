@@ -1,3 +1,7 @@
+# Under Windows, use GHC 8.0 which ships with Win32 < 2.4 needed by HGL.
+# resolver: lts-9.21
+
+# Under Linux/macOS, later GHCs work fine.
 resolver: lts-21.25
 
 extra-deps:
