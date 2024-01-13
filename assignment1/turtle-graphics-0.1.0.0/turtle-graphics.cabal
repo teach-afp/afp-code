@@ -1,32 +1,37 @@
-cabal-version:       3.4
+cabal-version: 1.12
 
--- For documentation of .cabal syntax, see https://haskell.org/cabal/users-guide/
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
 
 name:                turtle-graphics
-version:             0.1.0.0
+version:             0.0.0
 synopsis:            A graphics library based on artistic turtles
--- description:
-license:             BSD-3-Clause
+license:             BSD3
 license-file:        LICENSE
--- author:
--- maintainer:
--- copyright:
-category:            Graphics
 build-type:          Simple
 
 library
   exposed-modules:
-    TurtleGraphics
-    Turtle
-  -- other-modules:
+      TurtleGraphics
+      Turtle
+  other-modules:
+      Paths_turtle_graphics
+  hs-source-dirs:
+      ./
   build-depends:
-    , base >= 4 && < 5
-    , HGL
-    -- Add anything your package depends on here
+      HGL
+    , base
+  default-language: Haskell2010
 
 executable coolturtle
-  hs-source-dirs:      executable
-  main-is:             Example.hs
+  hs-source-dirs:
+      executable
+  main-is: Example.hs
+  other-modules:
+      Paths_turtle_graphics
   build-depends:
-    , base >= 4 && < 5
+      HGL
+    , base
     , turtle-graphics
+  default-language: Haskell2010
