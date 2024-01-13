@@ -1,0 +1,18 @@
+name: turtle-graphics
+synopsis: A graphics library based on artistic turtles
+
+dependencies:
+- base
+- gloss
+
+library:
+  source-dirs: .
+  exposed-modules:
+  - TurtleGraphics
+  - Turtle
+
+executables:
+  coolturtle:
+    source-dirs: executable
+    main: Example.hs
+    dependencies: turtle-graphics
