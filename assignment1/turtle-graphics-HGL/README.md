@@ -8,3 +8,14 @@ Assignment 1 stub using HGL
 
 Under macOS/Linux, it builds fine even with the latest GHC (9.8.1).
 To run it, one needs an X11 installation.
+
+macOS
+-----
+
+Install X11 libraries:
+
+    brew install libxrandr libxscrnsaver
+
+Test:
+
+    stack run
