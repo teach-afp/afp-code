@@ -1,7 +1,7 @@
-module Replay
-  (
-    Replay
+{-# LANGUAGE EmptyDataDeriving #-}  -- Can be removed once Trace has constructor(s)
 
+module Replay
+  ( Replay
   , io
   , ask
   , emptyTrace
@@ -9,6 +9,7 @@ module Replay
   , run
   ) where
 
+import Control.Applicative (liftA)
 import Control.Monad (ap)
 
 data Replay q r a
@@ -22,10 +23,10 @@ instance Applicative (Replay q r) where
   (<*>) = ap
 
 instance Functor (Replay q r) where
-  fmap f x = pure f <*> x
+  fmap = liftA
 
 data Trace r
---  deriving (Show, Read)
+  deriving (Show, Read)
 
 io :: (Show a, Read a) => IO a -> Replay q r a
 io = undefined
