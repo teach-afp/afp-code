@@ -1,0 +1,41 @@
+name: replay
+
+dependencies:
+- base >=4.11 && <5
+
+library:
+  source-dirs: .
+  exposed-modules: Replay
+
+executables:
+
+  example:
+    source-dirs: example
+    main:        Example.hs
+    dependencies:
+    - replay
+    - time
+
+  testscotty:
+    source-dirs: testscotty
+    main:        TestScotty.hs
+    dependencies:
+    - exceptions
+    - text
+    - scotty >=0.11.0 && <0.22
+
+  web:
+    source-dirs: executable
+    main:        Main.hs
+    other-modules:
+    - Web
+    dependencies:
+    - replay
+    - scotty >=0.11.0 && <0.22
+
+tests:
+  test-replay:
+    source-dirs: test
+    main:        Test.hs
+    dependencies:
+    - replay
