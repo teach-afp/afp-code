@@ -11,7 +11,7 @@ data Model = Model
     }
 
 runGraphical :: Program -> IO ()
-runGraphical p = simulate
+runGraphical _ = simulate
     (InWindow "Turtle!" (300, 300) (10, 10))
     black
     1
