@@ -1,1 +1,6 @@
 resolver: lts-21.25
+
+extra-deps:
+- scotty-0.21
+    # lts-21.25 only has scotty == 0.12, but we need >= 0.20
+    # lts 22 would have a recent enough scotty

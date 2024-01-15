@@ -5,7 +5,7 @@ module Main where
 
 import Control.Monad.Catch (SomeException, catch)
 import Data.Text.Lazy      (Text)
-import Web.Scotty          (ActionM, scotty, get, post, html, param)
+import Web.Scotty          (ActionM, scotty, get, post, html, formParam)
 
 main :: IO ()
 main = scotty 3000 $ do
@@ -18,7 +18,7 @@ main = scotty 3000 $ do
         html (page i)
 
     getInput :: ActionM Text
-    getInput = param "text_input_id" `catch` \ (_ :: SomeException) -> return ""
+    getInput = formParam "text_input_id" `catch` \ (_ :: SomeException) -> return ""
 
     page :: Text -> Text
     page s = mconcat $

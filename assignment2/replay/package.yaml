@@ -22,7 +22,8 @@ executables:
     dependencies:
     - exceptions
     - text
-    - scotty >=0.11.0 && <0.22
+    - scotty >=0.20 && <0.22
+        # scotty >= 0.20 needed for formParam
 
   web:
     source-dirs: executable
@@ -31,7 +32,7 @@ executables:
     - Web
     dependencies:
     - replay
-    - scotty >=0.11.0 && <0.22
+    - scotty >=0.20 && <0.22
 
 tests:
   test-replay:
