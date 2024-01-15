@@ -18,11 +18,8 @@ g xs = do
   ys <- getLine
   return (f ys)
 
------------------------
---- Programming with IO
------------------------
-
 -- An IO action can be executed several times and can give different results
+
 testg :: IO [Int]
 testg = do
   let a = g "Shoe size?"
@@ -33,6 +30,12 @@ testg = do
 
 testg' :: IO [Int]
 testg' = sequence $ replicate 3 $ g "Shoe size?"
+  -- replicate :: Int -> a -> [a]
+  -- sequence  :: [IO Int] -> IO [Int]
+
+-----------------------
+--- Programming with IO
+-----------------------
 
 hello :: IO ()
 hello = do
@@ -64,6 +67,15 @@ printTable2 xs =
 
 testTable2 :: IO ()
 testTable2 = printTable2 lussekatter
+
+-- Exercise: write printTable using the zipWithM_ :: (a -> b -> IO ()) -> [a] -> [b] -> IO ()
+-- zipWithM_ f as bs = mapM_ (uncurry f) $ zip as bs
+-- -- uncurry f :: (a,b) -> IO ()
+
+-- Law:  (do return e; e') == e'
+-- Law:  (do _ <- return e; e') == e'
+-- Law:  (do x <- return e; e') == e'[x=e]
+-- Law:  (return e >>= \ x -> e') == (let x = e in e') == e'[x=e]
 
 --------------------
 --- Evaluation order
