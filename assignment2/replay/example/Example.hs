@@ -2,11 +2,14 @@ module Main where
 
 import Control.Monad (void)
 import Data.Time     (getCurrentTime, diffUTCTime)
+import System.IO     (BufferMode( NoBuffering ),  hSetBuffering, stdout)
 
 import Replay
 
 main :: IO ()
-main = void $ running example
+main = do
+  hSetBuffering stdout NoBuffering
+  void $ running example
 
 running :: Replay String String a -> IO a
 running prog = play emptyTrace
