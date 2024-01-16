@@ -1,11 +1,17 @@
 name: replay
 
 dependencies:
-- base >=4.11 && <5
+- base >=4.12 && <5
+    # GHC 8.6 needed for BlockArguments
 
 library:
   source-dirs: .
   exposed-modules: Replay
+
+default-extensions:
+- BlockArguments
+- LambdaCase
+- ScopedTypeVariables
 
 executables:
 
@@ -24,6 +30,8 @@ executables:
     - text
     - scotty >=0.20 && <0.22
         # scotty >= 0.20 needed for formParam
+    - wai-extra
+        # wai-extra for logging
 
   web:
     source-dirs: executable

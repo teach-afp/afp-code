@@ -15,44 +15,61 @@ library
       Paths_replay
   hs-source-dirs:
       ./
+  default-extensions:
+      BlockArguments
+      LambdaCase
+      ScopedTypeVariables
   default-language: Haskell2010
   build-depends:
-      base >=4.11 && <5
+      base >=4.12 && <5
 
 executable example
   hs-source-dirs:
       example
+  default-extensions:
+      BlockArguments
+      LambdaCase
+      ScopedTypeVariables
   main-is: Example.hs
   other-modules:
       Paths_replay
   default-language: Haskell2010
   build-depends:
-      base >=4.11 && <5
+      base >=4.12 && <5
     , replay
     , time
 
 executable testscotty
   hs-source-dirs:
       testscotty
+  default-extensions:
+      BlockArguments
+      LambdaCase
+      ScopedTypeVariables
   main-is: TestScotty.hs
   other-modules:
       Paths_replay
   default-language: Haskell2010
   build-depends:
-      base >=4.11 && <5
+      base >=4.12 && <5
     , exceptions
     , scotty >=0.20 && <0.22
     , text
+    , wai-extra
 
 executable web
   hs-source-dirs:
       executable
+  default-extensions:
+      BlockArguments
+      LambdaCase
+      ScopedTypeVariables
   main-is: Main.hs
   other-modules:
       Web
   default-language: Haskell2010
   build-depends:
-      base >=4.11 && <5
+      base >=4.12 && <5
     , replay
     , scotty >=0.20 && <0.22
 
@@ -63,7 +80,11 @@ test-suite test-replay
       Paths_replay
   hs-source-dirs:
       test
+  default-extensions:
+      BlockArguments
+      LambdaCase
+      ScopedTypeVariables
   build-depends:
-      base >=4.11 && <5
+      base >=4.12 && <5
     , replay
   default-language: Haskell2010
