@@ -39,7 +39,7 @@ jobs:
         restore-keys: stack-${{ env.STACK_VERSION }}-
         path: |
           ${{ env.STACK_ROOT }}
-          ${{ env.HOME}}/.stack-work
+          .stack-work
 
     - name: Set up GHC
       run: |
