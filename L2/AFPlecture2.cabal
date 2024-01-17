@@ -14,7 +14,7 @@ library
                        Signal, Signal.Deep, Signal.Shallow, Signal.Example,
                        Animate, ANSI, Render,
                        Example, ExampleShape
-  build-depends:       base < 5, unix < 2.9
+  build-depends:       base >= 4 && < 5
 
 
 
@@ -22,5 +22,5 @@ library
 executable example
   hs-source-dirs:      exe
   main-is:             Main.hs
-  build-depends:       base >= 4 && < 5
+  build-depends:       base
                      , AFPlecture2

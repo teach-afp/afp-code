@@ -1,7 +1,7 @@
 -- | Combining 'Signal' and 'Shape' to obtain moving objects.
 module Animate where
 
-import System.Posix (usleep)
+import Control.Concurrent (threadDelay)
 
 import Signal
 import Shape
@@ -20,5 +20,4 @@ animate win t0 t1 ss = mapM_ display frames
 
     display sh = do
       putStr $ ansiClearScreen ++ ansiGoto 1 1 ++ render win sh
-      usleep 70000  -- sleeping removes flickering
-
+      threadDelay 70000  -- sleeping removes flickering
