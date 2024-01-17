@@ -1,6 +1,6 @@
 {-# LANGUAGE GADTs #-}
-module Resumption where
 
+module Resumption where
 
 {- Literature:
 
@@ -33,11 +33,11 @@ instance Functor (Conc m) where
     fmap = undefined
 
 instance Applicative (Conc m) where
-    pure = undefined
+    pure  = Done
     (<*>) = undefined
 
 instance Monad m => Monad (Conc m) where
-    return = Done
+    return = pure
     (Done a)     >>= f = f a
 
     (Atom m)     >>= f = Atom $ do
@@ -79,4 +79,5 @@ thread2 = do
     atom $ putStrLn "Adios"
     return ()
 
+test :: IO ()
 test = run [thread1,thread2]
