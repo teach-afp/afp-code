@@ -46,11 +46,31 @@ jobs:
         stack config set system-ghc --global true
         stack setup
 
+    - name: Install X11 (Linux)
+      if:   ${{ runner.os == 'Linux' }}
+      run:  sudo apt install libxrandr-dev libxss-dev
+
+    - name: Install X11 (macOS)
+      if:   ${{ runner.os == 'macOS' }}
+      run:  brew install libxrandr libxscrnsaver
+
+    - name: Install GLUT (Windows)
+      if:   ${{ runner.os == 'Windows' }}
+      run:  stack exec -- pacman -S mingw-w64-freeglut
+
     - name: Build with stack
       run:  stack test --no-run-tests
 
     - name: Haddock
       run:  stack haddock --no-haddock-deps
+
+    - name: Build with stack (no Windows)
+      if:   ${{ runner.os != 'Windows' }}
+      run:  stack test --stack-yaml=stack-no-win.yaml --no-run-tests
+
+    - name: Haddock (no Windows)
+      if:   ${{ runner.os != 'Windows' }}
+      run:  stack haddock --stack-yaml=stack-no-win.yaml --no-haddock-deps
 
     - name: Save cache
       uses: actions/cache/save@v3

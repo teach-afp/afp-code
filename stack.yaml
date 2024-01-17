@@ -1,3 +1,7 @@
+# Packages that work on the three major OSs.
+#
+# See also stack-no-win.yaml.
+
 resolver: lts-21.25
 
 packages:
@@ -11,7 +15,6 @@ packages:
 - L13
 - L15
 - Resumption
-- assignment1/turtle-graphics-HGL
 - assignment1/turtle-graphics-gloss
 - assignment1/turtle-graphics-glut
 - assignment2/replay
@@ -19,7 +22,6 @@ packages:
 - assignment3/ifc/basic2
 
 extra-deps:
-- HGL-3.2.3.2
 - scotty-0.21
     # lts-21.25 only has scotty == 0.12, but we need >= 0.20
     # lts 22 would have a recent enough scotty
