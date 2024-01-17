@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           turtle-graphics
+name:           turtle-graphics-gloss
 version:        0.0.0
 synopsis:       A graphics library based on artistic turtles
 license:        BSD3
@@ -16,7 +16,7 @@ library
       TurtleGraphics
       Turtle
   other-modules:
-      Paths_turtle_graphics
+      Paths_turtle_graphics_gloss
   hs-source-dirs:
       ./
   build-depends:
@@ -27,11 +27,11 @@ library
 executable coolturtle
   main-is: Example.hs
   other-modules:
-      Paths_turtle_graphics
+      Paths_turtle_graphics_gloss
   hs-source-dirs:
       executable
   build-depends:
       base
     , gloss
-    , turtle-graphics
+    , turtle-graphics-gloss
   default-language: Haskell2010

@@ -1,4 +1,4 @@
-name: turtle-graphics
+name: turtle-graphics-glut
 synopsis: A graphics library based on artistic turtles
 
 dependencies:
@@ -16,4 +16,4 @@ executables:
   coolturtle:
     source-dirs: executable
     main: Example.hs
-    dependencies: turtle-graphics
+    dependencies: turtle-graphics-glut
