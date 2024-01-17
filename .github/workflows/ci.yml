@@ -46,10 +46,10 @@ jobs:
         stack config set system-ghc --global true
         stack setup
 
-    - name: Install X11 (Linux)
+    - name: Install X11 and GLUT (Linux)
       if:   ${{ runner.os == 'Linux' }}
       run:  |
-        sudo apt install libxrandr-dev libxss-dev
+        sudo apt install libxrandr-dev libxss-dev freeglut-dev
 
     - name: Install X11 (macOS)
       if:   ${{ runner.os == 'macOS' }}
