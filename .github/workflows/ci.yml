@@ -35,8 +35,8 @@ jobs:
       uses: actions/cache/restore@v3
       id:   cache
       with:
-        key:          stack-${{ env.STACK_VERSION }}-commit-${{ github.sha }}
-        restore-keys: stack-${{ env.STACK_VERSION }}-
+        key:          ${{ runner.os }}-stack-${{ env.STACK_VERSION }}-commit-${{ github.sha }}
+        restore-keys: ${{ runner.os }}-stack-${{ env.STACK_VERSION }}-
         path: |
           ${{ env.STACK_ROOT }}
           .stack-work
@@ -48,21 +48,26 @@ jobs:
 
     - name: Install X11 (Linux)
       if:   ${{ runner.os == 'Linux' }}
-      run:  sudo apt install libxrandr-dev libxss-dev
+      run:  |
+        sudo apt install libxrandr-dev libxss-dev
 
     - name: Install X11 (macOS)
       if:   ${{ runner.os == 'macOS' }}
-      run:  brew install libxrandr libxscrnsaver
+      run:  |
+        brew install libxrandr libxscrnsaver
 
     - name: Install GLUT (Windows)
       if:   ${{ runner.os == 'Windows' }}
-      run:  stack exec -- pacman -S mingw-w64-freeglut
+      run:  |
+        stack exec -- pacman -S mingw-w64-freeglut
 
     - name: Build with stack
-      run:  stack test --no-run-tests
+      run:  |
+        stack test --no-run-tests
 
     - name: Haddock
-      run:  stack haddock --no-haddock-deps
+      run:  |
+        stack haddock --no-haddock-deps
 
     - name: Build with stack (no Windows)
       if:   ${{ runner.os != 'Windows' }}
