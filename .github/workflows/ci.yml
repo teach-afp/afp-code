@@ -59,7 +59,7 @@ jobs:
     - name: Install GLUT (Windows)
       if:   ${{ runner.os == 'Windows' }}
       run:  |
-        stack exec -- pacman --no-confirm -S mingw-w64-x86_64-freeglut
+        stack exec -- pacman -S mingw-w64-x86_64-freeglut
 
     - name: Build with stack
       run:  |
