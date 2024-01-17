@@ -1,0 +1,13 @@
+name: ifc1
+synopsis: Simple language with information-flow control
+author: Alejandro Gomez-Londono
+maintainer:
+
+dependencies:
+- base
+- mtl
+- containers
+- parsec
+
+library:
+  source-dirs: .
