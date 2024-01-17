@@ -1,0 +1,63 @@
+name: Build
+
+
+on:
+  push:         { branches: [ master ] }
+  pull_request: { branches: [ master ] }
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Stack ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest ]
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Get stack version
+      run: |
+        echo "STACK_VERSION=$(stack --numeric-version)" >> "${GITHUB_ENV}"
+
+    - name: Set stack root
+      if: ${{ ! env.STACK_ROOT }}
+      run: |
+        mkdir .stack
+        echo "STACK_ROOT=.stack" >> "${GITHUB_ENV}"
+
+    - name: Restore cache
+      uses: actions/cache/restore@v3
+      id:   cache
+      with:
+        key:          stack-${{ env.STACK_VERSION }}-commit-${{ github.sha }}
+        restore-keys: stack-${{ env.STACK_VERSION }}-
+        path: |
+          ${{ env.STACK_ROOT }}
+          ${{ env.HOME}}/.stack-work
+
+    - name: Set up GHC
+      run: |
+        stack config set system-ghc --global true
+        stack setup
+
+    - name: Build with stack
+      run:  stack test --no-run-tests
+
+    - name: Haddock
+      run:  stack haddock --no-haddock-deps
+
+    - name: Save cache
+      uses: actions/cache/save@v3
+      if:   always()
+      with:
+        key: ${{ steps.cache.outputs.cache-primary-key }}
+        path: |
+          ${{ env.STACK_ROOT }}
+          ${{ env.HOME}}/.stack-work
