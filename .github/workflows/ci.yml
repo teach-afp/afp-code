@@ -84,4 +84,4 @@ jobs:
         key: ${{ steps.cache.outputs.cache-primary-key }}
         path: |
           ${{ env.STACK_ROOT }}
-          ${{ env.HOME}}/.stack-work
+          .stack-work
