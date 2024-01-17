@@ -49,7 +49,7 @@ jobs:
     - name: Install X11 and GLUT (Linux)
       if:   ${{ runner.os == 'Linux' }}
       run:  |
-        sudo apt install libxrandr-dev libxss-dev freeglut-dev
+        sudo apt install libxrandr-dev libxss-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev
 
     - name: Install X11 (macOS)
       if:   ${{ runner.os == 'macOS' }}
@@ -59,7 +59,7 @@ jobs:
     - name: Install GLUT (Windows)
       if:   ${{ runner.os == 'Windows' }}
       run:  |
-        stack exec -- pacman -S mingw-w64-freeglut
+        stack exec -- "pacman -S mingw-w64-freeglut"
 
     - name: Build with stack
       run:  |
