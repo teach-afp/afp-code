@@ -23,4 +23,5 @@ square_disc = constS (change square disc) $$ timeS
 to_zero :: Time -> Time
 to_zero = const 0
 
+always_disc :: Signal Shape
 always_disc = mapT to_zero square_disc
