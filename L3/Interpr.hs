@@ -15,20 +15,21 @@ import Control.Applicative
 
 -- | Abstract syntax
 data Expr
-  = Con Int
-  | Div Expr Expr
+  = Con Int         -- ^ Integer literal.
+  | Div Expr Expr   -- ^ Division.
 
 -- | Simple interpreter
 interp :: Expr -> Int
 interp (Con i)     = i
 interp (Div e1 e2) = i1 `div` i2
-    where i1 = interp e1
-          i2 = interp e2
+  where
+    i1 = interp e1
+    i2 = interp e2
 
--- | Succesful division
-ex  = Div (Div (Con 10) (Con 5)) (Con 2)
+-- | Successful division.
+ex_ok    = Div (Div (Con 10) (Con 5)) (Con 2)
 
--- | Crashing!
+-- | Crashing 'interp'!
 ex_crash = Div (Con 1) (Con 0)
 
 {-
@@ -40,21 +41,20 @@ ex_crash = Div (Con 1) (Con 0)
 -}
 
 data E a
-  = Value a
-  | Wrong
+  = Value a   -- ^ Regular result.
+  | Wrong     -- ^ Exception.
 
 interpE :: Expr -> E Int
 interpE (Con i)     = Value i
-interpE (Div e1 e2) = case maybe_i1 of
+interpE (Div e1 e2) =
+  case interpE e1 of
     Wrong -> Wrong
-    Value i1 -> case maybe_i2 of
+    Value i1 ->
+      case interpE e2 of
         Wrong -> Wrong
         Value i2
           | i2 == 0   -> Wrong
           | otherwise -> Value $ i1 `div` i2
-  where maybe_i1 = interpE e1
-        maybe_i2 = interpE e2
-
 
 runE :: Expr -> IO ()
 runE e = case interpE e of
@@ -73,6 +73,7 @@ runE e = case interpE e of
 
 instance Monad E where
     return = Value
+
     Wrong   >>= f = Wrong
     Value a >>= f = f a
 
@@ -90,9 +91,10 @@ m_interpE (Div e1 e2) =
     -- No more boring pattern matching!
 
 m_runE :: Expr -> IO ()
-m_runE e = case m_interpE e of
-  Wrong   -> putStrLn "Something went wrong!"
-  Value i -> putStrLn $ show i
+m_runE e =
+  case m_interpE e of
+    Wrong   -> putStrLn "Something went wrong!"
+    Value i -> putStrLn $ show i
 
 
 
@@ -106,9 +108,10 @@ m_interpE' (Div e1 e2) = do
    else return (i1 `div` i2)
 
 m_runE' :: Expr -> IO ()
-m_runE' e = case m_interpE' e of
-  Wrong   -> putStrLn "Something went wrong!"
-  Value i -> putStrLn $ show i
+m_runE' e =
+  case m_interpE' e of
+    Wrong   -> putStrLn "Something went wrong!"
+    Value i -> putStrLn $ show i
 
 
 {-
@@ -121,29 +124,30 @@ m_runE' e = case m_interpE' e of
 -}
 
 
-newtype L a = L (a, [String])
+data L a = L a [String]
 
 interpL :: Expr -> L Int
-interpL (Con i)     = L (i, ["-- Hit Con --\n"])
+interpL (Con i)     = L i ["-- Hit Con --"]
 interpL (Div e1 e2) =
-  L (i1 `div` i2, concat
-      [ [ "-- Hit a Div --\n" ]
-      , [ "** Left recursive call**\n" ]
-      , msgs1
-      , [ "** Right recursive call**\n" ]
-      , msgs2
-      ]
-    )
-   where L (i1, msgs1) = interpL e1
-         L (i2, msgs2) = interpL e2
+  L (i1 `div` i2) $ concat
+    [ [ "-- Hit a Div --" ]
+    , [ "** Left recursive call **" ]
+    , msgs1
+    , [ "** Right recursive call **" ]
+    , msgs2
+    ]
+  where
+    L i1 msgs1 = interpL e1
+    L i2 msgs2 = interpL e2
 
 runL :: Expr -> IO ()
 runL e = do
-    putStr "The result is:"
+    putStr "The result is: "
     putStrLn $ show i
     putStrLn "Log:"
-    putStrLn $ show msgs
-  where L (i, msgs) = interpL e
+    mapM_ putStrLn msgs
+  where
+    L i msgs = interpL e
 
 {-
    What if you have many other constructors in the language which you want to log
@@ -156,27 +160,27 @@ runL e = do
 
 
 instance Monad L where
-  return x          = L (x, [])  -- recall the identity laws!
-  L (x, msgs) >>= f =
+  return x       = L x []  -- recall the identity laws!
+  L x msgs >>= f =
     case f x of
-      L (y, msgs') -> L (y, msgs ++ msgs')
+      L y msgs' -> L y (msgs ++ msgs')
 
 -- | Non-proper morphism
 msg :: String -> L ()
-msg m = L ((), [m])
+msg m = L () [m]
 
 m_interpL :: Expr -> L Int
 
 m_interpL (Con i) = do
-  msg "-- Hit Con --\n"
+  msg "-- Hit Con --"
   return i
 
 m_interpL (Div e1 e2) =
-  msg "-- Hit a Div --\n"           >>= \ _  ->
-  msg "** Left recursive call**\n"  >>= \ _  ->
-  m_interpL e1                      >>= \ i1 ->
-  msg "** Right recursive call**\n" >>= \ _  ->
-  m_interpL e2                      >>= \ i2 ->
+  msg "-- Hit a Div --"            >>= \ _  ->
+  msg "** Left recursive call **"  >>= \ _  ->
+  m_interpL e1                     >>= \ i1 ->
+  msg "** Right recursive call **" >>= \ _  ->
+  m_interpL e2                     >>= \ i2 ->
   return (i1 `div` i2)
 
 m_runL :: Expr -> IO ()
@@ -184,21 +188,22 @@ m_runL e = do
     putStr "Result: "
     putStrLn $ show result
     putStrLn "Messages:"
-    putStrLn $ concat log
-  where L (result, log) = m_interpL e
+    mapM_ putStrLn log
+  where
+    L result log = m_interpL e
 
 
 -- | Using the do notation
 m_interpL' :: Expr -> L Int
 m_interpL' (Con i)     = do
-   msg "-- Hit Con --\n"
+   msg "-- Hit Con --"
    return i
 
 m_interpL' (Div e1 e2) = do
-   msg "-- Hit a Div --\n"
-   msg "** Left recursive call**\n"
+   msg "-- Hit a Div --"
+   msg "** Left recursive call **"
    i1 <- m_interpL' e1
-   msg "** Right recursive call**\n"
+   msg "** Right recursive call **"
    i2 <- m_interpL' e2
    return (i1 `div` i2)
 
