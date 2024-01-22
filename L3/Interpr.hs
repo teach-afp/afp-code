@@ -248,7 +248,7 @@ interp_deep (Div e1 e2) = do
 
 run_deep :: Expr -> IO ()
 run_deep e =
-  case (to_semantics (interp_deep e)) of
+  case to_semantics (interp_deep e) of
     Wrong   -> putStrLn "Something went wrong!"
     Value i -> putStrLn $ show i
   where
@@ -286,21 +286,21 @@ instance Monad (St s) where
 interpS :: Expr -> St Int Int
 interpS (Con i)     = return i
 interpS (Div e1 e2) = do
-   i1 <- interpS e1
-   i2 <- interpS e2
-   dvs <- get
-   put (dvs + 1)
-   return (i1 `div` i2)
+    i1 <- interpS e1
+    i2 <- interpS e2
+    dvs <- get
+    put (dvs + 1)
+    return (i1 `div` i2)
 
 m_runS :: Expr -> IO ()
 m_runS e = do
-   putStr "Result: "
-   putStrLn $ show result
-   putStrLn "Number divisions:"
-   putStrLn $ show final_st
-
-   where MkSt f = interpS e
-         (result, final_st) = f 0
+    putStr "Result: "
+    putStrLn $ show result
+    putStrLn "Number divisions:"
+    putStrLn $ show final_st
+  where
+    MkSt f = interpS e
+    (result, final_st) = f 0
 
 
 
