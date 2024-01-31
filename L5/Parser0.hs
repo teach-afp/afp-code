@@ -10,7 +10,7 @@ module Parser0
   ) where
 
 import Control.Applicative
-import Control.Monad (liftM, ap)
+import Control.Monad (MonadPlus(..), liftM, ap)
 import Data.Char (isDigit, digitToInt)
 
 -- Final semantics to expose:
@@ -18,8 +18,10 @@ type Semantics s a = [s] -> [(a,[s])]
 
 data Parser0 s a where
   Symbol  ::  Parser0 s s
+  -- Alternative / MonadZero
   Fail    ::  Parser0 s a
   Choice  ::  Parser0 s a -> Parser0 s a -> Parser0 s a
+  -- Monad
   Return  ::  a -> Parser0 s a
   (:>>=)  ::  Parser0 s a -> (a -> Parser0 s b) -> Parser0 s b
 
@@ -45,6 +47,13 @@ instance Monad (Parser0 s) where
   (>>=)  = (:>>=)
   -- return = pure   -- automatic
 
+instance Alternative (Parser0 s) where
+  empty = pfail
+  (<|>) = (+++)
+
+instance MonadPlus (Parser0 s) where
+  -- mzero = empty  -- automatic
+  -- mplus = (<|>)  -- automatic
 
 {- | Run function -}
 parse  = run0
