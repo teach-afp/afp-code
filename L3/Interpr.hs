@@ -17,6 +17,7 @@ import Control.Applicative
 data Expr
   = Con Int         -- ^ Integer literal.
   | Div Expr Expr   -- ^ Division.
+  deriving Show
 
 -- | Simple interpreter
 interp :: Expr -> Int
@@ -223,6 +224,12 @@ data E_deep' b
   -- Combinators
   | forall a. Bind' (E_deep' a) (a -> E_deep' b)
 
+-- Bind' :: forall a. E_deep' a -> (a -> E_deep' b) -> E_deep' b
+-- Bind' :: (exist a, E_deep' a, a -> E_deep' b) -> E_deep' b
+
+-- [a] -> [a]
+-- forall a.  [a] -> [a]
+
 -- The data syntax provided by GADTs is more readable.
 data E_deep b where
    -- Constructors
@@ -339,3 +346,17 @@ instance Applicative E_deep where
 instance Applicative (St s) where
    pure  = return
    (<*>) af ax = af >>= \ f -> ax >>= \ x -> pure $ f x
+
+
+
+
+
+{- 3rd Monad law (associativity
+
+     m >>= \ x -> f x >>= \ y -> g y   =def
+     m >>= \ x -> (f x >>= \ y -> g y) =def
+     m >>= \ x -> (f x >>= g)          =law
+     (m >>= \ x -> f x) >>= g          =def
+     (m >>= f) >>= g
+
+-}
