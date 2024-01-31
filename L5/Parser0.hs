@@ -70,11 +70,16 @@ data Expr where
 
 infixr 6 :+:
 
-digit :: Parser0 Char Int
-digit = do
+char :: (s -> Bool) -> Parser0 s s
+char p = do
   s <- symbol
-  if isDigit s then return $ digitToInt s
-  else pfail
+  if p s then return s else pfail
+
+skip :: Char -> Parser0 Char ()
+skip c = () <$ char (== c)
+
+digit :: Parser0 Char Int
+digit = digitToInt <$> char isDigit
 
 digits :: Parser0 Char [Int]
 digits = do
@@ -85,35 +90,25 @@ digits = do
 number :: Parser0 Char Int
 number = do
   ln <- digits
-  let power = map (\(n,p) -> n*10^p) (zip (reverse ln) [0..])
-  return $ sum power
+  return $ sum $ zipWith (\ n p -> n*10^p) (reverse ln) [0..]
 
-plus :: Parser0 Char ()
-plus = do
-  s <- symbol
-  if s == '+' then return ()
-  else pfail
+expr, atom, add,  parenExpr :: Parser0 Char Expr
 
-pexpr :: Parser0 Char Expr
-pexpr = paren +++ add +++ (number >>= return . Val)
+expr = atom +++ add
+
+atom = (Val <$> number) +++ parenExpr
 
 add = do
-  e1 <- paren +++ (number >>= return . Val)
-  plus
-  e2 <- pexpr
+  e1 <- atom
+  skip '+'
+  e2 <- expr
   return (e1 :+: e2)
 
-paren = do
-  s <- symbol
-  if s == '(' then pexpr >>= body
-  else pfail
+parenExpr = do
+  skip '('
+  e <- expr
+  skip ')'
+  return e
 
-   where
-   body e = do
-     s <- symbol
-     case s of
-       ')' -> return e
-       _   -> pfail
-
-ex  =  parse pexpr "1+(3+4)"
-ex2 =  parse pexpr "(1+(3+4))"
+ex  =  parse expr "1+(3+4)"
+ex2 =  parse expr "(1+(3+4))"
