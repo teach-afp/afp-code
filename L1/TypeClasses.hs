@@ -20,6 +20,23 @@ somePrimitiveEqualityTest = (==) -- from the Haskell Prelude
 instance Eq' a => Eq' [a] where
   (===) = eqList (===)
 
+-- instance Eq' a => Eq' [a] where
+--   []     === []     = True
+--   (_:_)  === []     = False
+--   []     === (_:_)  = False
+--   (x:xs) === (y:ys) = x === y && xs === ys
+
+-- class Num a
+
+-- {-# LANGUAGE MultiParamTypeClasses #-}
+-- class Foo a b where
+--   bar :: a -> b -> Int
+
+-- instance Monoid a => Semigroup a where
+--   (<>) = mappend
+
+-- foo :: Bar a => a -> Int
+
 -- 2015: skipped down to Finite
 type EqT a = a -> a -> Bool
 
