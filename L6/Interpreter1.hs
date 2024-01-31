@@ -7,6 +7,7 @@ import Control.Monad
 import Control.Monad.Identity
 import Control.Monad.Reader
 
+import Data.Function ((&))
 import Data.Map (Map)
 import qualified Data.Map as Map
 
@@ -31,11 +32,17 @@ emptyEnv = Map.empty
 
 -- | The evaluation monad now keeps track of passing around
 -- the environment.
-type Eval a = ReaderT Env (Identity) a
+type Eval a = ReaderT Env Identity a
 -- Eval a ~= Env -> a
 
 runEval :: Eval a -> a
-runEval reader = runIdentity (runReaderT reader emptyEnv)
+runEval m = runIdentity (runReaderT m emptyEnv)
+
+-- Eliminating the transformers in the same textual order as
+-- in the definition of 'Eval'.
+runEval' :: Eval a -> a
+runEval' m = m & (`runReaderT` emptyEnv) & runIdentity
+
 
 -- * Environment manipulation
 
