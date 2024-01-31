@@ -38,8 +38,7 @@ emptyEnv :: Env
 emptyEnv = Map.empty
 
 -- | Preliminaries for mutuable references
-type Ptr    = Value
-  -- ^ dangerous language: any 'Value' can be used as a 'Ptr'
+type Ptr = Integer
 
 -- | Store
 data Store = Store
