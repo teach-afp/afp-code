@@ -10,15 +10,23 @@ build-type:     Simple
 
 library
   exposed-modules:
+      AppAlt
       Parser0
       Parser1
       Parser2
+      ParserApplicative
+      Tree
   other-modules:
       Paths_AFPlecture5
   hs-source-dirs:
       ./
   default-extensions:
       BlockArguments
+      LambdaCase
+      PatternSynonyms
+      FlexibleInstances
+      TypeSynonymInstances
   build-depends:
       base
+    , foldable1-classes-compat
   default-language: Haskell2010
