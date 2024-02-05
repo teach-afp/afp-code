@@ -14,6 +14,7 @@ library
       Interpreter0
       Interpreter1
       Interpreter2
+      LiveMonadTransformers
       MonadTransformers
   other-modules:
       Paths_AFPlecture6
