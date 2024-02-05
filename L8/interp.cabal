@@ -11,6 +11,9 @@ library
   default-extensions:
     BlockArguments
     LambdaCase
+    FlexibleContexts
+    FlexibleInstances
+    MultiParamTypeClasses
   exposed-modules:
     Interpreter3
     Interpreter4
