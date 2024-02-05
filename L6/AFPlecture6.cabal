@@ -14,12 +14,18 @@ library
       Interpreter0
       Interpreter1
       Interpreter2
+      MonadTransformers
   other-modules:
       Paths_AFPlecture6
   hs-source-dirs:
       ./
   default-extensions:
       BlockArguments
+      FlexibleInstances
+      GeneralisedNewtypeDeriving
+      InstanceSigs
+      LambdaCase
+      MultiParamTypeClasses
   build-depends:
       base
     , containers

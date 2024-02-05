@@ -4,4 +4,11 @@ library:
   source-dirs: .
 
 dependencies: [base, containers, mtl, parsec]
-default-extensions: BlockArguments
+
+default-extensions:
+- BlockArguments
+- FlexibleInstances
+- GeneralisedNewtypeDeriving
+- InstanceSigs
+- LambdaCase
+- MultiParamTypeClasses
