@@ -44,8 +44,12 @@ instance Monad (Parser1 s) where
   Fail         >>= k = Fail
   Choice p q   >>= k = Choice (p >>= k) (q >>= k)
   Return x     >>= k = k x
-  SymbolBind f >>= k = SymbolBind \s -> f s >>= k
-
+  SymbolBind f >>= k = SymbolBind \ s -> f s >>= k
+{- Derivation
+  SymbolBind f >>= k = (symbol >>= f) >>= k
+                     = symbol >>= \ s -> (f s >>= k)
+                     = SymbolBind \ s -> (f s >>= k)
+-}
 {- | Run function -}
 parse  = run1
 

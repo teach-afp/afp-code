@@ -5,7 +5,9 @@ import Prelude hiding (exp, fail)
 import Control.Applicative
 import Data.Bifunctor
 import Data.Char
-import Data.Foldable1
+import Data.Foldable1 (foldlMap1')
+import Data.Foldable
+import Data.List (genericLength)
 
 import Data.List.NonEmpty (pattern (:|))
 import qualified Data.List.NonEmpty as List1
@@ -133,7 +135,7 @@ instance Monad (P s) where
     , (b, ss2) <- runP (k a) ss1
     ]
 
-replicateP :: Int -> P s a -> P s [a]
+replicateP :: Integer -> P s a -> P s [a]
 replicateP n p = loop n
   where
     loop n
@@ -149,7 +151,7 @@ c = skip 'c'
 anbncn :: P Char ()
 anbncn = do
   as <- star a
-  let n = length as
+  let n = genericLength as
   replicateP n b
   replicateP n c
   eof
@@ -165,6 +167,15 @@ anbn = pure () <|> (a *> anbn *> b)
 test6 = runP (anbn *> eof) "aaabb"
 test7 = runP (anbn *> eof) "aaabbb"
 
+abc :: Integer -> P Char ()
+abc n = (replicateP n a *> replicateP n b *> replicateP n c *> eof)
+
+abc_cf :: P Char ()
+abc_cf = foldr (<|>) empty $ map abc [0..]
+
+test8 = head $ runP abc_cf "aaabbbccc"
+-- Note: we need to project the first successful parse here.
+-- The full list is [((),""), <<hang>>.
 
 -- Monadic parsing: char is definable
 
