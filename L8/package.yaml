@@ -1,0 +1,17 @@
+name: interp
+
+library:
+  source-dirs: .
+
+default-extensions:
+- BlockArguments
+- LambdaCase
+- FlexibleContexts
+- FlexibleInstances
+- MultiParamTypeClasses
+
+dependencies:
+- base >=4.12 && <5
+- containers
+- mtl
+- parsec
