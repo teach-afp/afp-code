@@ -1,0 +1,13 @@
+name: AFPlecture8
+
+library:
+  source-dirs: .
+
+default-extensions:
+- BlockArguments
+- LambdaCase
+
+dependencies:
+- base >=4.12 && <5
+- containers
+- QuickCheck
