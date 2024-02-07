@@ -11,6 +11,8 @@ build-type:     Simple
 library
   exposed-modules:
       Correctness
+      EqProofList
+      EqualityProof
       GenTree
       InsertionSort
       QCdefaulting
