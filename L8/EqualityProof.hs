@@ -4,7 +4,7 @@
 
 module EqualityProof
   ( Proof, proof, (=<), (>=)
-  , Justification(Conv, Def, IH, Thm)
+  , Justification(Conv, Def, Hyp, IH, Thm)
   , check
   )
 where
@@ -43,6 +43,7 @@ data Justification
   = IH
   | Conv
   | forall a. Def a
+  | forall a. Hyp a
   | forall a. Thm a
 
 check :: Eq a => Proof a -> Bool
