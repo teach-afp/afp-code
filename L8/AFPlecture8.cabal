@@ -15,6 +15,7 @@ library
       EqualityProof
       GenTree
       InsertionSort
+      LiveEqProofList
       QCdefaulting
       Testing
   other-modules:
