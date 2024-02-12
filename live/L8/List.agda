@@ -1,6 +1,6 @@
 -- AFP 2024-02-08 Live coding result
 
-module LiveList where
+module List where
 
 open import Agda.Primitive renaming (Set to Type)
 

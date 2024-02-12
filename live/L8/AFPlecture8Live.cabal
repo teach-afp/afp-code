@@ -4,21 +4,16 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           AFPlecture8
+name:           AFPlecture8Live
 version:        0.0.0
 build-type:     Simple
 
 library
   exposed-modules:
-      Correctness
       EqProofList
       EqualityProof
-      GenTree
-      InsertionSort
-      QCdefaulting
-      Testing
   other-modules:
-      Paths_AFPlecture8
+      Paths_AFPlecture8Live
   hs-source-dirs:
       ./
   default-extensions:
