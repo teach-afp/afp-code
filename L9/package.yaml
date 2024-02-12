@@ -1,0 +1,13 @@
+name: AFPlecture9
+
+library:
+  source-dirs: .
+
+dependencies:
+- base
+
+default-extensions:
+- DataKinds
+- GADTs
+- KindSignatures
+- PolyKinds
