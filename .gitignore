@@ -12,3 +12,5 @@ stack*.yaml.lock
 *.agdai
 *~
 \#*\#
+html/
+live-start.zip

@@ -6,6 +6,8 @@
 -- The balancing invariant is enforced by indexing trees by their height,
 -- which needs to be the same for all subtrees in a node.
 
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module TwoThreeTree where
 
 open import Agda.Primitive renaming (Set to Type)
