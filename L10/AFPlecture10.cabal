@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           AFPlecture9
+name:           AFPlecture10
 version:        0.0.0
 build-type:     Simple
 
@@ -12,7 +12,7 @@ library
   exposed-modules:
       TwoThree
   other-modules:
-      Paths_AFPlecture9
+      Paths_AFPlecture10
   hs-source-dirs:
       ./
   default-extensions:
