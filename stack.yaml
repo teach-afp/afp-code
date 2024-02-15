@@ -13,6 +13,7 @@ packages:
 - L6
 - L7
 - L8
+- L10
 - L13
 - L15
 - Resumption
@@ -23,6 +24,7 @@ packages:
 - assignment3/ifc/basic2
 
 - live/L8
+- live/L10
 
 extra-deps:
 - scotty-0.21
