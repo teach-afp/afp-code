@@ -8,7 +8,7 @@
 
 -- | Some equality proofs for list properties.
 
-module LiveEqProofList where
+module EqProofList where
 
 import Prelude
   ( ($)
