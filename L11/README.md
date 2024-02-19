@@ -29,4 +29,28 @@ Language: plus, if
 Tagless interpreter
 -------------------
 
+Types (`Ty`): `nat`, `bool`
+
 [`Tagless.agda`](Tagless.agda)
+
+- Typed terms `Tm : Ty → Type`
+- Tagless values `Val : Ty → Type`
+- Tagless evaluation
+- Type inference
+- Deciding type equality
+
+Tagless interpreter with binding
+--------------------------------
+
+Add let-binding and variables to the language.
+
+[`Let.agda`](`Let.agda`)
+
+- Contexts `Cxt`
+- de Bruijn indices
+- Typed terms `Tm : Cxt → Ty → Type`
+- Environments for evaluation and type inference
+
+[`AnyAll.agda`](`AnyAll.agda`)
+
+- Introduce `Any` and `All` generalizations
