@@ -55,8 +55,8 @@ data V : Type where
 -- Tagged interpreter
 
 interp : Exp → (env : NEnv V) → Maybe V
-interp (eBool b) env = just (vBool b)
-interp (eNat  n) env = just (vNat  n)
+interp (eBool b) env = return (vBool b)
+interp (eNat  n) env = return (vNat  n)
 
 interp (ePlus e₁ e₂) env = do
   vNat n₁ ← interp e₁ env where
