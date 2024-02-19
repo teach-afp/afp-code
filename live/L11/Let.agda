@@ -1,3 +1,5 @@
+{-# OPTIONS --hidden-argument-puns #-}
+
 open import Agda.Primitive renaming (Set to Type)
 
 open import Data.List.Base using (List; []; _∷_)
@@ -30,6 +32,12 @@ data Exp : Type where
   -- new:
   eLet  : (x : Name) (e e₁ : Exp) → Exp
   eVar  : (x : Name) → Exp
+
+{-
+data Tm (Γ : NEnv Ty) : Ty → Type where
+  tLet : (x : Name) (t : Tm Γ a) (t₁ : Tm ((x , a) ∷ Γ) b) → Tm Γ b
+  tVar : (x : Name) (a : Ty) (p : lookupNEnv x Γ ≡ just a) → Tm Γ a
+-}
 
 ------------------------------------------------------------------------
 -- Tagged interpreter
@@ -106,6 +114,20 @@ data Var : (Γ : Cxt) (a : Ty) → Type where
   here  : Var (a ∷ Γ) a
   there : (x : Var Γ a) → Var (b ∷ Γ) a
 
+Δ = (nat ∷ bool ∷ nat ∷ [])
+
+x₁ : Var Δ nat
+x₁ = here
+
+x₂ : Var Δ bool
+x₂ = there here
+
+x₃ : Var Δ nat
+x₃ = there (there here)
+
+-- Var Δ a → Var (Δ ++ Γ) a
+
+
 -- Typed terms (indexed also by context)
 
 data Tm (Γ : Cxt) : Ty → Type where
@@ -115,6 +137,10 @@ data Tm (Γ : Cxt) : Ty → Type where
 
   tLet  : (t : Tm Γ a) (t₁ : Tm (a ∷ Γ) b) → Tm Γ b
   tVar  : (x : Var Γ a)                    → Tm Γ a
+
+t₀ : Tm Δ nat
+t₀ = tPlus (tVar x₁) (tLet (tLit 42) (tVar {! x₃ !}))
+
 
 ------------------------------------------------------------------------
 -- Tagless interpreter
@@ -126,7 +152,8 @@ data Env : (Γ : Cxt) → Type where
   _∷_ : (v : Val a) (env : Env Γ) → Env (a ∷ Γ)
 
 lookupEnv : Env Γ → Var Γ a → Val a
-lookupEnv vs i = {!!}
+lookupEnv (v ∷ vs) here      = v
+lookupEnv (v ∷ vs) (there i) = lookupEnv vs i
 
 -- Tagless evaluation
 
@@ -134,8 +161,8 @@ eval : Tm Γ a → Env Γ → Val a
 eval (tLit v)      env = v
 eval (tPlus t₁ t₂) env = eval t₁ env + eval t₂ env
 eval (tIf t t₁ t₂) env = if eval t env then eval t₁ env else eval t₂ env
-eval (tVar x)      env = {!!}
-eval (tLet t t₁)   env = {!!}
+eval (tVar x)      env = lookupEnv env x
+eval (tLet t t₁)   env = eval t₁ ((eval t env) ∷ env)
 
 ------------------------------------------------------------------------
 -- Type inference
@@ -156,10 +183,12 @@ data TC : (Γ : Cxt) → Type where
 
 lookupTC : TC Γ → Name → Maybe (∃ λ (a : Ty) → Var Γ a)
 lookupTC [] x = nothing
-lookupTC (y ∷ cxt) x =
+lookupTC {Γ} (y ∷ cxt) x =
   case eqName x y of λ where
-    (yes _) → {!!}
-    (no  _) → {!!}
+    (yes _) → just (_ , here)
+    (no  _) → do
+      a , i ← lookupTC {Γ = {! !}} cxt x
+      return (a , there i)
 
 -- Type checking
 
@@ -179,9 +208,14 @@ mutual
     t₂ ← check e₂ a cxt
     return (a , tIf t t₁ t₂)
 
-  infer (eLet x e e₁) cxt = {!!}
+  infer (eLet x e e₁) cxt = do
+    (a , t)  ← infer e cxt
+    (b , t₁) ← infer e₁ (x ∷ cxt)
+    return (b , tLet t t₁)
 
-  infer (eVar x) cxt = {!!}
+  infer (eVar x) cxt = do
+     (a , i) ← lookupTC cxt x
+     return (a , tVar i)
 
   check : (e : Exp) (a : Ty) (cxt : TC Γ) → Maybe (Tm Γ a)
   check e a cxt = do

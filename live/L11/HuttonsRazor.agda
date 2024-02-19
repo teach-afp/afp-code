@@ -7,6 +7,7 @@ open import Data.Nat.Base using (ℕ; zero; suc; _+_)
 
 data Exp : Type where
   eNat  : ℕ → Exp
+  eBool : Bool → Exp
   ePlus : (e₁ e₂ : Exp) → Exp
 
 Val = ℕ

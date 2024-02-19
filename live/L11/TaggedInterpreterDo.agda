@@ -21,22 +21,38 @@ data Val : Type where
 return : {A : Type} (a : A) → Maybe A
 return = just
 
-_>>=_ : {A B : Type} (m : Maybe A) (k : A → Maybe B) → Maybe B
-just a  >>= k = k a
-nothing >>= k = nothing
+-- _>>=_ : {A B : Type} (m : Maybe A) (k : A → Maybe B) → Maybe B
+-- just a  >>= k = k a
+-- nothing >>= k = nothing
 
 -- Using do notation
 
-eval : Exp → Maybe Val
-eval (eBool b) = just (vBool b)
-eval (eNat  n) = just (vNat  n)
+module _ where
+  open import Data.Maybe using (_>>=_)
 
--- simple do
-eval (eIf e e₁ e₂) = ?
+  eval : Exp → Maybe Val
+  eval (eBool b) = return (vBool b)
+  eval (eNat  n) = return (vNat  n)
 
--- do with matching and alternative branches
-eval (ePlus e₁ e₂) = ?
+  -- simple do
+  eval (eIf e e₁ e₂) = do
+    v ← eval e
+    case v of λ where
+      (vBool b) → if b then eval e₁ else eval e₂
+      _ → nothing
 
+  -- do with matching and alternative branches
+  eval (ePlus e₁ e₂) = do
+    vNat n₁ ← eval e₁
+      where
+        (vBool _) → nothing
+    vNat n₂ ← eval e₂ where _ → nothing
+    return (vNat (n₁ + n₂))
+
+foo = {! eval !}
+{-
+  λ{ (vNat n₂) →
+   ; _ →
 
 -- -}
 -- -}

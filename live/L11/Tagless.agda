@@ -33,7 +33,8 @@ variable
 -- Tagless values
 
 Val : Ty → Type
-Val a = {!!}
+Val bool = Bool
+Val nat  = ℕ
 
 -- Typed terms
 
@@ -45,7 +46,9 @@ data Tm : Ty → Type where
 -- Tagless evaluation
 
 eval : Tm a → Val a
-eval t = {!!}
+eval (tLit v)       = v
+eval (tPlus t t₁)   = eval t + eval t₁
+eval (tIf t t₁ t₂) = if eval t then eval t₁ else eval t₂
 
 -- Decide equality of types
 
@@ -59,22 +62,38 @@ data Dec (P : Type) : Type where
   no  : (¬p : ¬ P) → Dec P
 
 _≟_ : (a b : Ty) → Dec (a ≡ b)
-a ≟ b = {!!}
+bool ≟ bool = yes refl
+bool ≟ nat = no (λ{ () })
+nat ≟ bool = no λ()
+nat ≟ nat = yes refl
 
 -- Type checking
 
 mutual
   infer : (e : Exp) → Maybe (∃ λ (a : Ty) → Tm a)
-  infer e = {!!}
+  infer (eBool b)     = return (bool , tLit b)
+  infer (eNat n)      = return  (nat , tLit n)
+  infer (ePlus e e₁)  = do
+    t  ← check e nat
+    t₁ ← check e₁ nat
+    return (nat , tPlus t t₁)
+  infer (eIf e e₁ e₂) = do
+    t      ← check e bool
+    a , t₁ ← infer e₁
+    t₂     ← check e₂ a
+    return (a , tIf t t₁ t₂)
 
   check : (e : Exp) (a : Ty) → Maybe (Tm a)
-  check e a = {!!}
+  check e a = do
+    b , t ← infer e
+    cast t a
 
   cast : (t : Tm b) (a : Ty) → Maybe (Tm a)
   cast {b} t a = cast' t (b ≟ a)
 
   cast' : (t : Tm b) (d : Dec (b ≡ a)) → Maybe (Tm a)
-  cast' t d = {!!}
+  cast' t (yes refl) = return t
+  cast' t (no ¬p)    = nothing
 
 
 -- -}
