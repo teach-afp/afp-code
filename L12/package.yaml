@@ -1,0 +1,16 @@
+name: FakingIt
+
+library:
+  source-dirs: .
+
+dependencies:
+- base >= 4.12 && < 5
+- singletons
+- QuickCheck
+
+default-extensions:
+- BangPatterns
+- LambdaCase
+- PatternSynonyms
+- ScopedTypeVariables
+- StandaloneDeriving
