@@ -32,7 +32,7 @@ jobs:
         echo "STACK_ROOT=${PWD}/.stack" >> "${GITHUB_ENV}"
 
     - name: Restore cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       id:   cache
       with:
         key:          ${{ runner.os }}-stack-${{ env.STACK_VERSION }}-commit-${{ github.sha }}
@@ -79,7 +79,7 @@ jobs:
       run:  stack haddock --stack-yaml=stack-no-win.yaml --no-haddock-deps
 
     - name: Save cache
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       if:   always()
       with:
         key: ${{ steps.cache.outputs.cache-primary-key }}
