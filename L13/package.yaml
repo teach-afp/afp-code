@@ -1,0 +1,8 @@
+name: typemodeling1
+
+dependencies:
+- base >= 4.12 && < 5
+- QuickCheck
+
+library:
+  source-dirs: .

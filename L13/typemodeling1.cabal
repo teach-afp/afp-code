@@ -1,20 +1,25 @@
-cabal-version:       >=1.10
+cabal-version: 1.12
 
-name:                typemodeling1
-version:             0.1.0.0
-author:              Alejandro Russo
-build-type:          Simple
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           typemodeling1
+version:        0.0.0
+build-type:     Simple
 
 library
-  hs-source-dirs: .
   exposed-modules:
-    Expr
-    Middle
-    Typed
+      Expr
+      Expr.Gen
+      Middle
+      Parser
+      Typed
   other-modules:
-    Expr.Gen
-    Parser
-  default-language:    Haskell2010
+      Paths_typemodeling1
+  hs-source-dirs:
+      ./
   build-depends:
-    base >=4.12 && <5
-    , QuickCheck
+      QuickCheck
+    , base >=4.12 && <5
+  default-language: Haskell2010
