@@ -14,8 +14,9 @@ packages:
 - L7
 - L8
 - L10
-- L13
-- L15
+- L12
+- TypeBasedModelingI
+- TypeBasedModelingII
 - Resumption
 - assignment1/turtle-graphics-gloss
 - assignment1/turtle-graphics-glut
@@ -25,6 +26,7 @@ packages:
 
 - live/L8
 - live/L10
+- live/L12
 
 extra-deps:
 - scotty-0.21

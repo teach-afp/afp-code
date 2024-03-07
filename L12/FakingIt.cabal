@@ -10,9 +10,10 @@ build-type:     Simple
 
 library
   exposed-modules:
-      Expr
       ExprTypeIndexed
       ExprTypeRep
+      Tree
+      TreeNat
       Vec
   other-modules:
       Paths_FakingIt

@@ -11,7 +11,7 @@ module Tree where
 import Data.Bifunctor
 import Data.Kind (Type)
 
-import Vec ( Nat(Zero, Suc), SNat(SZero, SSuc) )
+import Vec ( Nat(Zero, Suc), SNat(..) )
 
 ------------------------------------------------------------------------
 -- Singletons and their existential closure.
@@ -99,6 +99,7 @@ list (Node p t1 t2) = list t1 ++ unSing p : list t2
 sorting :: (Reflect a k, Reify a k, Total k) => [a] -> [a]
 sorting = list . tree
 
+{-
 ------------------------------------------------------------------------
 -- * Example with keys = natural numbers.
 
