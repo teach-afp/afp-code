@@ -37,7 +37,6 @@ instance Eq' a => Eq' [a] where
 
 -- foo :: Bar a => a -> Int
 
--- 2015: skipped down to Finite
 type EqT a = a -> a -> Bool
 
 eqList :: EqT a -> EqT [a]
@@ -62,7 +61,7 @@ instance (Finite a, Finite b) => Finite (a, b) where
 
 -- 2015: This is the solution to a problem posed in the lecture:
 instance (Finite a, Eq b) => Eq (a -> b) where
-  f == g   = all (\ x -> f x == g x) domain
+  f == g  = all (\ x -> f x == g x) domain
 
 -- and some example uses:
 testEqFun :: (Bool, Bool, Bool, Bool)
