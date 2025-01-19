@@ -80,7 +80,7 @@ jobs:
 
     - name: Save cache
       uses: actions/cache/save@v4
-      if:   always()
+      if:   always() && steps.cache.outputs.cache-hit != 'true'
       with:
         key: ${{ steps.cache.outputs.cache-primary-key }}
         path: |
