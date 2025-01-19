@@ -21,6 +21,14 @@ jobs:
 
     - uses: actions/checkout@v4
 
+    - name: Set up Haskell
+      uses: haskell-actions/setup@v2
+      with:
+        ghc-version: 9.4.8
+        stack-version: latest
+        enable-stack:  true
+        cabal-update:  false
+
     - name: Get stack version
       run: |
         echo "STACK_VERSION=$(stack --numeric-version)" >> "${GITHUB_ENV}"
