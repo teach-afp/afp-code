@@ -12,14 +12,17 @@ import Shape.Deep as ShapeImpl
 -- | Derived combinators
 
 scale :: Vec -> Shape -> Shape
-scale v = transform (matrix  (vecX v)  0
-                             0         (vecY v))
+scale v = transform $ matrix
+  (vecX v)  0
+  0         (vecY v)
 
 rotate :: Angle -> Shape -> Shape
-rotate d = transform (matrix  c  (-s)
-                              s  c   )
-  where  c = cos d
-         s = sin d
+rotate d = transform $ matrix
+    c  (-s)
+    s  c
+  where
+    c = cos $ theAngle d
+    s = sin $ theAngle d
 
 difference :: Shape -> Shape -> Shape
 difference sh1 sh2 = sh1 `intersect` invert sh2
