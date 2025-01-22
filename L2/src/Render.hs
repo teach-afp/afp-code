@@ -1,16 +1,19 @@
 -- | Textual rendering of a 'Shape'.
+
 module Render where
 
 import Shape
 
--- | A window specifies what part of the world to render and at which
---   resolution.
+-- | A window specifies what part of the world to render
+--   and at which resolution.
 data Window = Window
   {  bottomLeft  :: Point
   ,  topRight    :: Point
   ,  resolution  :: (Int, Int)
   }
 
+-- | A 40x40 window
+--   showing points with a Manhattan distance of 1.5 from the origin.
 defaultWindow :: Window
 defaultWindow = Window
   { bottomLeft  = point (-1.5) (-1.5)
@@ -19,16 +22,18 @@ defaultWindow = Window
 --  , resolution = (50, 50) -- for larger terminal windows
   }
 
--- | Generate a list of evenly spaces (n :: Int) points in an interval.
+-- | Generate a list of @(n :: Int)@ evenly spaced points in an interval.
 samples :: Double -> Double -> Int -> [Double]
-samples x0 x1 n = take n $ iterate (+dx) x0
+samples x0 x1 n = take n $ iterate (+ dx) x0
   where
     dx = (x1 - x0) / fromIntegral (n - 1)
 
 -- | Generate the matrix of points corresponding to the pixels of a window.
 pixels :: Window -> [[Point]]
-pixels (Window p0 p1 (w,h)) =
-  [  [ point x y | x <- samples (ptX p0) (ptX p1) w ]
+pixels (Window p0 p1 (w, h)) =
+  [  [ point x y
+     | x <- samples (ptX p0) (ptX p1) w
+     ]
   |  y <- reverse $ samples (ptY p0) (ptY p1) h
   ]
 

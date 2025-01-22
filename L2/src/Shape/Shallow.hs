@@ -33,10 +33,11 @@ square = Shape \ p -> abs (ptX p) <= 1 && abs (ptY p) <= 1
 -- | Transform a shape with a matrix.
 transform :: Matrix -> Shape -> Shape
 transform m sh = Shape \ p -> (inv_m `mul` p) `inside` sh
-  where inv_m = inv m  -- the point is transformed with the inverse matrix
+  where
+    inv_m = inv m  -- the point is transformed with the inverse matrix
 
--- | To represent translations as matrix transformations we would need
---   to add another dimension to the matrices (excercise).
+-- To represent translations as matrix transformations we would need
+-- to add another dimension to the matrices (excercise).
 translate :: Vec -> Shape -> Shape
 translate v sh = Shape \ p -> inside (p `sub` v) sh
 

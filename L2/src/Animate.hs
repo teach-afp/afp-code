@@ -8,6 +8,7 @@ import Shape
 import Render
 import ANSI
 
+-- | Frames per second.
 fps :: Double
 fps = 10   -- we generate 10 fps
 
