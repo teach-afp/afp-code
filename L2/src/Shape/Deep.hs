@@ -95,24 +95,26 @@ invert = Invert
 
 inside :: Point -> Shape -> Bool
 _p `inside` Empty             = False
-p  `inside` Disc              = sqDistance p <= 1
-p  `inside` Square            = maxnorm  p <= 1
+p  `inside` Disc              = squaredDistance p <= 1
+p  `inside` Square            = maxNorm  p <= 1
 p  `inside` Translate v sh    = (p `sub` v) `inside` sh
 p  `inside` Transform m sh    = (inv m `mul` p) `inside` sh
 p  `inside` Union sh1 sh2     = p `inside` sh1 || p `inside` sh2
 p  `inside` Intersect sh1 sh2 = p `inside` sh1 && p `inside` sh2
 p  `inside` Invert sh         = not (p `inside` sh)
 
--- * Helper functions
+-- * Helper functions <https://en.wikipedia.org/wiki/Norm_%28mathematics%29#Properties>
 
-sqDistance :: Point -> Double
-sqDistance p = x*x+y*y -- proper distance would use sqrt
-  where x = ptX p
-        y = ptY p
+-- | Square of the Euclidian norm.
+squaredDistance :: Point -> Double
+squaredDistance p = x*x + y*y -- proper distance would use sqrt
+  where
+    x = ptX p
+    y = ptY p
 
-maxnorm :: Point -> Double
-maxnorm p = max (abs x) (abs y)
-  where x = ptX p
-        y = ptY p
-
--- | More reading: http://en.wikipedia.org/wiki/Norm_%28mathematics%29#Properties
+-- | Manhattan norm (maximum norm).
+maxNorm :: Point -> Double
+maxNorm p = max (abs x) (abs y)
+  where
+    x = ptX p
+    y = ptY p
