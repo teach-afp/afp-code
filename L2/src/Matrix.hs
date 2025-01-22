@@ -2,7 +2,7 @@
 
 module Matrix
   ( -- * Types
-    Matrix, Vec, Point, Angle
+    Angle, Vec, Point, Matrix
   , -- * Run functions
     theAngle, vecX, vecY, ptX, ptY
   , -- * Constructors
@@ -13,10 +13,25 @@ module Matrix
 
 -- * Types
 
-newtype Angle  = A { theAngle           :: Double }
-data    Vec    = V { vecX, vecY         :: Double }
-data    Point  = P { ptX,  ptY          :: Double }
-data    Matrix = M { m00, m01, m10, m11 :: Double }
+-- | Abstract type of angles.
+newtype Angle = A
+  { theAngle :: Double  -- ^ Angle in radian.
+  }
+
+-- | Abstract type of 2D vectors.
+data Vec = V
+  { vecX :: Double  -- ^ First component of 2D vector.
+  , vecY :: Double  -- ^ Second component of 2D vector.
+  }
+
+-- | Abstract type of 2D points.
+data Point = P
+  { ptX  :: Double -- ^ X coordinate (cartesian) of 2D point.
+  , ptY  :: Double -- ^ Y coordinate (cartesian) of 2D point.
+  }
+
+-- | Abstract type of 2x2 matrices.
+data Matrix = M { m00, m01, m10, m11 :: Double }
 
 -- * Constructors
 
