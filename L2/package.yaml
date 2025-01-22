@@ -1,0 +1,29 @@
+name:          AFPlecture2
+version:       0
+
+synopsis:      AFP course lecture 2
+author:        Patrik Jansson, Alejandro Russo, Andreas Abel
+maintainer:    Andreas Abel
+license:       BSD3
+license-file:  LICENSE
+
+library:
+  source-dirs: src
+
+executable:
+  source-dirs: exe
+  main:        Main.hs
+  dependencies: AFPlecture2
+
+dependencies:  base
+
+language:      Haskell2010
+
+default-extensions:
+- BlockArguments
+- LambdaCase
+- PatternSynonyms
+
+when:
+  condition: impl(ghc >= 9.8)
+  ghc-options: -Wno-x-partial

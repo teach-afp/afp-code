@@ -1,4 +1,8 @@
-----------------
+module InsideTriangle where
+
+data Vec   = V { vecX, vecY :: Double }
+type Point = Vec
+
 -- If you would like to extend the Shape library to triangles,
 -- Barycentric coordinates is the key math needed.
 
