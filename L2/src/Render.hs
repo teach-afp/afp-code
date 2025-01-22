@@ -7,19 +7,20 @@ import Shape
 -- | A window specifies what part of the world to render
 --   and at which resolution.
 data Window = Window
-  {  bottomLeft  :: Point
-  ,  topRight    :: Point
-  ,  resolution  :: (Int, Int)
+  {  bottomLeft           :: Point
+  ,  topRight             :: Point
+  ,  horizontalResolution :: Int
+  ,  verticalResolution   :: Int
   }
 
 -- | A 40x40 window
 --   showing points with a Manhattan distance of 1.5 from the origin.
 defaultWindow :: Window
 defaultWindow = Window
-  { bottomLeft  = point (-1.5) (-1.5)
-  , topRight    = point 1.5 1.5
-  , resolution  = (40, 40)
---  , resolution = (50, 50) -- for larger terminal windows
+  { bottomLeft           = point (-1.5) (-1.5)
+  , topRight             = point 1.5 1.5
+  , horizontalResolution = 40
+  , verticalResolution   = 40
   }
 
 -- | Generate a list of @(n :: Int)@ evenly spaced points in an interval.
@@ -30,7 +31,7 @@ samples x0 x1 n = take n $ iterate (+ dx) x0
 
 -- | Generate the matrix of points corresponding to the pixels of a window.
 pixels :: Window -> [[Point]]
-pixels (Window p0 p1 (w, h)) =
+pixels (Window p0 p1 w h) =
   [  [ point x y
      | x <- samples (ptX p0) (ptX p1) w
      ]
