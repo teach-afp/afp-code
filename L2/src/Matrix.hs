@@ -1,48 +1,69 @@
 -- | Simple 2D matrix algebra.
+
 module Matrix
-  ( Matrix, Vec, Point, Angle
-  , vecX, vecY, ptX, ptY
-  , matrix, point, vec
-  , cross, mul, inv, sub
+  ( -- * Types
+    Matrix, Vec, Point, Angle
+  , -- * Run functions
+    theAngle, vecX, vecY, ptX, ptY
+  , -- * Constructors
+    angle, vec, point, matrix, diagonalMatrix
+  , -- * Combinators
+    inner, mul, inv, sub, scaleMatrix, determinant
   ) where
 
-type Angle  = Double
-data Vec    = V { vecX, vecY :: Double }
-type Point  = Vec
-data Matrix = M Vec Vec
+-- * Types
 
--- | Matrix creation
-matrix :: Double -> Double -> Double -> Double -> Matrix
-matrix a b c d = M (V a b)
-                   (V c d)
+newtype Angle  = A { theAngle           :: Double }
+data    Vec    = V { vecX, vecY         :: Double }
+data    Point  = P { ptX,  ptY          :: Double }
+data    Matrix = M { m00, m01, m10, m11 :: Double }
 
--- | Vector creation
+-- * Constructors
+
+-- | Angle creation.
+angle :: Double -> Angle
+angle = A
+
+-- | Vector creation.
 vec :: Double -> Double -> Vec
 vec = V
 
 -- | Point creation.
 point :: Double -> Double -> Point
-point = vec
+point = P
 
--- | Cross product
-cross :: Vec -> Vec -> Double
-cross (V a b) (V c d) = a * c + b * d
+-- | Matrix creation.
+matrix :: Double -> Double -> Double -> Double -> Matrix
+matrix = M
 
--- | Matrix multiplication
-mul :: Matrix -> Vec -> Vec
-mul (M r1 r2) v = V (cross r1 v) (cross r2 v)
+-- | Diagonal matrix creation.
+diagonalMatrix :: Vec -> Matrix
+diagonalMatrix (V x y) = M
+  x 0
+  0 y
 
--- | Matrix inversion
+-- * Combinators
+
+-- | Inner product.
+inner :: Point -> Point -> Double
+inner (P a b) (P c d) = a * c + b * d
+
+-- | Transforming a point by matrix multiplication.
+mul :: Matrix -> Point -> Point
+mul (M x0 x1 y0 y1) p = P (inner (P x0 x1) p) (inner (P y0 y1) p)
+
+-- | Matrix scaling.
+scaleMatrix :: Double -> Matrix -> Matrix
+scaleMatrix k (M a b c d) = M (k * a) (k * b) (k * c) (k * d)
+
+-- | Determinant of a 2x2 matrix.
+determinant :: Matrix -> Double
+determinant (M a b c d) = a * d - b * c
+
+-- | Matrix inversion.
 inv :: Matrix -> Matrix
-inv (M (V a b) (V c d)) = matrix (d / k) (-b / k) (-c / k) (a / k)
-  where k = a * d - b * c
+inv m@(M a b c d) = scaleMatrix (1 / determinant m) $ M d (-b) (-c) a
 
--- | Subtraction
+-- | Subtraction.
 sub :: Point -> Vec -> Point
-sub (V x y) (V dx dy) = V (x - dx) (y - dy)
-
--- Run functions
-
-ptX, ptY :: Point -> Double
-ptX = vecX
-ptY = vecY
+sub (P x y) (V dx dy) = P (x - dx) (y - dy)

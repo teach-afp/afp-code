@@ -5,19 +5,19 @@ import Control.Applicative
 
 import Signal  (Signal, constS, ($$), mapS, timeS)
 import Shape   (Shape, disc, square, difference,
-                scale, translate, vec, rotate)
+                scale, translate, vec, angle, rotate)
 import Animate (animate)
 import Render  (defaultWindow)
 
 -- | A rotating square
 rotatingSquare :: Signal Shape
-rotatingSquare = constS rotate $$ timeS $$ constS square
+rotatingSquare = constS (rotate . angle) $$ timeS $$ constS square
               -- Using the Control.Applicative interface:
 -- rotatingSquare = rotate <$> timeS <*> pure square
 
 -- | A stranger drop-in replacement for rotate in rotatingSquare
 transmogrify :: Double -> Shape -> Shape
-transmogrify d s = scale (vec (sin d) (cos d)) (rotate d s)
+transmogrify d s = scale (vec (sin d) (cos d)) (rotate (angle d) s)
 
 -- | A bouncing ball
 bouncingBall :: Signal Shape
