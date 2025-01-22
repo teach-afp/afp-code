@@ -36,7 +36,7 @@ toBars = mapS (`replicate` '#')
 displayLength = 100
 -- | display the signal at a number of points
 display :: Signal String -> IO ()
-display ss = forM_ [0..displayLength] $ \x ->
+display ss = forM_ [0..displayLength] \ x ->
    putStrLn (sample ss x)
 
 -- | The display magic.
