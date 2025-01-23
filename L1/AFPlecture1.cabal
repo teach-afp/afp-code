@@ -13,6 +13,7 @@ library
       Lect1
       QuizPrimeCheck
       TypeClasses
+      TypeClasses2025
   other-modules:
       Paths_AFPlecture1
   hs-source-dirs:
