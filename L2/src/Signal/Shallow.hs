@@ -21,11 +21,14 @@ applyS :: Signal (a -> b) -> Signal a -> Signal b
 mapT   :: (Time -> Time)  -> Signal a -> Signal a
 -- * Derived operation
 mapS   :: (a -> b)        -> Signal a -> Signal b
--- * Run function
-sample :: Signal a -> Time -> a
 
 type Time = Double
-newtype Signal a = Sig {unSig :: Time -> a}
+
+newtype Signal a = Sig {
+    -- | Sampling a signal at a given time point.
+    -- This is the /semantic function/ of our library.
+    sample :: Time -> a
+  }
 
 -- | The constant signal.
 constS x = Sig (const x)
@@ -34,14 +37,10 @@ constS x = Sig (const x)
 timeS = Sig id
 
 -- | Function application lifted to signals.
-fs `applyS` xs = Sig (\t -> unSig fs t  (unSig xs t))
+fs `applyS` xs = Sig (\ t -> sample fs t (sample xs t))
 
 -- | Mapping a function over a signal.
 mapS f xs = constS f `applyS` xs
 
 -- | Transforming the time.
-mapT f xs = Sig (unSig xs . f)
-
--- | Sampling a signal at a given time point.
--- This is the /semantic function/ of our library.
-sample = unSig
+mapT f xs = Sig (sample xs . f)
