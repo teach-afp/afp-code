@@ -1,7 +1,7 @@
 -- | Examples for simple shapes.
 module ExampleSignal where
 
-import Signal  (Time, Signal, constS, timeS, applyS, mapT)
+import Signal  (Time, Signal, constS, timeS, applyS, mapT, signal)
 import Shape   (Shape, disc, square)
 import Animate (animate)
 import Render  (defaultWindow)
@@ -17,7 +17,7 @@ change sh1 sh2 t
        | otherwise     = sh2
 
 square_disc :: Signal Shape
-square_disc = constS (change disc square) `applyS` timeS
+square_disc = signal (change disc square)
 
 
 to_zero :: Time -> Time

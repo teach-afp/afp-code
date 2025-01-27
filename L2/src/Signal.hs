@@ -17,3 +17,8 @@ instance Functor Signal where
 instance Applicative Signal where
   pure  = constS
   (<*>) = applyS
+
+-- | Constructing a signal from a time-varying value.
+--   Inverse of 'sample'.
+signal :: (Time -> a) -> Signal a
+signal f = constS f `applyS` timeS

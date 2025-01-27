@@ -3,7 +3,7 @@ module Example where
 
 import Control.Applicative
 
-import Signal  (Signal, constS, applyS, mapS, timeS)
+import Signal  (Signal, constS, applyS, mapS, timeS, signal)
 import Shape   (Shape, disc, square, difference,
                 scale, translate, vec, angle, rotate)
 import Animate (animate)
@@ -11,9 +11,9 @@ import Render  (defaultWindow)
 
 -- | A rotating square
 rotatingSquare :: Signal Shape
-rotatingSquare = constS (rotate . angle) `applyS` timeS `applyS` constS square
+rotatingSquare = signal (rotate . angle) `applyS` constS square
               -- Using the Control.Applicative interface:
--- rotatingSquare = rotate <$> timeS <*> pure square
+-- rotatingSquare = signal (rotate . angle) <*> pure square
 
 -- | A stranger drop-in replacement for rotate in rotatingSquare
 transmogrify :: Double -> Shape -> Shape
