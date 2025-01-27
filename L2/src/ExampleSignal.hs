@@ -17,11 +17,11 @@ change sh1 sh2 t
        | otherwise     = sh2
 
 square_disc :: Signal Shape
-square_disc = constS (change square disc) `applyS` timeS
+square_disc = constS (change disc square) `applyS` timeS
 
 
 to_zero :: Time -> Time
 to_zero = const 0
 
-always_disc :: Signal Shape
-always_disc = mapT to_zero square_disc
+always_square :: Signal Shape
+always_square = mapT to_zero square_disc
