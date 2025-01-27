@@ -284,7 +284,7 @@ put :: s -> St s ()
 put s = MkSt \ _ -> ((), s)
 
 instance Monad (St s) where
-  return x     = MkSt \ s -> (x,s)
+  return x     = MkSt \ s -> (x, s)
   MkSt f >>= k = MkSt \ s -> let
       (a, s') = f s
       MkSt ff = k a
