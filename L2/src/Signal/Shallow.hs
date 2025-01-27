@@ -6,7 +6,7 @@ module Signal.Shallow
   -- * Smart constructors
   , constS, timeS
   -- * Combinators
-  , ($$), mapT
+  , applyS, mapT
   -- * Derived operation
   , mapS
   -- * Run function
@@ -17,7 +17,7 @@ module Signal.Shallow
 constS :: a -> Signal a
 timeS  ::      Signal Time
 -- * Combinators
-($$)   :: Signal (a -> b) -> Signal a -> Signal b
+applyS :: Signal (a -> b) -> Signal a -> Signal b
 mapT   :: (Time -> Time)  -> Signal a -> Signal a
 -- * Derived operation
 mapS   :: (a -> b)        -> Signal a -> Signal b
@@ -34,10 +34,10 @@ constS x = Sig (const x)
 timeS = Sig id
 
 -- | Function application lifted to signals.
-fs $$ xs = Sig (\t -> unSig fs t  (unSig xs t))
+fs `applyS` xs = Sig (\t -> unSig fs t  (unSig xs t))
 
 -- | Mapping a function over a signal.
-mapS f xs = constS f $$ xs
+mapS f xs = constS f `applyS` xs
 
 -- | Transforming the time.
 mapT f xs = Sig (unSig xs . f)

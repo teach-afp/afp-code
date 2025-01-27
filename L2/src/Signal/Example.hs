@@ -18,7 +18,7 @@ main = magic $ sinS 0.3
 --             Signal a -> Signal a -> Signal a
 -- averageS = -- ... Fill in a definition here ...
 -- @
--- Hint: use the average function, mapS and $$ combinators.
+-- Hint: use the average function, mapS and `applyS` combinators.
 average :: Fractional a =>  a -> a -> a
 average x y = (x + y) / 2.0
 
@@ -52,7 +52,7 @@ magic = display . toBars . discretize . scale
 -- | Answer to exercise
 averageS :: Fractional a =>
             Signal a -> Signal a -> Signal a
-averageS xs ys = mapS average xs $$ ys
+averageS xs ys = mapS average xs `applyS` ys
 
 -- | It can also be generalised to an arbitray Applicative functor
 averageA :: (Fractional a, Applicative f) =>

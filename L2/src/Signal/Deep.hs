@@ -7,7 +7,7 @@ module Signal.Deep
   -- * Smart constructors
   , constS, timeS
   -- * Combinators
-  , ($$), mapT
+  , applyS, mapT
   -- * Derived operation
   , mapS
   -- * Run function
@@ -18,7 +18,7 @@ module Signal.Deep
 constS :: a -> Signal a
 timeS  ::      Signal Time
 -- * Combinators
-($$)   :: Signal (a -> b) -> Signal a -> Signal b
+applyS   :: Signal (a -> b) -> Signal a -> Signal b
 mapT   :: (Time -> Time)  -> Signal a -> Signal a
 -- * Derived operation
 mapS   :: (a -> b)        -> Signal a -> Signal b
@@ -30,7 +30,7 @@ data Signal a where
   ConstS :: a -> Signal a
   TimeS  :: Signal Time
   MapT   :: (Time -> Time) -> Signal a -> Signal a
-  (:$$)  :: Signal (a -> b) -> Signal a -> Signal b
+  ApplyS  :: Signal (a -> b) -> Signal a -> Signal b
 
 -- | The constant signal.
 constS = ConstS
@@ -41,16 +41,16 @@ constS = ConstS
 timeS = TimeS
 
 -- | Function application lifted to signals.
-fs $$ xs = fs :$$ xs
+applyS = ApplyS
 
 -- | Mapping a function over a signal.
-mapS f xs = constS f $$ xs
+mapS f xs = constS f `applyS` xs
 
 -- | Transforming the time.
 mapT = MapT
 
 -- | Sampling a signal at a given time point.
-sample (ConstS x)  = const x
-sample TimeS       = id
-sample (f :$$ s)   = \t -> sample f t $ sample s t
-sample (MapT f s)  = sample s . f
+sample (ConstS x)   = const x
+sample TimeS        = id
+sample (ApplyS f s) = \ t -> sample f t $ sample s t
+sample (MapT f s)   = sample s . f

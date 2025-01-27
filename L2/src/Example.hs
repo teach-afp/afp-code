@@ -3,7 +3,7 @@ module Example where
 
 import Control.Applicative
 
-import Signal  (Signal, constS, ($$), mapS, timeS)
+import Signal  (Signal, constS, applyS, mapS, timeS)
 import Shape   (Shape, disc, square, difference,
                 scale, translate, vec, angle, rotate)
 import Animate (animate)
@@ -11,7 +11,7 @@ import Render  (defaultWindow)
 
 -- | A rotating square
 rotatingSquare :: Signal Shape
-rotatingSquare = constS (rotate . angle) $$ timeS $$ constS square
+rotatingSquare = constS (rotate . angle) `applyS` timeS `applyS` constS square
               -- Using the Control.Applicative interface:
 -- rotatingSquare = rotate <$> timeS <*> pure square
 
@@ -21,11 +21,11 @@ transmogrify d s = scale (vec (sin d) (cos d)) (rotate (angle d) s)
 
 -- | A bouncing ball
 bouncingBall :: Signal Shape
--- bouncingBall = constS translate $$ pos $$ constS ball
+-- bouncingBall = constS translate `applyS` pos `applyS` constS ball
 bouncingBall = translate <$> pos <*> pure ball
   where
     ball = scale (vec 0.5 0.5) disc
-    pos  = constS vec $$ bounceX $$ bounceY
+    pos  = constS vec `applyS` bounceX `applyS` bounceY
     bounceY = mapS ((0.8*) . sin . (3*)) timeS
 --    bounceX = constS 0
     bounceX = mapS ((0.8*) . sin . (2*)) timeS
@@ -33,7 +33,7 @@ bouncingBall = translate <$> pos <*> pure ball
 
 -- | Combining the two
 example :: Signal Shape
---example = constS difference $$ rotatingSquare $$ bouncingBall
+--example = constS difference `applyS` rotatingSquare `applyS` bouncingBall
 example = difference <$> rotatingSquare <*> bouncingBall
 
 {-

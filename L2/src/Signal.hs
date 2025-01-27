@@ -16,4 +16,4 @@ instance Functor Signal where
 
 instance Applicative Signal where
   pure  = constS
-  (<*>) = ($$)
+  (<*>) = applyS
