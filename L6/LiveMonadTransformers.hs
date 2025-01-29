@@ -161,7 +161,7 @@ instance MonadError e m => MonadError e (ReaderT r m) where
 
 instance MonadError e m => MonadError e (StateT e m) where
   throwError e = lift $ throwError e
-  catchError m h = StateT $ \ s -> do
+  catchError m h = StateT \ s -> do
     -- runStateT m s :: m (a, s)
     catchError (runStateT m s) \ e ->
       runStateT (h e) s

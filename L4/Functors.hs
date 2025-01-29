@@ -86,7 +86,7 @@ newtype Equal a = Equal { runEqual :: a -> a -> Bool }
 
 
 fmapEqual :: (a -> b) -> Equal a -> Equal b
-fmapEqual _f (Equal _op) = Equal $ \_b1 _b2 -> error "Hopeless!"
+fmapEqual _f (Equal _op) = Equal \_b1 _b2 -> error "Hopeless!"
 -- Hopeless! The value of type a is in a negative position!
 
 

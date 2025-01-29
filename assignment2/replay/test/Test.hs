@@ -69,7 +69,7 @@ testCases =
     { testName    = "example"
     , testInput   = [59,65]
     , testResult  = (2^59 * 3^65, 6)
-    , testProgram = \tick -> do
+    , testProgram = \ tick -> do
         io tick        -- getCurrentTime
         io tick        -- putStrLn "Hello!"
         age  <- ask () -- "What is your age?"
@@ -84,7 +84,7 @@ testCases =
     { testName    = "test1"
     , testInput   = [3,4]
     , testResult  = (8, 1)
-    , testProgram = \tick -> do
+    , testProgram = \ tick -> do
         io tick
         a <- ask () -- should be 3
         b <- io (return 1)

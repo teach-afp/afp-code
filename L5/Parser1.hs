@@ -82,5 +82,5 @@ cast ((P0.Choice p q) P0.:>>= k) = Choice (cast (p P0.:>>= k))
 cast ((P0.Return x) P0.:>>= k)   = cast (k x)
                                    -- monad law, L1
 
-cast ((p P0.:>>= k') P0.:>>= k)  = cast (p P0.:>>= \x -> k' x P0.:>>= k)
+cast ((p P0.:>>= k') P0.:>>= k)  = cast (p P0.:>>= \ x -> k' x P0.:>>= k)
                                    -- monad law, L3

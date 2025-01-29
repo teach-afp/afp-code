@@ -21,7 +21,7 @@ data P s a where
 symbol = SymbolBind return
 pfail  = Fail
 
-SymbolBind f +++ SymbolBind g = SymbolBind (\x -> f x +++ g x)
+SymbolBind f +++ SymbolBind g = SymbolBind (\ x -> f x +++ g x)
 Fail +++ q  = q
 p +++ Fail  = p
 ReturnChoice x p +++ q = ReturnChoice x (p +++ q)

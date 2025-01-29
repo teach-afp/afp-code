@@ -70,7 +70,7 @@ type Eval a = StateT Store (ReaderT Env Identity) a
 --   return = returnMyMonad
 --   (>>=)  = bindMyMonad
 -- returnMyMonad :: a -> MyMonad s e a
--- returnMyMonad x = MyMonad $ \s -> \ e -> (x, s)
+-- returnMyMonad x = MyMonad \ s -> \ e -> (x, s)
 -- -- ...
 -- -}
 
@@ -128,8 +128,9 @@ p =: v = do
 {-
 -- Alternative
 (=:) :: Ptr -> Value -> Eval Value
-p =: v = do modify $ \s -> s { heap = Map.adjust (const v) p (heap s) }
-            return v
+p =: v = do
+  modify \ s -> s { heap = Map.adjust (const v) p (heap s) }
+  return v
 -}
 
 -- | As before we only need to add cases for the new con-

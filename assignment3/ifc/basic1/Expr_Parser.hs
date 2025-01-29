@@ -23,8 +23,8 @@ tok = makeTokenParser LanguageDef
   , commentEnd      = "-}"
   , commentLine     = "--"
   , nestedComments  = True
-  , identStart      = satisfy (\c -> isAlpha c || c == '_')
-  , identLetter     = satisfy (\c -> isAlphaNum c || c == '_')
+  , identStart      = satisfy (\ c -> isAlpha c || c == '_')
+  , identLetter     = satisfy (\ c -> isAlphaNum c || c == '_')
   , opStart         = satisfy (`elem` "+:=!;")
   , opLetter        = satisfy (`elem` "=")
   , reservedNames   = ["let", "new", "try", "catch","secret_ref","secret"]
