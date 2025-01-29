@@ -275,7 +275,7 @@ run_deep e =
   ---------------
 --}
 
-newtype St s a = MkSt (s -> (a, s))
+newtype St s a = MkSt { runSt :: s -> (a, s) }
 
 get :: St s s
 get = MkSt \ s -> (s, s)
@@ -284,19 +284,18 @@ put :: s -> St s ()
 put s = MkSt \ _ -> ((), s)
 
 instance Monad (St s) where
-  return x     = MkSt \ s -> (x, s)
-  MkSt f >>= k = MkSt \ s -> let
-      (a, s') = f s
-      MkSt ff = k a
-    in ff s'
+  return x = MkSt \ s -> (x, s)
+  m >>= k  = MkSt \ s -> let
+       (a, s') = runSt m s
+    in runSt (k a) s'
 
 interpS :: Expr -> St Int Int
 interpS (Con i)     = return i
 interpS (Div e1 e2) = do
     i1 <- interpS e1
     i2 <- interpS e2
-    dvs <- get
-    put (dvs + 1)
+    divisions <- get
+    put (divisions + 1)
     return (i1 `div` i2)
 
 m_runS :: Expr -> IO ()
