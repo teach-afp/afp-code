@@ -5,8 +5,12 @@ module Functors where
 import Control.Applicative
 import Data.Monoid
 
-data Tree a = Leaf a | Node (Tree a) (Tree a)
-              deriving Show
+-- * Functors
+
+data Tree a
+  = Leaf a
+  | Node (Tree a) (Tree a)
+  deriving Show
 
 -- | A version of map for Trees.
 mapTree :: (a -> b) -> Tree a -> Tree b
@@ -16,19 +20,19 @@ mapTree f (Node t1 t2) = Node (mapTree f t1)
 
 tree = Node (Leaf 2) ((Node (Node (Leaf 3) (Leaf 4)) (Leaf 5)))
 
-ex1 = (+1) `mapTree` tree
+ex1 = (+ 1) `mapTree` tree
 
 {-- Functor instance for Tree --}
 instance Functor Tree where
   fmap f (Leaf a)     = Leaf (f a)
   fmap f (Node t1 t2) = Node (fmap f t1) (fmap f t2)
 
-ex2 = (+1) `fmap` tree
+ex2 = (+ 1) `fmap` tree
 
 {-- Known functors --}
 
 -- Maybe data type
-ex3 = (+1) `fmap` (Just 10)
+ex3 = (+ 1) `fmap` (Just 10)
 
 -- Generalized trees
 data TreeG a = LeafG a | BranchG [TreeG a]
@@ -39,7 +43,7 @@ instance Functor TreeG where
    fmap f (BranchG ts) = BranchG (fmap (fmap f) ts)
 
 ex4 :: TreeG Int
-ex4 = (+1)
+ex4 = (+ 1)
       `fmap` BranchG [LeafG 10,
                       BranchG [LeafG 11, LeafG 12],
                       BranchG [LeafG 13, LeafG 14, LeafG 15]]
@@ -69,7 +73,7 @@ instance Functor MMaybe where
    fmap f (JJust a) = JJust (f a)
 
 instance Applicative MMaybe where
-    pure            = JJust
+    pure             = JJust
     NNothing <*> vv  = NNothing
     JJust f  <*> vv  = fmap f vv
 
@@ -78,7 +82,7 @@ instance Applicative MMaybe where
 {-------------------}
 
 type NotAFunctor = Equal
-newtype Equal a = Equal {runEqual :: a -> a -> Bool}
+newtype Equal a = Equal { runEqual :: a -> a -> Bool }
 
 
 fmapEqual :: (a -> b) -> Equal a -> Equal b
@@ -105,10 +109,12 @@ instance Functor (Pair r) where
 instance Applicative (Pair r) where
    pure x = P (error "Hopeless!") x
    {- To create a container (as pure does), we need to have a value of
-      type r, which is never abailable to pure.
+      type r, which is never available to pure.
    -}
-   f <*> v = error "Hopeless!"
+   P r1 f <*> P r2 a = P (r1 {- or r2 ?? -}) (f a)
 
+-- Exercise:  Define:
+-- instance Monoid r => Applicative (Pair r)
 
 {------------------------------------------}
 {-- Applicative functor, but not a monad --}
@@ -152,7 +158,7 @@ onePhantom :: Phantom ()
 onePhantom = Phantom (Suc Zero)
 
 exPhantom :: Phantom ()
-exPhantom = pure (\x y z -> z) <*> onePhantom <*> onePhantom <*> onePhantom
+exPhantom = pure (\ x y z -> z) <*> onePhantom <*> onePhantom <*> onePhantom
 
 
 {-

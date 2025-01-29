@@ -24,7 +24,7 @@ type Output = String
 --   In this case a program is a function from the input to the
 --   result, the remaining input and the output.
 type IOSem a = Input -> (a, Input, Output)
-newtype Program a = P { unP :: IOSem a }
+newtype Program a = P { runP :: IOSem a }
 
 -- | Print a character.
 putC :: Char -> Program ()
@@ -47,13 +47,13 @@ returnP x = P \ i -> (x, i, [])
 
 bindP :: Program a -> (a -> Program b) -> Program b
 bindP p k = P \ i ->
-    let  (x,  i1,  o1)  =  unP  p      i
-         (y,  i2,  o2)  =  unP  (k x)  i1
+    let  (x,  i1,  o1)  =  runP  p      i
+         (y,  i2,  o2)  =  runP  (k x)  i1
     in   (y,  i2,  o1 ++ o2)
 
 -- | Running a program is simply returning its semantics.
 run :: Program a -> IOSem a
-run = unP
+run = runP
 
 
 -- Hierarchy Functor < Applicative < Monad
