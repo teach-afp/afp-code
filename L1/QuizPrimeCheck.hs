@@ -15,7 +15,7 @@ primes = 2 : sieve odds
     odds             = everyOtherFrom 3
     everyOtherFrom n = n : everyOtherFrom (n + 2)
 
--- | Raise error if given numer is not prime.
+-- | Raise error if given number is not prime.
 checkPrime :: Integer -> ()
 checkPrime k = if findAscend k primes then () else error "not prime"
 
