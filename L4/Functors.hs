@@ -3,6 +3,7 @@
 module Functors where
 
 import Control.Applicative
+import Data.Bifunctor (first)
 import Data.Monoid
 
 -- * Functors
@@ -48,21 +49,75 @@ ex4 = (+ 1)
                       BranchG [LeafG 11, LeafG 12],
                       BranchG [LeafG 13, LeafG 14, LeafG 15]]
 
+-- Functor instance for State monad
+
+newtype State s a = State { runState :: s -> (a, s) }
+
+instance Functor (State s) where
+  fmap f (State g) = State \ s -> first f (g s)
+  {- From Monad:
+  fmap f m = do
+    a <- m
+    return (f a)
+  fmap = liftM
+  -}
+
+-- first :: (a1 -> a2) -> (a1, b) -> (a2, b)
+
+{- Functor instance for IO
+
+instance Functor IO where
+  fmap f m = do
+    a <- m
+    return (f a)
+-}
+
+-- Free monad over functor f
+
+data Free f a = Return a | Oper (f (Free f a))
+
+instance Functor f => Functor (Free f) where
+  fmap f (Return a) = Return (f a)
+  fmap f (Oper ts)  = Oper (fmap (fmap f) ts)
+
+-- * Applicative functors
+
+-- | Unary map ('fmap', 'liftA').
+mapMaybe1 :: (a -> b) -> Maybe a -> Maybe b
+mapMaybe1 f (Just a) = Just (f a)
+mapMaybe1 f _ = Nothing
+
+-- | Binary map ('zipWith', 'liftA2').
+mapMaybe2 :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c
+mapMaybe2 f (Just a) (Just b) = Just (f a b)
+mapMaybe2 f _ _ = Nothing
+
+-- | Ternary map ('zipWith3', 'liftA3').
+mapMaybe3 :: (a -> b -> c -> d) -> Maybe a -> Maybe b -> Maybe c -> Maybe d
+mapMaybe3 f (Just a) (Just b) (Just c) = Just (f a b c)
+mapMaybe3 f _ _ _ = Nothing
+
+-- | Nullary map ('pure').
+mapMaybe0 :: a -> Maybe a
+mapMaybe0 f = Just f
+-- no catch-all case here!
 
 
 {-- Mapping a multi-argument function to multiple containers at once  --}
-mp_fmap :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c
-mp_fmap f ma mb = let m_b_to_c = fmap f ma
-                  in case m_b_to_c of
-                          Nothing -> Nothing
-                          Just fa -> fmap fa mb
+fmap2 :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c
+fmap2 f ma mb =
+  case fmap f ma of
+    Nothing -> Nothing
+    Just fa -> fmap fa mb
 
-mp_fmap2 :: (a -> b -> c -> d) -> Maybe a -> Maybe b -> Maybe c -> Maybe d
-mp_fmap2 f ma mb mc = case fmap f ma of
-                           Nothing -> Nothing
-                           Just fa -> case fmap fa mb of
-                                          Nothing  -> Nothing
-                                          Just fab -> fmap fab mc
+fmap3 :: (a -> b -> c -> d) -> Maybe a -> Maybe b -> Maybe c -> Maybe d
+fmap3 f ma mb mc =
+  case fmap f ma of
+    Nothing -> Nothing
+    Just fa ->
+      case fmap fa mb of
+        Nothing  -> Nothing
+        Just fab -> fmap fab mc
 
 
 -- Define our own Maybe type to show how to instantiate Applicative:
@@ -111,7 +166,7 @@ instance Applicative (Pair r) where
    {- To create a container (as pure does), we need to have a value of
       type r, which is never available to pure.
    -}
-   P r1 f <*> P r2 a = P (r1 {- or r2 ?? -}) (f a)
+   P r1 f <*> P r2 a = P (r1 {- ?? Or r2 ? -}) (f a)
 
 -- Exercise:  Define:
 -- instance Monoid r => Applicative (Pair r)

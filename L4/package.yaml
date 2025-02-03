@@ -4,3 +4,10 @@ library:
   source-dirs: .
 
 dependencies: base
+
+language: Haskell2010
+
+default-extensions:
+- BlockArguments
+- LambdaCase
+- PatternSynonyms
