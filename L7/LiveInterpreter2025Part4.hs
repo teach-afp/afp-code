@@ -1,7 +1,7 @@
 {-# LANGUAGE InstanceSigs #-}
 -- Live coding 2025-02-06
 
-module LiveInterpreter2025 where
+module LiveInterpreter2025Part4 where
 
 import Control.Applicative
 import Control.Monad
@@ -38,23 +38,10 @@ type Value = Integer
 -- * Monad
 ------------------------------------------------------------------
 
-newtype Eval a = Eval { unEval :: ReaderT Env (StateT Store IO) a }
+newtype Eval a = Eval { unEval :: Env -> StateT Store IO a }
 
 newtype ReaderT r m a = ReaderT { runReaderT :: r -> m a }
 newtype StateT  s m a = StateT  { runStateT  :: s -> m (a, s) }
-
-instance Monad m => Monad (ReaderT r m) where
-  return = pure
-  m >>= k = ReaderT \ r -> do
-    a <- runReaderT m r
-    runReaderT (k a) r
-
-instance Monad m => Applicative (ReaderT r m) where
-  pure a = ReaderT \ r -> return a
-  (<*>) = ap
-
-instance Monad m => Functor  (ReaderT r m) where
-  fmap = liftM
 
 evalStateT :: Monad m => StateT s m a -> s -> m a
 evalStateT m s = do
@@ -76,36 +63,28 @@ instance Monad m => Functor  (StateT s m) where
 
 instance Monad Eval where
   return   = pure
-  m >>= k  = Eval do
-    v <- unEval m
-    unEval (k v)
+  m >>= k  = Eval \ env -> do
+    v <- unEval m env
+    unEval (k v) env
 
 instance Applicative Eval where
   (<*>) = ap
-  pure v = Eval $ return v
+  pure v = Eval \ _env -> return v
 
 instance Functor Eval where
   fmap  = liftM
 
-class Monad m => MonadReader r m where
-  ask :: m r
-  local :: (r -> r) -> m a -> ma
-
 ask :: Eval Env
-ask = Eval $ ReaderT \ env -> return env
+ask = Eval \ env -> return env
 
 local :: (Env -> Env) -> Eval a -> Eval a
-local f m = Eval $ ReaderT \ env -> unEval m (runReaderT f env)
+local f m = Eval \ env -> unEval m (f env)
 
 class Monad m => MonadIO m where
   liftIO :: IO a -> m a
 
 instance MonadIO IO where
   liftIO m = m
-
-instance MonadIO m => MonadIO (ReaderT r m) where
-  liftIO m = ReaderT \ r -> do
-    liftIO m
 
 instance MonadIO m => MonadIO (StateT s m) where
   liftIO m = StateT \ s -> do
@@ -118,36 +97,21 @@ instance MonadIO Eval where
     a <- liftIO m
     return a
 
-class Monad m => MonadState s m where
-  get    :: m s
-  modify :: (s -> s) -> m ()
+modify :: (Store -> Store) -> Eval ()
+modify f = Eval \ env -> StateT \ store ->
+  return ((), f store)
 
-  put    :: s -> m ()
-  put s  = modify (const s)
+get :: Eval Store
+get = Eval \ env -> StateT \ store -> return (store, store)
 
-instance Monad m => MonadState s (StateT s m) where
-
-  get :: StateT s m s  -- s -> m (s, s)
-  get = StateT \ s -> return (s, s)
-
-  modify :: (s -> s) -> StateT s m ()
-  modify f = StateT \ s -> return ((), f s)
-
-instance MonadState s m => MonadState s (ReaderT r m) where
-  get      = ReaderT \ _r -> get
-  modify f = ReaderT \ _r -> modify f
-
-instance MonadState Store Eval where
-
-  modify :: (Store -> Store) -> Eval ()
-  modify f = Eval $ modify f
-
-  get :: Eval Store
-  get = Eval $ get
+put :: Store -> Eval ()
+-- put store = Eval \ env _store -> return ((), store)
+put store = modify $ const store
+-- put = modify . const
 
 runEval :: Eval a -> IO a
 runEval m = do
-  v <- evalStateT (runReaderT (unEval m) emptyEnv) emptyStore
+  v <- evalStateT (unEval m emptyEnv) emptyStore
   return v
 
 -- * Evaluation

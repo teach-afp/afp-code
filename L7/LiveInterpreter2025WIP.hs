@@ -1,7 +1,7 @@
 {-# LANGUAGE InstanceSigs #-}
 -- Live coding 2025-02-06
 
-module LiveInterpreter2025 where
+module LiveInterpreter2025WIP where
 
 import Control.Applicative
 import Control.Monad
