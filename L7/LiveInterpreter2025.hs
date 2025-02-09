@@ -89,13 +89,14 @@ instance Functor Eval where
 
 class Monad m => MonadReader r m where
   ask :: m r
-  local :: (r -> r) -> m a -> ma
+  local :: (r -> r) -> m a -> m a
 
-ask :: Eval Env
-ask = Eval $ ReaderT \ env -> return env
+instance MonadReader Env Eval where
+  ask :: Eval Env
+  ask = Eval $ ReaderT \ env -> return env
 
-local :: (Env -> Env) -> Eval a -> Eval a
-local f m = Eval $ ReaderT \ env -> unEval m (runReaderT f env)
+  local :: (Env -> Env) -> Eval a -> Eval a
+  local f m = Eval $ ReaderT \ env -> runReaderT (unEval m) (f env)
 
 class Monad m => MonadIO m where
   liftIO :: IO a -> m a
@@ -114,7 +115,7 @@ instance MonadIO m => MonadIO (StateT s m) where
 
 instance MonadIO Eval where
   liftIO :: IO a -> Eval a
-  liftIO m = Eval \ _env -> do
+  liftIO m = Eval $ ReaderT \ _env -> do
     a <- liftIO m
     return a
 

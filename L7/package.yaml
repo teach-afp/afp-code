@@ -3,6 +3,10 @@ name: interp
 library:
   source-dirs: .
 
+  when:
+    condition: False
+    exposed-modules: LiveInterpreter2025WIP
+
 default-extensions:
 - BlockArguments
 - LambdaCase
