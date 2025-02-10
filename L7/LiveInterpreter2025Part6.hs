@@ -1,18 +1,7 @@
 {-# LANGUAGE InstanceSigs #-}
 -- Live coding 2025-02-06 and -10
 
--- Plan for 2025-02-10:
--- - Refactor using MonadReader
--- - Introduce MonadTrans and use it to simplify existing instances
--- - Make use of GeneralizedNewtypeDeriving
--- - Add MonadError for exceptions and implement it via ExceptT
--- - Add ExceptT to the stack, discussing the order of transformers
--- - Make an API for the effects used in the interpreter
--- - Split the API into microservices
-
-
-
-module LiveInterpreter2025 where
+module LiveInterpreter2025Part6 where
 
 import Control.Applicative
 import Control.Monad

@@ -12,6 +12,7 @@ default-extensions:
 - LambdaCase
 - FlexibleContexts
 - FlexibleInstances
+- InstanceSigs
 - MultiParamTypeClasses
 
 dependencies:
