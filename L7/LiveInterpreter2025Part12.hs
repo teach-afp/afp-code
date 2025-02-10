@@ -14,7 +14,7 @@
 
 
 
-module LiveInterpreter2025 where
+module LiveInterpreter2025Part12 where
 
 import Control.Applicative
 import Control.Monad
@@ -86,7 +86,7 @@ class Monad m => MonadEval m where
   newRef :: Value -> m Ptr
   deRef :: Ptr -> m Value
   (=:) :: Ptr -> Value -> m Value
-  
+
   catch :: m a -> m a -> m a
 
 instance MonadEval Eval where

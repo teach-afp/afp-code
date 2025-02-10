@@ -9,11 +9,16 @@ library:
 
 default-extensions:
 - BlockArguments
+- DefaultSignatures
 - LambdaCase
 - FlexibleContexts
 - FlexibleInstances
 - InstanceSigs
 - MultiParamTypeClasses
+- RankNTypes
+- ScopedTypeVariables
+- StandaloneDeriving
+- TypeOperators
 
 dependencies:
 - base >=4.12 && <5

@@ -1,6 +1,4 @@
 {-# LANGUAGE InstanceSigs #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-
 -- Live coding 2025-02-06 and -10
 
 -- Plan for 2025-02-10:
@@ -13,8 +11,7 @@
 -- - Split the API into microservices
 
 
-
-module LiveInterpreter2025 where
+module LiveInterpreter2025Part7 where
 
 import Control.Applicative
 import Control.Monad
@@ -48,88 +45,19 @@ data Expr
 type Name  = String
 type Value = Integer
 
--- | Exception type
-data Err
-  = UnboundVariable Name
-  | UnallocatedPointer Ptr
-  | OtherError String
-  deriving Show
-
 -- * Monad
 ------------------------------------------------------------------
 
-newtype Eval a = Eval { unEval :: ReaderT Env (ExceptT Err (StateT Store IO)) a }
-  deriving (Functor, Applicative, Monad, MonadReader Env, MonadError Err, MonadState Store, MonadIO)
+newtype Eval a = Eval { unEval :: ReaderT Env (StateT Store IO) a }
 
--- StateT Store IO a = Store -> IO (a, Store)
-
-
--- Eval a ˜= Env -> Store -> IO (a, Store)
--- Either Err a
-
--- Eval a ˜= Env -> Store -> IO (Either Err a, Store)
--- Eval a ˜= Env -> Store -> IO (Either Err (a, Store))
-
-runEval :: Eval a -> IO (Either Err a)
-runEval m = m & unEval & (`runReaderT` emptyEnv) & runExceptT & (`evalStateT` emptyStore)
-
+runEval :: Eval a -> IO a
+runEval m = do
+  evalStateT (runReaderT (unEval m) emptyEnv) emptyStore
 
 -- * Evaluation
 ------------------------------------------------------------------
 
-class Monad m => MonadEval m where
-  msg :: String -> m ()
-
-  lookupVar :: Name -> m Value
-  localScope :: Name -> Value -> m a -> m a
-
-  newRef :: Value -> m Ptr
-  deRef :: Ptr -> m Value
-  (=:) :: Ptr -> Value -> m Value
-  
-  catch :: m a -> m a -> m a
-
-instance MonadEval Eval where
-  msg :: String -> Eval ()
-  msg s = liftIO $ putStrLn s
-
-  lookupVar :: Name -> Eval Value
-  lookupVar x = do
-    env <- ask
-    case Map.lookup x env of
-      Just v -> return v
-      Nothing -> throwError $ UnboundVariable x
-
-  localScope :: Name -> Value -> Eval a -> Eval a
-  localScope x v m = local (\ env -> Map.insert x v env) m
-
-  newRef :: Value -> Eval Ptr
-  newRef v = do
-    Store{ nextPtr = p, heap = h } <- get
-    put Store{  nextPtr = p+1, heap = Map.insert p v h }
-    return p
-
-  deRef :: Ptr -> Eval Value
-  deRef p = do
-    Store{ heap = h } <- get
-    case Map.lookup p h of
-      Just v -> return v
-      Nothing -> throwError $ UnallocatedPointer p
-
-  (=:) :: Ptr -> Value -> Eval Value
-  p =: v = do
-    Store n heap <- get
-    case Map.lookup p heap of
-      Nothing -> throwError $ UnallocatedPointer p
-      Just _  -> do
-        put $ Store n $ Map.adjust (const v) p heap
-        return v
-
-  catch :: Eval a -> Eval a -> Eval a
-  catch m h = catchError m \ (_ :: Err) -> h
-
-
-eval :: MonadEval m => Expr -> m Value
+eval :: Expr -> Eval Value
 -- Pure
 eval (Lit n)        = return n
 eval (a :+: b)      = (+) <$> eval a <*> eval b
@@ -138,32 +66,81 @@ eval (a :+: b)      = (+) <$> eval a <*> eval b
   --    return (i + j)
 
 -- Printing
-eval (Print m)      = 0 <$ msg m
+eval (Print m)      = 0 <$ liftIO (putStrLn m)
   -- (<$>) :: (a -> b) -> m a -> m b
   -- (<$)  ::       b  -> m a -> m b
   -- do liftIO $ putStrLn m
   --    return 0
 
 -- Local variables
-eval (Var x)        = lookupVar x
+eval (Var x)        = do
+  Map.findWithDefault err x <$> ask
+  where err = error $ "unbound variable: " ++ x
+
 eval (Let x e1 e2)  = do
   v1 <- eval e1
-  localScope x v1 $ eval e2
+  local (Map.insert x v1) $ eval e2
 
 -- Pointers
 eval (NewRef e)     = do
   v <- eval e
-  newRef v
+  Store p heap <- get
+  put $ Store (p+1) $ Map.insert p v heap
+  return p
+
 eval (Deref pe)     = do
   p <- eval pe
-  deRef p
+  Store _ heap <- get
+  let err = error $ "Unallocated pointer: " ++ show p
+  return $ Map.findWithDefault err p heap
+
 eval (pe := ve)     = do
   v <- eval ve
   p <- eval pe
-  p =: v
+  modify \ (Store n heap) -> Store n $ Map.adjust (const v) p heap
+  return v
 
--- Exceptions
-eval (Catch e1 e2) = eval e1 `catch` eval e2
+-- -- Exceptions
+-- eval (Catch e1 e2)  = undefined
+
+-- * Eval monad
+------------------------------------------------------------------
+
+instance Monad Eval where
+  return   = pure
+  m >>= k  = Eval do
+    v <- unEval m
+    unEval (k v)
+
+instance Applicative Eval where
+  (<*>) = ap
+  pure v = Eval $ return v
+
+instance Functor Eval where
+  fmap  = liftM
+
+instance MonadReader Env Eval where
+  ask :: Eval Env
+  ask = Eval $ ReaderT \ env -> return env
+
+  local :: (Env -> Env) -> Eval a -> Eval a
+  local f m = Eval $ ReaderT \ env -> runReaderT (unEval m) (f env)
+  -- TODO: Use the MonadReader instance for ReaderT
+
+instance MonadState Store Eval where
+
+  modify :: (Store -> Store) -> Eval ()
+  modify f = Eval $ modify f
+
+  get :: Eval Store
+  get = Eval $ get
+
+instance MonadIO Eval where
+  liftIO :: IO a -> Eval a
+  liftIO m = Eval $ ReaderT \ _env -> do
+    a <- liftIO m
+    return a
+  -- TODO: Use the MonadIO instance for ReaderT
 
 -- * Reader monad
 ------------------------------------------------------------------
@@ -173,10 +150,6 @@ eval (Catch e1 e2) = eval e1 `catch` eval e2
 class Monad m => MonadReader r m where
   ask :: m r
   local :: (r -> r) -> m a -> m a
-
-  asks :: (r -> a) -> m a
-  asks f = f <$> ask
-
 
 -- ** Reader monad transformer
 
@@ -217,12 +190,6 @@ class Monad m => MonadState s m where
   put    :: s -> m ()
   put s  = modify (const s)
 
-  default get :: (MonadTrans t, MonadState s n, m ~ t n) => m s
-  get = lift get
-
-  default modify :: (MonadTrans t, MonadState s n, m ~ t n) => (s -> s) -> m ()
-  modify f = lift $ modify f
-
 -- ** State monad transformer
 
 newtype StateT  s m a = StateT  { runStateT  :: s -> m (a, s) }
@@ -255,65 +222,11 @@ instance Monad m => MonadState s (StateT s m) where
 
 -- ** State monad liftings
 
-instance MonadState s m => MonadState s (ReaderT r m)
-
--- * Exception monad
-------------------------------------------------------------------
-
--- ** MonadError
-------------------------------------------------------------------
-
-class Monad m => MonadError e m where
-  throwError :: e -> m a
-  catchError :: m a -> (e -> m a) -> m a
-
-  default throwError :: (MonadTrans t, MonadError e n, m ~ t n) => e -> m a
-  throwError = lift . throwError
-
-
--- ** ExceptT
-
-newtype ExceptT e m a = ExceptT { runExceptT :: m (Either e a) }
-
-instance Monad m => MonadError e (ExceptT e m) where
-  throwError :: e -> ExceptT e m a
-  throwError e = ExceptT $ return $ Left e
-
-  catchError :: ExceptT e m a -> (e -> ExceptT e m a) -> ExceptT e m a
-  catchError m h = ExceptT do
-    runExceptT m >>= \case
-      Left e  -> runExceptT (h e)
-      Right a -> return (Right a)
-
-instance Monad m => Monad (ExceptT e m) where
-  return = pure
-  m >>= k = ExceptT do
-    runExceptT m >>= \case
-      Left e  -> return (Left e)
-      Right a -> runExceptT (k a)
-
-instance Monad m => Applicative (ExceptT e m) where
-  pure a = ExceptT $ return $ Right a
-  (<*>) = ap
-
-instance Monad m => Functor (ExceptT e m) where
-  fmap = liftM
-
-instance MonadTrans (ExceptT e) where
-  lift :: Monad m => m a -> ExceptT e m a
-  lift m = ExceptT do
-    a <- m
-    return $ Right a
-
--- ** Liftings
-
-instance MonadIO m      => MonadIO (ExceptT e m)
-instance MonadState s m => MonadState s (ExceptT e m)
--- instance MonadReader r m => MonadReader r (ExceptT e m)
-
-instance MonadError e m => MonadError e (ReaderT r m) where
-  catchError :: ReaderT r m a -> (e -> ReaderT r m a) -> ReaderT r m a
-  catchError m h = ReaderT \ r -> catchError (runReaderT m r) \ e -> runReaderT (h e) r
+instance MonadState s m => MonadState s (ReaderT r m) where
+  get :: ReaderT r m s
+  get      = lift get
+  modify :: MonadState s m => (s -> s) -> ReaderT r m ()
+  modify f = lift $ modify f
 
 -- * IO monad
 ------------------------------------------------------------------
@@ -323,14 +236,14 @@ instance MonadError e m => MonadError e (ReaderT r m) where
 class Monad m => MonadIO m where
   liftIO :: IO a -> m a
 
-  default liftIO :: (MonadTrans t, MonadIO n, m ~ t n) => IO a -> m a
-  liftIO = lift . liftIO
-
 instance MonadIO IO where
   liftIO m = m
 
-instance MonadIO m => MonadIO (ReaderT r m)
-instance MonadIO m => MonadIO (StateT s m)
+instance MonadIO m => MonadIO (ReaderT r m) where
+  liftIO m = lift $ liftIO m
+
+instance MonadIO m => MonadIO (StateT s m) where
+  liftIO m = lift $ liftIO m
 
 -- * Monad transformers
 ------------------------------------------------------------------

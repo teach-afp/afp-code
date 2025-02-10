@@ -14,7 +14,7 @@
 
 
 
-module LiveInterpreter2025 where
+module LiveInterpreter2025Part11 where
 
 import Control.Applicative
 import Control.Monad
@@ -77,59 +77,7 @@ runEval m = m & unEval & (`runReaderT` emptyEnv) & runExceptT & (`evalStateT` em
 -- * Evaluation
 ------------------------------------------------------------------
 
-class Monad m => MonadEval m where
-  msg :: String -> m ()
-
-  lookupVar :: Name -> m Value
-  localScope :: Name -> Value -> m a -> m a
-
-  newRef :: Value -> m Ptr
-  deRef :: Ptr -> m Value
-  (=:) :: Ptr -> Value -> m Value
-  
-  catch :: m a -> m a -> m a
-
-instance MonadEval Eval where
-  msg :: String -> Eval ()
-  msg s = liftIO $ putStrLn s
-
-  lookupVar :: Name -> Eval Value
-  lookupVar x = do
-    env <- ask
-    case Map.lookup x env of
-      Just v -> return v
-      Nothing -> throwError $ UnboundVariable x
-
-  localScope :: Name -> Value -> Eval a -> Eval a
-  localScope x v m = local (\ env -> Map.insert x v env) m
-
-  newRef :: Value -> Eval Ptr
-  newRef v = do
-    Store{ nextPtr = p, heap = h } <- get
-    put Store{  nextPtr = p+1, heap = Map.insert p v h }
-    return p
-
-  deRef :: Ptr -> Eval Value
-  deRef p = do
-    Store{ heap = h } <- get
-    case Map.lookup p h of
-      Just v -> return v
-      Nothing -> throwError $ UnallocatedPointer p
-
-  (=:) :: Ptr -> Value -> Eval Value
-  p =: v = do
-    Store n heap <- get
-    case Map.lookup p heap of
-      Nothing -> throwError $ UnallocatedPointer p
-      Just _  -> do
-        put $ Store n $ Map.adjust (const v) p heap
-        return v
-
-  catch :: Eval a -> Eval a -> Eval a
-  catch m h = catchError m \ (_ :: Err) -> h
-
-
-eval :: MonadEval m => Expr -> m Value
+eval :: Expr -> Eval Value
 -- Pure
 eval (Lit n)        = return n
 eval (a :+: b)      = (+) <$> eval a <*> eval b
@@ -138,32 +86,49 @@ eval (a :+: b)      = (+) <$> eval a <*> eval b
   --    return (i + j)
 
 -- Printing
-eval (Print m)      = 0 <$ msg m
+eval (Print m)      = 0 <$ liftIO (putStrLn m)
   -- (<$>) :: (a -> b) -> m a -> m b
   -- (<$)  ::       b  -> m a -> m b
   -- do liftIO $ putStrLn m
   --    return 0
 
 -- Local variables
-eval (Var x)        = lookupVar x
+eval (Var x)        = do
+  asks (Map.lookup x) >>= \case
+    Just v  -> return v
+    Nothing -> throwError $ UnboundVariable x
+
 eval (Let x e1 e2)  = do
   v1 <- eval e1
-  localScope x v1 $ eval e2
+  local (Map.insert x v1) $ eval e2
 
 -- Pointers
 eval (NewRef e)     = do
   v <- eval e
-  newRef v
+  Store p heap <- get
+  put $ Store (p+1) $ Map.insert p v heap
+  return p
+
 eval (Deref pe)     = do
   p <- eval pe
-  deRef p
+  Store _ heap <- get
+  case Map.lookup p heap of
+    Just v  -> return v
+    Nothing -> throwError $ UnallocatedPointer p
+
 eval (pe := ve)     = do
   v <- eval ve
   p <- eval pe
-  p =: v
+  Store n heap <- get
+  case Map.lookup p heap of
+    Nothing -> throwError $ UnallocatedPointer p
+    Just _  -> do
+      put $ Store n $ Map.adjust (const v) p heap
+      return v
 
 -- Exceptions
-eval (Catch e1 e2) = eval e1 `catch` eval e2
+eval (Catch e1 e2) = catchError (eval e1) \ (_ :: Err) -> eval e2
+  -- eval e1 `catchError` \ (_ :: Err) -> eval e2
 
 -- * Reader monad
 ------------------------------------------------------------------
@@ -267,10 +232,6 @@ class Monad m => MonadError e m where
   throwError :: e -> m a
   catchError :: m a -> (e -> m a) -> m a
 
-  default throwError :: (MonadTrans t, MonadError e n, m ~ t n) => e -> m a
-  throwError = lift . throwError
-
-
 -- ** ExceptT
 
 newtype ExceptT e m a = ExceptT { runExceptT :: m (Either e a) }
@@ -312,6 +273,9 @@ instance MonadState s m => MonadState s (ExceptT e m)
 -- instance MonadReader r m => MonadReader r (ExceptT e m)
 
 instance MonadError e m => MonadError e (ReaderT r m) where
+  throwError :: e -> ReaderT r m a
+  throwError = lift . throwError
+
   catchError :: ReaderT r m a -> (e -> ReaderT r m a) -> ReaderT r m a
   catchError m h = ReaderT \ r -> catchError (runReaderT m r) \ e -> runReaderT (h e) r
 
