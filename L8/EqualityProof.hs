@@ -23,6 +23,8 @@ infixl 0 :=<:
 infixl 0 >=
 infixl 0 =<
 
+-- | An equality chain of elements of type @a@.
+--
 data Proof a
   = Proof a
   | ProofL a :>=: a
@@ -30,22 +32,34 @@ data Proof a
 data ProofL a
   = Proof a :=<: Justification
 
+-- | Start an equality chain.
+--
 proof :: a -> Proof a
 proof = Proof
 
-(>=) :: ProofL a -> a -> Proof a
-(>=) = (:>=:)
-
+-- | Left part of @=< justification >=@ to connect two
+--   consecutive elements of the equation chain.
+--
 (=<) :: Proof a -> Justification -> ProofL a
 (=<) = (:=<:)
 
-data Justification
-  = IH
-  | Conv
-  | forall a. Def a
-  | forall a. Hyp a
-  | forall a. Thm a
+-- | Right part of @=< justification >=@ to connect two
+--   consecutive elements of the equation chain.
+--
+(>=) :: ProofL a -> a -> Proof a
+(>=) = (:>=:)
 
+-- | Justification (unchecked).
+--
+data Justification
+  = IH                -- ^ By induction hypothesis.
+  | Conv              -- ^ By conversion (computation).
+  | forall a. Def a   -- ^ By definition of the given symbol.
+  | forall a. Hyp a   -- ^ By some hypothesis.
+  | forall a. Thm a   -- ^ By some theorem or lemma.
+
+-- | Check that all elements of the chain are actually equal.
+--
 check :: Eq a => Proof a -> Bool
 check = \case
   Proof  a -> True
