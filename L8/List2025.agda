@@ -35,50 +35,60 @@ reverse-[] = refl
 eta : {A B : Type} {f : A → B} → f ≡ (λ x → f x)
 eta = refl
 
-++-[] : {A : Type} (xs : List A) → xs ++ [] ≡ xs
-++-[] [] = refl
-++-[] (x ∷ xs) rewrite ++-[] xs = refl
 
 cong : {A B : Type} (f : A → B) {a₁ a₂ : A} (p : a₁ ≡ a₂) → f a₁ ≡ f a₂
 cong f {a₁} {.a₁} refl = refl
 
-anti-cong : {A B : Type} (f : A → B) (g : B → A) {a₁ a₂ : A} (p : a₁ ≡ g (f a₂)) → a₁ ≡ g (f a₂)
-anti-cong f g refl = {! !}
+-- anti-cong : {A B : Type} (f : A → B) (g : B → A) {a₁ a₂ : A} (p : a₁ ≡ g (f a₂)) → a₁ ≡ g (f a₂)
+-- anti-cong f g refl = {! !}
 
 sym : {A : Type} {a₁ a₂ : A} (p : a₁ ≡ a₂) → a₂ ≡ a₁
 sym refl = refl
 
 trans : {A : Type} {a₁ a₂ a₃ : A} (p : a₁ ≡ a₂) (q : a₂ ≡ a₃) → a₁ ≡ a₃
-trans p q = {!   !}
+trans refl q = q
 
-{-
 -- Monoid laws for (List, [], ++)
 
-++-[] : ∀{A} (xs : List A) → xs ++ [] ≡ xs
-++-[] xs = ?
+[]-++ : {A : Type} (xs : List A) → [] ++ xs ≡ xs
+[]-++ xs = refl
+
+-- {-# NON_TERMINATING #-}
+++-[] : {A : Type} (xs : List A) → xs ++ [] ≡ xs
+++-[] [] = refl
+++-[] (x ∷ xs) -- = ++-[] (x ∷ xs)
+  rewrite ++-[] xs = refl
+
 
 ++-assoc : ∀{A} (xs {ys zs} : List A) → (xs ++ ys) ++ zs ≡ xs ++ (ys ++ zs)
-++-assoc xs = ?
+++-assoc [] = refl
+++-assoc (x ∷ xs) = cong (x ∷_) (++-assoc xs)
+
 
 -- Involution laws
 
 reverse-++ : ∀{A} (xs ys : List A) → reverse (xs ++ ys) ≡ reverse ys ++ reverse xs
-reverse-++ xs ys = ?
---   where
---     step₁ : reverse (xs ++ ys) ++ [ x ] ≡ (reverse ys ++ reverse xs) ++ [ x ]
---     step₁ = ?
+reverse-++ []       ys = sym (++-[] (reverse ys))
+reverse-++ (x ∷ xs) ys = trans step₁ step₂
+  where
+    step₁ : reverse (xs ++ ys) ++ [ x ] ≡ (reverse ys ++ reverse xs) ++ [ x ]
+    step₁ = cong (_++ [ x ]) (reverse-++ xs ys)
 
---     step₂ : (reverse ys ++ reverse xs) ++ [ x ] ≡ reverse ys ++ (reverse xs ++ [ x ])
---     step₂ = ?
+    step₂ : (reverse ys ++ reverse xs) ++ [ x ] ≡ reverse ys ++ (reverse xs ++ [ x ])
+    step₂ = ++-assoc (reverse ys)
+    -- step₂ = ++-assoc (reverse ys) {zs = [ x ]}
+    -- f _x = f _y  ==> _x = _y
+    -- ys ++ _x = ys ++ _y ==> _x = _y
 
 reverse-reverse : ∀{A} (xs : List A) → reverse (reverse xs) ≡ xs
-reverse-reverse xs = ?
---   where
---     step₁ : reverse (reverse xs ++ [ x ]) ≡ reverse [ x ] ++ reverse (reverse xs)
---     step₁ = ?
+reverse-reverse [] = refl
+reverse-reverse (x ∷ xs) = trans step₁ step₂
+  where
+    step₁ : reverse (reverse xs ++ [ x ]) ≡ reverse [ x ] ++ reverse (reverse xs)
+    step₁ = reverse-++ (reverse xs) [ x ]
 
---     step₂ : reverse [ x ] ++ reverse (reverse xs) ≡ reverse [ x ] ++ xs
---     step₂ = ?
+    step₂ : reverse [ x ] ++ reverse (reverse xs) ≡ reverse [ x ] ++ xs
+    step₂ = cong (x ∷_) (reverse-reverse xs)
 
 -- -}
 -- -}
