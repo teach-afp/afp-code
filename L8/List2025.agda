@@ -5,13 +5,13 @@ module List2025 where
 open import Agda.Primitive renaming (Set to Type)
 
 data List (A : Type) : Type where
-  []  : List A
-  _∷_ : (x : A) (xs : List A) → List A
+    []  : List A
+    _∷_ : (x : A) (xs : List A) → List A   -- A → List A → List A
 
 infixr 6 _∷_
 infixl 4 _++_
 
-_++_ : ∀{A : Type} (xs ys : List A) → List A
+_++_ : ∀ {A : Type} (xs ys : List A) → List A
 []     ++ ys = ys
 x ∷ xs ++ ys = x ∷ (xs ++ ys)
 
@@ -27,11 +27,26 @@ infix 2 _≡_
 data _≡_ {A : Type} (a : A) : A → Type where
   refl : a ≡ a
 
+{-# BUILTIN EQUALITY _≡_ #-}
+
+reverse-[] : {A : Type} → reverse {A} [] ≡ []
+reverse-[] = refl
+
+eta : {A B : Type} {f : A → B} → f ≡ (λ x → f x)
+eta = refl
+
+++-[] : {A : Type} (xs : List A) → xs ++ [] ≡ xs
+++-[] [] = refl
+++-[] (x ∷ xs) rewrite ++-[] xs = refl
+
 cong : {A B : Type} (f : A → B) {a₁ a₂ : A} (p : a₁ ≡ a₂) → f a₁ ≡ f a₂
-cong f p = {!   !}
+cong f {a₁} {.a₁} refl = refl
+
+anti-cong : {A B : Type} (f : A → B) (g : B → A) {a₁ a₂ : A} (p : a₁ ≡ g (f a₂)) → a₁ ≡ g (f a₂)
+anti-cong f g refl = {! !}
 
 sym : {A : Type} {a₁ a₂ : A} (p : a₁ ≡ a₂) → a₂ ≡ a₁
-sym p = {!   !}
+sym refl = refl
 
 trans : {A : Type} {a₁ a₂ a₃ : A} (p : a₁ ≡ a₂) (q : a₂ ≡ a₃) → a₁ ≡ a₃
 trans p q = {!   !}

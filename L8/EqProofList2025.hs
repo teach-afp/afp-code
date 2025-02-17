@@ -33,7 +33,6 @@ reverse (x:xs) = reverse xs ++ [x]
 prop_length_append :: [a] -> [a] -> Bool
 prop_length_append xs ys = length (xs ++ ys) == length xs + length ys
 
-{- }
 -- (List a, [], ++) is a monoid
 
 -- length is a monoid homomorphism from (List a, [], ++) to (Nat, 0, +)
@@ -47,15 +46,20 @@ prop_length_append xs ys = length (xs ++ ys) == length xs + length ys
 --
 prop_length_append_nil :: [a] -> Proof _
 prop_length_append_nil ys = proof
-  (length ([] ++ ys))    =< Def "TODO" >=
-
+  (length ([] ++ ys))    =< Def "++" >=
+  (length ys)            =< Def "TODO" >=
+  (0 + length ys)        =< Def "+"   >=
+  length ys              =< Def "length"      >=
   (length [] + length ys)
 
 -- Case (x:xs).
 --
 prop_length_append_cons :: a -> [a] -> [a] -> Proof _
 prop_length_append_cons x xs ys = proof
-  (length ((x:xs) ++ ys))      =< Def "TODO" >=
+  (length ((x:xs) ++ ys))      =< Def (++) >=
+  (length (x : (xs ++ ys)))    =< Def length >=
+  (1 + length (xs ++ ys))      =< IH  >=
+  (1 + length xs + length ys)  =< Def "length" >=
   (length (x:xs) + length ys)
 
 -- Unit testing the proofs.
