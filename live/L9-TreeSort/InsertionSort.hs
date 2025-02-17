@@ -1,5 +1,8 @@
 {-# LANGUAGE GADTs #-}
 
+-- Advanced Functional Programming
+-- Chalmers TDA342 / GU DIT260
+
 -- | Binary search tree.
 
 data BST a where

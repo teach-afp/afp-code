@@ -1,4 +1,4 @@
--- Advanced Functional Programming course 2024
+-- Advanced Functional Programming
 -- Chalmers TDA342 / GU DIT260
 --
 -- Introduction to Dependent Types with Agda
