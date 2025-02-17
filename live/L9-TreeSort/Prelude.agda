@@ -9,10 +9,12 @@
 
 module Prelude where
 
+open import Agda.Primitive renaming (Set to Type)
+
 -- Natural numbers as our first example of
 -- an inductive data type.
 
-data ℕ : Set where
+data ℕ : Type where
   zero : ℕ
   suc  : (n : ℕ) → ℕ
 
@@ -24,7 +26,7 @@ data ℕ : Set where
 
 -- Lists are a parameterized inductive data type.
 
-data List (A : Set) : Set where
+data List (A : Type) : Type where
   []  : List A
   _∷_ : (x : A) (xs : List A) → List A   -- C-\ : :
 
@@ -34,7 +36,7 @@ infixr 6 _∷_
 
 -- Disjoint sum type.
 
-data _⊎_ (A B : Set) : Set where  -- \uplus
+data _⊎_ (A B : Type) : Type where  -- \uplus
   inl : A → A ⊎ B
   inr : B → A ⊎ B
 
@@ -46,9 +48,9 @@ infixr 4 _⊎_
 -- which views a proposition as the set/type of its proofs,
 -- it is also the absurd proposition.
 
-data False : Set where
+data False : Type where
 
-⊥-elim : False → {A : Set} → A
+⊥-elim : False → {A : Type} → A
 ⊥-elim = {!!}
 
 -- C-c C-SPC give
@@ -64,7 +66,7 @@ data False : Set where
 --   Σ ℕ B =  Σ   B(n) = B(0) + B(1) + ...
 --           n ∈ ℕ
 
-record Σ (A : Set) (B : A → Set) : Set where  -- \GS  \Sigma
+record Σ (A : Type) (B : A → Type) : Type where  -- \GS  \Sigma
   constructor _,_
   field  fst : A
          snd : B fst
@@ -74,7 +76,7 @@ infixr 5 _,_
 
 -- The non-dependent version is the ordinary Cartesian product.
 
-_×_ : (A B : Set) → Set
+_×_ : (A B : Type) → Type
 A × B = Σ A (λ _ → B)
 
 infixr 5 _×_
@@ -84,10 +86,10 @@ infixr 5 _×_
 -- By Curry-Howard, it corresponds to Truth, as
 -- no evidence is needed to construct this proposition.
 
-record True : Set where
+record True : Type where
 
-test : True
-test = {!!}
+trivial : True
+trivial = {!!}
 
 -- Example: distributivity  A ∧ (B ∨ C) → (A ∧ B) ∨ (A ∧ C)
 
@@ -102,17 +104,17 @@ dist = {!!}
 --
 -- which is
 --
---   A × A → Set
+--   A × A → Type
 --
 -- by the Curry-Howard-Isomorphism
 -- and
 --
---   A → A → Set
+--   A → A → Type
 --
 -- by currying.
 
-Rel : (A : Set) → Set₁
-Rel A = A → A → Set
+Rel : (A : Type) → Type₁
+Rel A = A → A → Type
 
 -- Less-or-equal on natural numbers
 

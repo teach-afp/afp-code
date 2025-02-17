@@ -7,11 +7,12 @@
 
 module TreeSortOrd where
 
+open import Agda.Primitive renaming (Set to Type)
 open import Prelude
 
 -- Comparing natural numbers
 
-Total : ∀{A} (R : Rel A) → Set
+Total : ∀{A} (R : Rel A) → Type
 Total R = ∀ x y → R x y ⊎ R y x
 
 pattern le z = inl z
@@ -22,7 +23,7 @@ compare = {!!}
 
 -- Extension by a least and a greatest element
 
-data Ext (A : Set) : Set where
+data Ext (A : Type) : Type where
   ⊤ : Ext A
   # : A → Ext A
   ⊥ : Ext A
@@ -30,11 +31,11 @@ data Ext (A : Set) : Set where
 ext : ∀{A} → Rel A → Rel (Ext A)
 ext R x y = {!!}
 
-module _ {A : Set} (R : Rel A) (compare : Total R) where
+module _ {A : Type} (R : Rel A) (compare : Total R) where
 
   -- Binary search trees (ordered)
 
-  data BST (l u : Ext A) : Set where
+  data BST (l u : Ext A) : Type where
 
     leaf : ext R l u            -- proof that l ≤ u
          → BST l u
@@ -66,7 +67,7 @@ module _ {A : Set} (R : Rel A) (compare : Total R) where
 {-
   -- Ordered lists
 
-  data OList (l u : Ext A) : Set where
+  data OList (l u : Ext A) : Type where
     onil  : ext R l u → OList l u
     ocons : (p : A)
             (l≤p : ext R l (# p))
@@ -76,7 +77,8 @@ module _ {A : Set} (R : Rel A) (compare : Total R) where
 
   _++_ : ∀{l m u}
          (xs : OList l m)
-         (ys : ∀{k} (k≤m : ext R k m) → OList k u) → OList l u
+         (ys : ∀{k} (k≤m : ext R k m) → OList k u)
+       → OList l u
   ocons x l≤x xs ++ ys = ocons x l≤x (xs ++ ys)
   onil l≤m       ++ ys = ys l≤m
 
