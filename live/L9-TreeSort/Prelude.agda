@@ -5,7 +5,7 @@
 --
 -- File 1: The Curry-Howard Isomorphism
 
-{-# OPTIONS --allow-unsolved-metas #-}
+-- {-# OPTIONS --allow-unsolved-metas #-}
 
 module Prelude where
 
@@ -51,7 +51,7 @@ infixr 4 _⊎_
 data False : Type where
 
 ⊥-elim : False → {A : Type} → A
-⊥-elim = {!!}
+⊥-elim = {! !}
 
 -- C-c C-SPC give
 -- C-c C-, show hypotheses and goal
@@ -89,12 +89,12 @@ infixr 5 _×_
 record True : Type where
 
 trivial : True
-trivial = {!!}
+trivial = {! !}
 
 -- Example: distributivity  A ∧ (B ∨ C) → (A ∧ B) ∨ (A ∧ C)
 
 dist : ∀{A B C : Set} → A × (B ⊎ C) → (A × B) ⊎ (A × C)
-dist = {!!}
+dist = {! !}
 
 -- Relations
 
@@ -119,7 +119,7 @@ Rel A = A → A → Type
 -- Less-or-equal on natural numbers
 
 _≤_ : Rel ℕ
-x  ≤ y     = {!!}
+x  ≤ y     = {! !}
 
 -- C-c C-l load
 -- C-c C-c case split

@@ -19,7 +19,7 @@ pattern le z = inl z
 pattern ge z = inr z
 
 compare : Total _≤_
-compare = {!!}
+compare = {! !}
 
 -- Extension by a least and a greatest element
 
@@ -29,7 +29,7 @@ data Ext (A : Type) : Type where
   ⊥ : Ext A
 
 ext : ∀{A} → Rel A → Rel (Ext A)
-ext R x y = {!!}
+ext R x y = {! !}
 
 module _ {A : Type} (R : Rel A) (compare : Total R) where
 
@@ -53,10 +53,10 @@ module _ {A : Type} (R : Rel A) (compare : Total R) where
          → (p≤u : ext R (# p) u)
          → (t : BST l u)            -- insert into this tree
          → BST l u
-  insert p l≤p p≤u (leaf l≤u) = {!!}
+  insert p l≤p p≤u (leaf l≤u) = {! !}
   insert p l≤p p≤u (node q lt rt) with compare p q
-  ... | le p≤q = {!!}
-  ... | ge q≤p = {!!}
+  ... | le p≤q = {! !}
+  ... | ge q≤p = {! !}
 
   -- Building a binary search tree from a list
 
