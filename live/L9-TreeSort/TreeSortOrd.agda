@@ -19,7 +19,9 @@ pattern le z = inl z
 pattern ge z = inr z
 
 compare : Total _≤_
-compare = {!!}
+compare zero y = le _
+compare (suc x) zero = ge _
+compare (suc x) (suc y) = compare x y
 
 -- Extension by a least and a greatest element
 
@@ -29,7 +31,10 @@ data Ext (A : Type) : Type where
   ⊥ : Ext A
 
 ext : ∀{A} → Rel A → Rel (Ext A)
-ext R x y = {!!}
+ext R x ⊤         = True
+ext R ⊥ x         = True
+ext R (# x) (# y) = R x y
+ext R _ _         = False
 
 module _ {A : Type} (R : Rel A) (compare : Total R) where
 
@@ -53,10 +58,10 @@ module _ {A : Type} (R : Rel A) (compare : Total R) where
          → (p≤u : ext R (# p) u)
          → (t : BST l u)            -- insert into this tree
          → BST l u
-  insert p l≤p p≤u (leaf l≤u) = {!!}
+  insert p l≤p p≤u (leaf l≤u) = node p (leaf l≤p) (leaf p≤u)
   insert p l≤p p≤u (node q lt rt) with compare p q
-  ... | le p≤q = {!!}
-  ... | ge q≤p = {!!}
+  ... | le p≤q = node q (insert p l≤p p≤q lt) rt
+  ... | ge q≤p = node q lt (insert p q≤p p≤u rt)
 
   -- Building a binary search tree from a list
 
@@ -64,7 +69,6 @@ module _ {A : Type} (R : Rel A) (compare : Total R) where
   tree []       = leaf _
   tree (x ∷ xs) = insert x _ _ (tree xs)
 
-{-
   -- Ordered lists
 
   data OList (l u : Ext A) : Type where

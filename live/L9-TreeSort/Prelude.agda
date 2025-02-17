@@ -53,6 +53,13 @@ data False : Type where
 ⊥-elim : False → {A : Type} → A
 ⊥-elim = {!!}
 
+variable
+  A B : Type
+
+⊥-unit-left : False ⊎ A → A
+-- ⊥-unit-left (inl ())
+⊥-unit-left (inr x)  = x
+
 -- C-c C-SPC give
 -- C-c C-, show hypotheses and goal
 -- C-c C-. show hypotheses and infers type
@@ -74,12 +81,21 @@ open Σ
 
 infixr 5 _,_
 
+-- data  Σ (A : Type) (B : A → Type) : Type where
+--   _,_ : (fst : A) (snd : B fst) → Σ A B
+
 -- The non-dependent version is the ordinary Cartesian product.
 
 _×_ : (A B : Type) → Type
 A × B = Σ A (λ _ → B)
 
+-- mkPair : (a : A) → B a → Σ A (λ x → B x)
+-- mkPair a b = a , b
+
 infixr 5 _×_
+
+-- ex0 : Σ ℕ (λ n → n ≡ 0)
+-- ex0 = 0 , refl
 
 -- The record type with no fields has exactly one inhabitant
 -- namely the empty tuple record{}
@@ -93,8 +109,9 @@ trivial = {!!}
 
 -- Example: distributivity  A ∧ (B ∨ C) → (A ∧ B) ∨ (A ∧ C)
 
-dist : ∀{A B C : Set} → A × (B ⊎ C) → (A × B) ⊎ (A × C)
-dist = {!!}
+dist : ∀{A B C : Type} → A × (B ⊎ C) → (A × B) ⊎ (A × C)
+dist (a , inl b) = inl (a , b)
+dist (a , inr c) = inr (a , c)
 
 -- Relations
 
@@ -119,10 +136,22 @@ Rel A = A → A → Type
 -- Less-or-equal on natural numbers
 
 _≤_ : Rel ℕ
-x  ≤ y     = {!!}
+zero ≤ y = True
+suc x ≤ zero = False
+suc x ≤ suc y = x ≤ y
 
 -- C-c C-l load
 -- C-c C-c case split
 -- C-c C-, show goal and assumptions
 -- C-c C-. show goal and assumptions and current term
 -- C-c C-SPC give
+
+≤-refl : (n : ℕ) → n ≤ n
+≤-refl zero    = trivial
+≤-refl (suc n) = ≤-refl n
+
+ex34 : 3 ≤ 4
+ex34 = trivial
+
+ex : 1 ≤ 0 → False
+ex x = x
