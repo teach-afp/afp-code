@@ -16,7 +16,7 @@ import Vec ( Nat(Zero, Suc), SNat(SZero, SSuc) )
 ------------------------------------------------------------------------
 -- Singletons and their existential closure.
 
-type family Sing k :: k -> Type
+type family Sing k :: k -> Type  -- declaration of an open type family
 
 data SomeSing k where
   Wrap :: Sing k p -> SomeSing k
@@ -38,6 +38,9 @@ data Ext a where
   Emb :: a -> Ext a
 
 data Empty where
+
+-- Just like a class can get new instances,
+-- an open type family can always get new clauses:
 
 type instance Le Bot     Bot     = ()
 type instance Le Bot     (Emb y) = ()

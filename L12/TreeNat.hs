@@ -19,6 +19,8 @@ data Empty
 -- | Comparing two type-level Nats.
 --
 -- Truth is the unit type.  Absurdity the empty type.
+--
+-- Implemented as closed type family.
 
 type family Le (l :: Nat) (r :: Nat) where
   Le Zero r          = ()
