@@ -4,7 +4,8 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE TypeFamilies #-}
 
--- | Length-index lists (vectors).
+-- | Binary search trees where keys are natural numbers.
+--   Tress are indexed by lower and upper bound.
 
 module TreeNat where
 
