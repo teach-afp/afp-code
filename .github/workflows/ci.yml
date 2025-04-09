@@ -83,14 +83,6 @@ jobs:
       run:  |
         stack haddock --no-haddock-deps
 
-    - name: Build with stack (no Windows)
-      if:   ${{ runner.os != 'Windows' }}
-      run:  stack test --stack-yaml=stack-no-win.yaml --no-run-tests
-
-    - name: Haddock (no Windows)
-      if:   ${{ runner.os != 'Windows' }}
-      run:  stack haddock --stack-yaml=stack-no-win.yaml --no-haddock-deps
-
     - name: Save cache
       uses: actions/cache/save@v4
       if:   always() && steps.cache.outputs.cache-hit != 'true'
