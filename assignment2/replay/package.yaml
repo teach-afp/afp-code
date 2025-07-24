@@ -28,7 +28,7 @@ executables:
     dependencies:
     - exceptions
     - text
-    - scotty >=0.20 && <0.22
+    - scotty >=0.20 && <0.23
         # scotty >= 0.20 needed for formParam
     - wai-extra
         # wai-extra for logging
@@ -40,7 +40,7 @@ executables:
     - Web
     dependencies:
     - replay
-    - scotty >=0.20 && <0.22
+    - scotty >=0.20 && <0.23
 
 tests:
   test-replay:

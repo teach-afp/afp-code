@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -53,7 +53,7 @@ executable testscotty
   build-depends:
       base >=4.12 && <5
     , exceptions
-    , scotty >=0.20 && <0.22
+    , scotty >=0.20 && <0.23
     , text
     , wai-extra
 
@@ -71,7 +71,7 @@ executable web
   build-depends:
       base >=4.12 && <5
     , replay
-    , scotty >=0.20 && <0.22
+    , scotty >=0.20 && <0.23
 
 test-suite test-replay
   type: exitcode-stdio-1.0
