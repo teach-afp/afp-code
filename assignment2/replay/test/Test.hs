@@ -55,12 +55,11 @@ checkTestCase :: TestCase -> IO Bool
 checkTestCase (TestCase name i r p) = do
   putStr $ name ++ ": "
   r' <- runProgram p i
-  if r == r'
-    then putStrLn "ok" >> return True
-    else putStrLn ("FAIL: expected " ++ show r ++
-                  " instead of " ++ show r')
-         >> return False
-
+  let success = r == r'
+  if success
+    then putStrLn "ok"
+    else putStrLn $ unwords [ "FAIL: expected", show r, "instead of", show r' ]
+  return success
 
 -- | List of interesting test cases.
 testCases :: [TestCase]
