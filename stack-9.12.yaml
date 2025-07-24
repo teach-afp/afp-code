@@ -1,0 +1,34 @@
+# Packages that work on the three major OSs.
+#
+# See also stack-no-win.yaml.
+
+resolver: nightly-2025-07-24
+
+packages:
+- L1
+- L2
+- L3
+- L4
+- L5
+- L6
+- L7
+- L8
+- L10
+- L12
+- TypeBasedModelingI
+- TypeBasedModelingII
+- Resumption
+- assignment1/turtle-graphics-gloss
+- assignment1/turtle-graphics-glut
+- assignment2/replay
+- assignment3/ifc/basic1
+- assignment3/ifc/basic2
+
+- live/L8
+- live/L10
+- live/L12
+
+extra-deps:
+- GLUT-2.7.0.16
+- gloss-1.13.2.2
+- gloss-rendering-1.13.2.1
