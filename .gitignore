@@ -14,3 +14,5 @@ stack*.yaml.lock
 \#*\#
 html/
 live-start.zip
+/L1/LazyIO
+/L1/SpaceLeaks

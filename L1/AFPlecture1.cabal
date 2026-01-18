@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.37.0.
+-- This file has been generated from package.yaml by hpack version 0.39.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -10,16 +10,23 @@ build-type:     Simple
 
 library
   exposed-modules:
+      LazyIO
       Lect1
       QuizPrimeCheck
+      SpaceLeaks
       TypeClasses
       TypeClasses2025
   other-modules:
       Paths_AFPlecture1
   hs-source-dirs:
       ./
+  default-extensions:
+      BlockArguments
+      LambdaCase
+      PatternSynonyms
   build-depends:
       base
-  default-language: Haskell2010
+    , text
+  default-language: GHC2021
   if impl(ghc >= 9.8)
     ghc-options: -Wno-x-partial
