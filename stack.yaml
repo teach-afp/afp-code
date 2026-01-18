@@ -6,6 +6,7 @@ resolver: lts-22.44
 
 packages:
 - L1
+- LazyEvaluator
 - L2
 - L3
 - L4

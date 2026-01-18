@@ -1,0 +1,34 @@
+name:      LazyEvaluator
+version:   0.0.20260118
+synopsis:  A lazy evaluator
+license:   BSD-3-Clause
+author:    Andreas Abel <andreas.abel@gu.se>
+
+dependencies:
+  - base >= 4.18 && < 5
+  - array
+  - containers
+  - text
+
+build-tools:
+  - alex
+  - happy
+
+executable:
+  main:         Main.hs
+  source-dirs:  .
+
+  # exclude some modules
+  when:
+    condition: false
+    other-modules:
+      - Lazy.ErrM
+      - Lazy.Skel
+      - Lazy.Test
+
+language: GHC2021
+default-extensions:
+  - BlockArguments
+  - LambdaCase
+
+ghc-options: -Wall

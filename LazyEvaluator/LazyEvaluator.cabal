@@ -1,0 +1,40 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.39.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           LazyEvaluator
+version:        0.0.20260118
+synopsis:       A lazy evaluator
+author:         Andreas Abel <andreas.abel@gu.se>
+maintainer:     Andreas Abel <andreas.abel@gu.se>
+license:        BSD-3-Clause
+build-type:     Simple
+
+executable LazyEvaluator
+  main-is: Main.hs
+  other-modules:
+      Interpreter
+      Lazy.Abs
+      Lazy.Lex
+      Lazy.Par
+      Lazy.Print
+      Paths_LazyEvaluator
+  autogen-modules:
+      Paths_LazyEvaluator
+  hs-source-dirs:
+      ./
+  default-extensions:
+      BlockArguments
+      LambdaCase
+  ghc-options: -Wall
+  build-tool-depends:
+      alex:alex
+    , happy:happy
+  build-depends:
+      array
+    , base >=4.18 && <5
+    , containers
+    , text
+  default-language: GHC2021

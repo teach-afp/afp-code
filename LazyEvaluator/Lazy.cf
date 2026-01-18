@@ -1,0 +1,13 @@
+Prog.  Program ::= "main" "=" "print" "do" Exp;
+
+EInt.  Exp3 ::= Integer;
+EVar.  Exp3 ::= Ident;
+EApp.  Exp2 ::= Exp2 Exp3;
+EPlus. Exp1 ::= Exp1 "+" Exp2;
+EAbs.  Exp  ::= "\\" Ident "->" Exp;
+ELet.  Exp  ::= "let" Ident "=" Exp ";" Exp;
+
+coercions Exp 3;
+
+comment "--";
+comment "{-" "-}";
