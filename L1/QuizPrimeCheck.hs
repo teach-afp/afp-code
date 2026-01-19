@@ -25,5 +25,5 @@ ensurePrime k =
   let _ = checkPrime k
   in  k
 
--- menti.com 8725 3240 https://www.menti.com/aloyjb5u3jgo?source=voteCode
+-- menti.com 4490 5431  https://www.menti.com/aloyjb5u3jgo?source=voteCode
 main = print $ ensurePrime 4
