@@ -60,6 +60,9 @@ evalVar env x = case Map.lookup x env of
       v <- eval env1 e
       writeIORef p $ Val v
       return v
-  Nothing -> do
-    putStrLn $ "unbound variable " ++ printTree x
-    exitFailure
+  Nothing -> die $ "unbound variable " ++ printTree x
+
+die :: String -> IO a
+die msg = do
+  putStrLn msg
+  exitFailure
