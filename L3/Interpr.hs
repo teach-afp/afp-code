@@ -130,25 +130,25 @@ data L a = L a [String]
 interpL :: Expr -> L Int
 interpL (Con i)     = L i ["-- Hit Con --"]
 interpL (Div e1 e2) =
-  L (i1 `div` i2) $ concat
-    [ [ "-- Hit a Div --" ]
-    , [ "** Left recursive call **" ]
-    , msgs1
-    , [ "** Right recursive call **" ]
-    , msgs2
-    ]
-  where
-    L i1 msgs1 = interpL e1
-    L i2 msgs2 = interpL e2
+  case interpL e1 of
+    L i1 msgs1 ->
+      case interpL e2 of
+        L i2 msgs2 ->
+          L (i1 `div` i2) $ concat
+            [ [ "-- Hit a Div --" ]
+            , [ "** Left recursive call **" ]
+            , msgs1
+            , [ "** Right recursive call **" ]
+            , msgs2
+            ]
 
 runL :: Expr -> IO ()
-runL e = do
+runL e = case interpL e of
+  L i msgs -> do
     putStr "The result is: "
     putStrLn $ show i
     putStrLn "Log:"
     mapM_ putStrLn msgs
-  where
-    L i msgs = interpL e
 
 {-
    What if you have many other constructors in the language which you want to log
