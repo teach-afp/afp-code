@@ -7,12 +7,17 @@ dependencies:
   - base
   - text
 
-when:
-  condition: impl(ghc >= 9.8)
-  ghc-options: -Wno-x-partial
-
 default-language: GHC2021
 default-extensions:
   - BlockArguments
   - LambdaCase
   - PatternSynonyms
+
+# -ffull-laziness is part of -O1 but does some expression
+# lifting that may introduce space leaks.
+# Thus, we turn it off here (relevant for file SpaceLeaks.hs).
+ghc-options: -fno-full-laziness
+
+when:
+  condition: impl(ghc >= 9.8)
+  ghc-options: -Wno-x-partial
