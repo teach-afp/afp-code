@@ -1,20 +1,31 @@
-dist/
-dist-newstyle/
-*.o
-*.hi
-*.dyn_o
-*.dyn_hi
-.cabal-sandbox/
-cabal.sandbox.config
-cabal.project.local
-.stack-work/
-stack*.yaml.lock
-*.agdai
+# Generic ignores
 *~
 \#*\#
+
+# Build products
+*.agdai
+*.dyn_hi
+*.dyn_o
+*.hi
+*.o
+.cabal-sandbox/
+.stack-work/
+cabal.sandbox.config
+dist-newstyle/
+dist/
+stack*.yaml.lock
+
+# Local configuration
+.ghci
+.vscode/
+cabal.project.local
+
+# Others
 html/
 live-start.zip
+/L1/files/
 /L1/LazyIO
 /L1/SpaceLeaks
 /LazyEvaluator/Lazy/
 /LazyEvaluator/examples/Ex1
+/tmp/
