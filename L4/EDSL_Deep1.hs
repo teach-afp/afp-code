@@ -46,12 +46,17 @@ example1 = putC 'a'
 echo :: Program ()
 echo = getC >>= \case
   Nothing -> return ()
-  Just c  -> putC c
+  Just c  -> do
+    putC c
+    echo
 
 double_echo :: Program ()
 double_echo = getC >>= \case
   Nothing -> return ()
-  Just c  -> putC c >> putC c
+  Just c  -> do
+    putC c
+    putC c
+    double_echo
 
 instance Monad Program where
   return  =  Return
