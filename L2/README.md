@@ -1,6 +1,6 @@
 # Lecture 2: (Embedded) Domain Specific Languages
 
-[Lecture slides](http://www.cse.chalmers.se/edu/course/TDA342_Advanced_Functional_Programming/lecture2.html)
+[Lecture slides](https://teach-afp.github.io/www/lecture2.html)
 
 Below is just a "table of contents" for the lecture.
 
