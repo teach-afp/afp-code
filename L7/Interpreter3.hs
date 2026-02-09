@@ -1,4 +1,4 @@
--- | Version 3 of the interpreter
+-- | Version 3 of the interpreter: Exceptions losing state changes
 
 module Interpreter3 where
 
@@ -8,6 +8,7 @@ import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Except    -- new
 
+import Data.Function ((&))
 import Data.Map (Map)
 import qualified Data.Map as Map
 
@@ -59,17 +60,22 @@ data Err
 -- ExceptT on the inside (wrapped by the state monad)
 type Eval a = StateT Store
                 (ReaderT Env
-                  (ExceptT Err Identity)) -- new
+                  (ExceptT Err         -- new
+                     Identity))
                 a
 
-runEval :: Eval a -> Either Err a      -- new type!
-runEval st = runIdentity
-                      (runExceptT     -- new
-                        (runReaderT
-                            (evalStateT st emptyStore)
-                        emptyEnv)
-                      )
+-- Eval a
+--   ~= s -> (ReaderT ...) (a , s)
+--   ~= s -> r -> (ExceptT ...) (a , s)
+--   ~= s -> r -> Identity (Either e (a, s))
+--   ~= s -> r -> Either e (a, s)
 
+runEval :: Eval a -> Either Err a      -- new type!
+runEval m = m
+  & (`evalStateT` emptyStore)
+  & (`runReaderT` emptyEnv)
+  & runExceptT                         -- new
+  & runIdentity
 
 -- * Environment manipulation (no changes from Interpreter1)
 

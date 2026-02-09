@@ -1,3 +1,4 @@
+{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE QuantifiedConstraints #-}
 
 -- | A reimplementation of standard monad transformers.
@@ -21,7 +22,8 @@ instance Monad m => Functor (ReaderT r m) where
   fmap = liftM
 
 instance Monad m => Applicative (ReaderT r m) where
-  pure a = ReaderT \ r -> pure a
+  pure :: a -> ReaderT r m a
+  pure a = ReaderT \ _r -> pure a
   (<*>)  = ap
 
 instance Monad m => Monad (ReaderT r m) where
@@ -48,21 +50,24 @@ newtype StateT s m a = StateT { runStateT :: s -> m (a, s) }
 instance Monad m => Functor (StateT s m) where fmap = liftM
 
 instance Monad m => Applicative (StateT s m) where
+  pure :: a -> StateT s m a
   pure a = StateT \ s -> pure (a, s)
+
   (<*>)  = ap
 
 instance Monad m => Monad (StateT s m) where
-  m >>= k = StateT \ s -> do
-    (a, s1) <- runStateT m s
-    (b, s2) <- runStateT (k a) s1
-    return (b, s2)
+  (>>=) :: StateT s m a -> (a -> StateT s m b) -> StateT s m b
+  m >>= k = StateT \ s1 -> do
+    (a, s2) <- runStateT m s1
+    (b, s3) <- runStateT (k a) s2
+    return (b, s3)
 
 instance Monad m => MonadState s (StateT s m) where
   get :: StateT s m s
   get = StateT \ s -> pure (s, s)
 
   put :: s -> StateT s m ()
-  put s = StateT \ _ -> pure ((), s)
+  put s = StateT \ _s -> pure ((), s)
 
 -- * Liftings
 
@@ -101,6 +106,24 @@ instance MonadTrans (StateT s) where
     a <- m
     return (a, s)
 
+-- Lifting a 'MonadState' through a 'MonadTrans'(former)
+-- can be implemented uniformly.
+
+instance (MonadState s m, MonadTrans t) => MonadState s (t m) where
+  get :: t m s
+  get = lift get
+  put :: s -> t m ()
+  put s = lift $ put s
+
+-- The reason is that the methods of @MonadState s m@ never mention @m@ in an argument.
+
+-- Trying the same for MonadReader fails for 'local'
+instance (MonadReader r m, MonadTrans t) => MonadReader r (t m) where
+  ask :: t m r
+  ask = lift ask
+  local :: (r -> r) -> t m a -> t m a
+  local f tm = undefined  -- cannot analyse tm, would need 'unlift' (run) for @t@
+
 -- * Exception
 
 class Monad m => MonadError e m where
@@ -112,10 +135,12 @@ newtype ExceptT e m a = ExceptT { runExceptT :: m (Either e a) }
 instance Monad m => Functor (ExceptT e m) where fmap = liftM
 
 instance Monad m => Applicative (ExceptT e m) where
+  pure :: a -> ExceptT e m a
   pure a = ExceptT $ pure $ Right a
   (<*>)  = ap
 
 instance Monad m => Monad (ExceptT e m) where
+  (>>=) :: ExceptT e m a -> (a -> ExceptT e m b) -> ExceptT e m b
   m >>= k = ExceptT do
     r <- runExceptT m
     case r of
@@ -123,20 +148,26 @@ instance Monad m => Monad (ExceptT e m) where
       Right a -> runExceptT $ k a
 
 instance Monad m => MonadError e (ExceptT e m) where
+  throwError :: e -> ExceptT e m a
   throwError e = ExceptT $ pure $ Left e
+
+  catchError :: ExceptT e m a -> (e -> ExceptT e m a) -> ExceptT e m a
   catchError m h = ExceptT do
     r <- runExceptT m
     case r of
       Left e -> runExceptT $ h e
       Right a -> pure $ Right a
 
--- ** Liftings
-
 instance MonadTrans (ExceptT e) where
   lift :: Monad m => m a -> ExceptT e m a
   lift m = ExceptT do
     r <- m
     pure $ Right r
+
+-- ** Liftings
+
+-- We cannot generically define
+-- instance (MonadError e m, MonadTrans t) => MonadError e (t m)
 
 instance MonadError e m => MonadError e (ReaderT r m) where
   throwError :: e -> ReaderT r m a
@@ -153,9 +184,10 @@ instance MonadError e m => MonadError e (StateT e m) where
     catchError (runStateT m s) \ e ->
       runStateT (h e) s  -- discards changes to the state
 
-instance MonadState s m => MonadState s (ExceptT e m) where
-  get = lift get
-  put s = lift $ put s
+-- Exists since MonadTrans (ExceptT e)
+-- instance MonadState s m => MonadState s (ExceptT e m) where
+--   get = lift get
+--   put s = lift $ put s
 
 instance MonadReader r m => MonadReader r (ExceptT e m) where
   ask = lift ask

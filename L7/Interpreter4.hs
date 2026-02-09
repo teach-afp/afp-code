@@ -1,4 +1,4 @@
--- | Version 4 of the interpreter
+-- | Version 4 of the interpreter: Exceptions preserving state changes
 
 module Interpreter4 where
 
@@ -8,6 +8,7 @@ import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Except    -- new
 
+import Data.Function ((&))
 import Data.Map (Map)
 import qualified Data.Map as Map
 
@@ -56,20 +57,25 @@ data Err
   | OtherError String
   deriving Show
 
--- ExceptT on the inside (wrapped by the state monad)
+-- ExceptT on the outside (wrapping the state monad)
 type Eval a = ExceptT Err                              -- new
                 (StateT Store
-                  (ReaderT Env Identity))
+                  (ReaderT Env
+                    Identity))
                 a
 
-runEval :: Eval a -> Either Err a
-runEval err  = runIdentity
-                         (runReaderT
-                            (evalStateT
-                                        (runExceptT err) -- new
-                                        emptyStore)
-                        emptyEnv)
+-- Eval a
+--   ~= (StateT ...) (Either Err a)
+--   ~= s -> (ReaderT ...) (Either Err a, s)
+--   ~= s -> r -> Identity (Either Err a, s)
+--   ~= s -> r -> (Either Err a, s)
 
+runEval :: Eval a -> Either Err a
+runEval m = m
+  & runExceptT
+  & (`evalStateT` emptyStore)
+  & (`runReaderT` emptyEnv)
+  & runIdentity
 
 -- * Environment manipulation (no changes from Interpreter1)
 

@@ -1,4 +1,4 @@
--- | Version 5 of the interpreter
+-- | Version 5 of the interpreter: IO
 
 module Interpreter5 where
 
@@ -7,6 +7,7 @@ import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Except
 
+import Data.Function ((&))
 import Data.Map (Map)
 import qualified Data.Map as Map
 
@@ -46,8 +47,6 @@ data Store = Store
 emptyStore :: Store
 emptyStore = Store 0 Map.empty
 
-
--- | We add an exception type...
 data Err
   = SegmentationFault
   | UnboundVariable String
@@ -55,15 +54,18 @@ data Err
   deriving Show
 
 type Eval a = (StateT Store
-                (ReaderT Env (ExceptT Err IO)) -- new IO for Identity
+                (ReaderT Env
+                  (ExceptT Err
+                    IO)) -- new IO for Identity
               a)
 
-runEval :: Eval a -> IO (Either Err a)
-runEval st = runExceptT
-                        (runReaderT
-                            (evalStateT st emptyStore)
-                         emptyEnv)
+-- Eval a ~= s -> r -> IO (Either Err (a, s))
 
+runEval :: Eval a -> IO (Either Err a)
+runEval m = m
+  & (`evalStateT` emptyStore)
+  & (`runReaderT` emptyEnv)
+  & runExceptT
 
 -- * Environment manipulation
 
