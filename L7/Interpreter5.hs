@@ -102,15 +102,15 @@ deref p = do
     Just v  -> return v
 
 (=:) :: MonadState Store m => Ptr -> Value -> m Value
-
--- * I/O manipulation (new)
-msg :: String -> Eval ()
-msg = liftIO . putStrLn
 p =: v = do
   store <- get
   let heap' = Map.adjust (const v) p (heap store)
   put (store {heap = heap'})
   return v
+
+-- * I/O manipulation (new)
+msg :: String -> Eval ()
+msg m = liftIO $ putStrLn m
 
 -- | The case for 'Catch' simply uses the 'catchError' function
 -- from the error monad.
@@ -151,7 +151,7 @@ testExpr2 = parse "let one = new 1; \
 test2 :: IO (Either Err Value)
 test2 = runEval $ eval testExpr2
 
--- The side-effect in I/O is not executed
+-- The side-effect in I/O is executed even in the part that throws an exception.
 testExpr3 :: Expr
 testExpr3 = parse "let one = new 1; \
                  \ let dummy = (try ( print \"hello!\" + (one := 2) + !7) \

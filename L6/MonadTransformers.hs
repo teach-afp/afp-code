@@ -89,7 +89,10 @@ instance MonadReader r m => MonadReader r (StateT s m) where
 
   local :: (r -> r) -> StateT s m a -> StateT s m a
   local f m = StateT \ s -> do
-    local f $ runStateT m s
+    -- local f $ runStateT m s
+    local f do
+      (a, s') <- runStateT m s
+      return (a, s')
 
 -- * Monad transformer class
 
@@ -98,7 +101,7 @@ class (forall m. Monad m => Monad (t m)) => MonadTrans t where
 
 instance MonadTrans (ReaderT r) where
   lift :: m a -> ReaderT r m a
-  lift m = ReaderT \ r -> m
+  lift m = ReaderT \ _r -> m
 
 instance MonadTrans (StateT s) where
   lift :: Monad m => m a -> StateT s m a
@@ -117,12 +120,15 @@ instance (MonadState s m, MonadTrans t) => MonadState s (t m) where
 
 -- The reason is that the methods of @MonadState s m@ never mention @m@ in an argument.
 
--- Trying the same for MonadReader fails for 'local'
-instance (MonadReader r m, MonadTrans t) => MonadReader r (t m) where
-  ask :: t m r
-  ask = lift ask
-  local :: (r -> r) -> t m a -> t m a
-  local f tm = undefined  -- cannot analyse tm, would need 'unlift' (run) for @t@
+-- -- Trying the same for MonadReader fails for 'local'
+-- instance (MonadReader r m, MonadTrans t) => MonadReader r (t m) where
+--   ask :: t m r
+--   ask = lift ask
+--   local :: (r -> r) -> t m a -> t m a
+--   local f tm = lift $ local f $ unlift tm  -- cannot analyse tm, would need 'unlift' (run) for @t@
+--     where
+--       unlift :: t m a -> m a
+--       -- See MonadTransControl
 
 -- * Exception
 
@@ -160,9 +166,10 @@ instance Monad m => MonadError e (ExceptT e m) where
 
 instance MonadTrans (ExceptT e) where
   lift :: Monad m => m a -> ExceptT e m a
-  lift m = ExceptT do
-    r <- m
-    pure $ Right r
+  -- lift m = ExceptT do
+  --   a <- m
+  --   pure (Right a)
+  lift m = ExceptT $ fmap Right m
 
 -- ** Liftings
 
@@ -180,6 +187,8 @@ instance MonadError e m => MonadError e (ReaderT r m) where
 
 instance MonadError e m => MonadError e (StateT e m) where
   throwError e = lift $ throwError e
+
+  catchError :: StateT s m a -> (e -> StateT s m a) -> StateT s m a
   catchError m h = StateT \ s -> do
     catchError (runStateT m s) \ e ->
       runStateT (h e) s  -- discards changes to the state
@@ -191,6 +200,7 @@ instance MonadError e m => MonadError e (StateT e m) where
 
 instance MonadReader r m => MonadReader r (ExceptT e m) where
   ask = lift ask
+
   local :: (r -> r) -> ExceptT e m a -> ExceptT e m a
   local f m = ExceptT do
     local f $ runExceptT m
@@ -202,14 +212,22 @@ instance MonadReader r m => MonadReader r (ExceptT e m) where
 class Monad m => MonadIO m where
   liftIO :: IO a -> m a
 
-instance MonadIO m => MonadIO (ReaderT r m) where
-  liftIO m = lift $ liftIO m
+instance MonadIO IO where
+  liftIO = id
 
-instance MonadIO m => MonadIO (StateT s m) where
-  liftIO m = lift $ liftIO m
+instance (MonadIO m, MonadTrans t) => MonadIO (t m) where
+  liftIO = lift . liftIO
 
-instance MonadIO m => MonadIO (ExceptT e m) where
-  liftIO m = lift $ liftIO m
+-- These are consequences for specific transformers t = ReaderT r, ...:
+
+-- instance MonadIO m => MonadIO (ReaderT r m) where
+--   liftIO m = lift $ liftIO m
+
+-- instance MonadIO m => MonadIO (StateT s m) where
+--   liftIO m = lift $ liftIO m
+
+-- instance MonadIO m => MonadIO (ExceptT e m) where
+--   liftIO m = lift $ liftIO m
 
 -- * Commutation
 
