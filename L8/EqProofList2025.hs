@@ -15,7 +15,7 @@ import Prelude
   , Int, Num(..)
   , return
   )
-import Test.QuickCheck ( quickCheckAll )
+import Test.QuickCheck ( quickCheckAll, quickCheck )
 import EqualityProof
 
 length :: [a] -> Int
@@ -33,6 +33,9 @@ reverse (x:xs) = reverse xs ++ [x]
 prop_length_append :: [a] -> [a] -> Bool
 prop_length_append xs ys = length (xs ++ ys) == length xs + length ys
 
+prop_length_nil :: Bool
+prop_length_nil = length [] == 0
+
 -- (List a, [], ++) is a monoid
 
 -- length is a monoid homomorphism from (List a, [], ++) to (Nat, 0, +)
@@ -46,19 +49,18 @@ prop_length_append xs ys = length (xs ++ ys) == length xs + length ys
 --
 prop_length_append_nil :: [a] -> Proof _
 prop_length_append_nil ys = proof
-  (length ([] ++ ys))    =< Def "++" >=
-  (length ys)            =< Def "TODO" >=
-  (0 + length ys)        =< Def "+"   >=
-  length ys              =< Def "length"      >=
+  (length ([] ++ ys))    =< Def "++"     >=
+  (length ys)            =< Def "+"      >=
+  (0 + length ys)        =< Def "length" >=
   (length [] + length ys)
 
 -- Case (x:xs).
 --
 prop_length_append_cons :: a -> [a] -> [a] -> Proof _
 prop_length_append_cons x xs ys = proof
-  (length ((x:xs) ++ ys))      =< Def (++) >=
-  (length (x : (xs ++ ys)))    =< Def length >=
-  (1 + length (xs ++ ys))      =< IH  >=
+  (length ((x:xs) ++ ys))      =< Def "++" >=
+  (length (x : (xs ++ ys)))    =< Def "length" >=
+  (1 + length (xs ++ ys))      =< IH >=
   (1 + length xs + length ys)  =< Def "length" >=
   (length (x:xs) + length ys)
 
@@ -82,7 +84,7 @@ List_A : Value -> Prop  for A some type.
 
 1. "nil" is a list.
 
-   -------
+   ---------
    List_A []
 
 2. If x is a value of type A and xs a list then (x:xs) is a list.
@@ -92,7 +94,7 @@ List_A : Value -> Prop  for A some type.
    List_A (x:xs)
 
 There are no other rules to generate list values, so List_A is the _least_ predicate closed under these rules.
-We also say that List_A is an _inductive_predicate.
+We also say that List_A is an _inductive_ predicate.
 
 So if we have any other predicate P : Value -> Prop closed under these rules, we know that
 
@@ -100,7 +102,7 @@ So if we have any other predicate P : Value -> Prop closed under these rules, we
 
 This is called the induction principle for lists:
 
-> If P [] and P xs implies P (x:xs) for all x and xs, then P xs holds for all lists xs.
+> If P [] and P xs implies P (x:xs) for all x and xs, then P xs' holds for all lists xs'.
 
 Instantiating the induction principle
 -------------------------------------
@@ -142,7 +144,12 @@ By induction we have to show.
 -- Case xs = [] is trivial by definition.
 
 prop_length_reverse_cons x xs = proof
-  (length (reverse (x:xs)))            =< Def "TODO"         >=
+  (length (reverse (x:xs)))            =< Def "reverse" >=
+  (length (reverse xs ++ [x]))         =< Thm prop_length_append >=
+  (length (reverse xs) + length [x])   =< Def "length" >=
+  (length (reverse xs) + 1)            =< Def "comm +" >=
+  (1 + length (reverse xs))            =< IH >=
+  (1 + length xs)                      =< Def "length" >=
   (length (x:xs))
 
 -- reverse is involutive
@@ -152,8 +159,17 @@ prop_length_reverse_cons x xs = proof
 -- By induction on xs, case [] is trivial.
 
 prop_reverse_reverse_cons x xs = proof
-  (reverse (reverse (x:xs)))             =< Def "TODO" >=
+  (reverse (reverse (x:xs)))             =< Def "reverse" >=
+  (reverse (reverse xs ++ [x]))          =< Thm prop_reverse_append_cons >=
+  (reverse [x] ++ reverse (reverse xs))  =< Def "reverse" >=
+  ([x] ++ reverse (reverse xs))          =< Def "reverse" >=
+  (x : reverse (reverse xs))             =< IH >=
   (x:xs)
+
+-- reverse (ys ++ [x]) = x : reverse ys
+-- reverse ((y:ys) ++ [x]) = x : y : reverse ys
+-- reverse (ys ++ [y] ++ [x]) = x : y : reverse ys
+-- reverse (ys ++ [y,x]) = [x,y] ++ reverse ys
 
 -- 2. reverse (xs ++ ys) = reverse ys ++ reverse xs
 

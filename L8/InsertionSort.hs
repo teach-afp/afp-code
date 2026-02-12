@@ -1,6 +1,6 @@
 module InsertionSort where
 
-import qualified Control.Monad   as CM
+import Control.Monad (liftM2)
 import qualified Test.QuickCheck as Q
 
 q :: Q.Testable prop => prop -> IO ()
@@ -56,7 +56,7 @@ instance Ord El where
   -- note that compare x y == EQ   /=   x==y in general
 
 instance Q.Arbitrary El where
-  arbitrary = CM.liftM2 El Q.arbitrary Q.arbitrary
+  arbitrary = liftM2 El Q.arbitrary Q.arbitrary
 
 -- | Sorting twice is the same as sorting once. Not true for our
 -- insertion sort!

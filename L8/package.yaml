@@ -3,6 +3,8 @@ name: AFPlecture8
 library:
   source-dirs: .
 
+language: GHC2021
+
 default-extensions:
 - BlockArguments
 - LambdaCase
