@@ -2,6 +2,8 @@
 {-# OPTIONS --no-keep-pattern-variables #-}
 
 module IntroTT where
+
+open import Agda.Primitive
 ```
 
 Introduction to Type Theory and Dependent Types
@@ -26,7 +28,7 @@ E.g. there is no infinite list in this list type:
 ```
 data List (A : Set) : Set where
   []  : List A
-  _∷_ : (x : A) (xs : List A) → List A
+  _∷_ : (x : A) (xs : List A) → List A   -- \ : :  =  ∷
 
 infixr 8 _∷_
 ```
@@ -78,7 +80,7 @@ module ComputedTypes where
 We define the type of vectors of length `n` computed by recursion on `n`.
 ```
   Vec : (A : Set) (n : Nat) → Set
-  Vec A zero = ⊤
+  Vec A zero    = ⊤
   Vec A (suc n) = A × Vec A n
 ```
 
@@ -88,9 +90,9 @@ Example.
   down3 = 2 , 1 , 0 , tt
 ```
 
-Now we define the type `Fin n` of numbers below `n` by recursion on `n`.
+Now we define the type `Fin n` of numbers strictly below `n` by recursion on `n`.
 
-There are no numbers below `0`, so we produce an empty type for `Fin 0`.
+There are no numbers strictly below `0`, so we produce an empty type for `Fin 0`.
 ```
   data ⊥ : Set where
     -- no constructors!
@@ -154,7 +156,7 @@ but can be values.
 Let's define the tyype of vectors indexed by their length:
 ```
   data Vec (A : Set) : (n : Nat) → Set where
-    vnil : Vec A zero
+    vnil  : Vec A zero
     vcons : {n : Nat} (x : A) (xs : Vec A n) → Vec A (suc n)
 ```
 In a data type signature like `data Vec (A : Set) : (n : Nat) → Set`
@@ -181,7 +183,7 @@ The type `Fin n` of numbers below `n` can also be given as inductive family.
 Example.
 ```
   one3 : Fin 3
-  one3 = fsuc fzero
+  one3 = fsuc {n = 2} fzero
 
   two3 : Fin 3
   two3 = fsuc (fsuc fzero)
@@ -189,18 +191,18 @@ Example.
 
 Safe vector lookup.
 ```
-  lookup : {A : Set} (n : Nat) (xs : Vec A n) (i : Fin n) → A
-  lookup .zero vnil ()
-  lookup .(suc _) (vcons x xs) fzero = x
-  lookup .(suc _) (vcons x xs) (fsuc i) = lookup _ xs i
+  lookup : {A : Set} {n : Nat} (xs : Vec A n) (i : Fin n) → A
+  -- lookup vnil ()
+  lookup (vcons x xs) fzero = x
+  lookup (vcons x xs) (fsuc i) = lookup xs i
 ```
 
 Examples.
 ```
-  lone3 = lookup 3 down3 one3
-  ltwo3 = lookup 3 down3 two3
+  lone3 = lookup {n = 3} down3 one3
+  ltwo3 = lookup {n = 3} down3 two3
 
-  -- hole = {!ltwo3!}
+  -- hole = {!lone3!}
 ```
 
 The Equality Type
@@ -218,7 +220,7 @@ something that is not possible with definitional equality.
 The equality type is an indexed inductive type with just one constructor for trivial equality,
 `refl`exivity.
 ```
-data _≡_ {A : Set} (x : A) : A → Set where
+data _≡_ {A : Set} (x : A) : (y : A) → Set where
   refl : x ≡ x
 
 infix 6 _≡_
@@ -334,7 +336,7 @@ Proving list properties by induction
 Concatenation of lists.
 ```
 _++_ : {A : Set} (xs ys : List A) → List A
-[] ++ ys = ys
+[]       ++ ys = ys
 (x ∷ xs) ++ ys = x ∷ (xs ++ ys)
 
 infixl 8 _++_
@@ -344,11 +346,12 @@ Concatenation is associative.
 ```
 ++-assoc : {A : Set} (xs ys zs : List A) → (xs ++ ys) ++ zs ≡ xs ++ (ys ++ zs)
 ++-assoc [] ys zs = refl
-++-assoc (x ∷ xs) ys zs = begin
-  (((x ∷ xs) ++ ys) ++ zs) ≡⟨⟩
-  ((x ∷ (xs ++ ys)) ++ zs) ≡⟨⟩
-  (x ∷ ((xs ++ ys) ++ zs)) ≡⟨ cong (x ∷_) (++-assoc xs ys zs) ⟩
-  (x ∷ (xs ++ (ys ++ zs))) ∎
+++-assoc (x ∷ xs) ys zs =
+  ((x ∷ xs) ++ ys) ++ zs    ≡⟨ refl ⟩
+  (x ∷ (xs ++ ys)) ++ zs    ≡⟨ refl ⟩
+  x ∷ ((xs ++ ys) ++ zs)    ≡⟨ cong (x ∷_) (++-assoc xs ys zs) ⟩
+  x ∷ (xs ++ (ys ++ zs))    ≡⟨ refl ⟩
+  (x ∷ xs) ++ (ys ++ zs)    ∎
 ```
 
 Concatenations makes a monoid.
