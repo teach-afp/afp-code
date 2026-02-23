@@ -88,13 +88,13 @@ data Ord : Type where
 
 module _ (A : Set) (compare : A → A → Ord) where
 
-  data Grow? (n : ℕ) : Type where
-    stay : Tree A n → Grow? n
-    grow : Tree A (suc n) → Grow? n
+  data Grow (n : ℕ) : Type where
+    stay : Tree A n → Grow n
+    grow : Tree A (suc n) → Grow n
 
   -- Inserting a key into a tree
 
-  insert : A → Tree A n → Grow? n
+  insert : A → Tree A n → Grow n
   insert a leaf = grow (singleton a)
 
   insert a (node2 l p r) with compare a p
@@ -125,7 +125,7 @@ module _ (A : Set) (compare : A → A → Ord) where
 
   -- Join two trees
 
-  join : Tree A n → Tree A n → Grow? n
+  join : Tree A n → Tree A n → Grow n
 
   join leaf leaf = stay leaf
 
@@ -165,7 +165,7 @@ module _ (A : Set) (compare : A → A → Ord) where
    shrink : Tree A n → Shrink (suc n)
    stay   : Tree A n → Shrink n
 
-  growToShrink : Grow? n → Shrink (suc n)
+  growToShrink : Grow n → Shrink (suc n)
   growToShrink (stay t) = shrink t
   growToShrink (grow t) = stay t
 
