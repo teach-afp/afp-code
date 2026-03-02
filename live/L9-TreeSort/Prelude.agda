@@ -18,6 +18,15 @@ data ℕ : Type where
   zero : ℕ
   suc  : (n : ℕ) → ℕ
 
+id : ℕ → ℕ
+id zero    = zero
+id (suc n) = suc (id n)
+
+f : ℕ → ℕ
+f zero = zero
+f (suc (suc x)) = f (suc x)
+f _ = zero
+
 -- To use decimal notation for numerals, like
 -- 2 instead of (suc (suc zero)), connect it
 -- to the built-in natural numbers.
@@ -51,11 +60,14 @@ infixr 4 _⊎_
 data False : Type where
 
 ⊥-elim : False → {A : Type} → A
-⊥-elim = {! !}
+⊥-elim ()
 
 -- C-c C-SPC give
 -- C-c C-, show hypotheses and goal
 -- C-c C-. show hypotheses and infers type
+
+¬ : (A : Type) → Type
+¬ A = A → False
 
 -- Tuple types
 
@@ -74,6 +86,12 @@ open Σ
 
 infixr 5 _,_
 
+-- foo : {!   !}
+-- foo = {! snd  !}
+
+-- data Σ (A : Type) (B : A → Type) : Type where
+--   _,_ : (a : A) (b : B a) → Σ A B
+
 -- The non-dependent version is the ordinary Cartesian product.
 
 _×_ : (A B : Type) → Type
@@ -81,15 +99,23 @@ A × B = Σ A (λ _ → B)
 
 infixr 5 _×_
 
+-- p : Σ A B
+-- p = fst p , snd p  -- eta law
+-- p = record { fst = fst p; snd = snd p }
+
 -- The record type with no fields has exactly one inhabitant
 -- namely the empty tuple record{}
 -- By Curry-Howard, it corresponds to Truth, as
 -- no evidence is needed to construct this proposition.
 
 record True : Type where
+  -- no-eta-equality
+
+-- t : True
+-- t = record {}
 
 trivial : True
-trivial = {! !}
+trivial = record{}
 
 -- Example: distributivity  A ∧ (B ∨ C) → (A ∧ B) ∨ (A ∧ C)
 
@@ -126,3 +152,5 @@ x  ≤ y     = {! !}
 -- C-c C-, show goal and assumptions
 -- C-c C-. show goal and assumptions and current term
 -- C-c C-SPC give
+
+-- -}

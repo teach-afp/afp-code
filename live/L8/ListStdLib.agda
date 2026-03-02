@@ -33,7 +33,14 @@ reverse (x ∷ xs) = reverse xs ++ [ x ]
 -- Involution laws
 
 reverse-++ : (xs ys : List A) → reverse (xs ++ ys) ≡ reverse ys ++ reverse xs
-reverse-++ xs ys = ?
+reverse-++ [] ys = sym (++-[] (reverse ys))
+reverse-++ (x ∷ xs) ys = begin
+  reverse ((x ∷ xs) ++ ys)             ≡⟨⟩
+  reverse (x ∷ (xs ++ ys))             ≡⟨ refl ⟩
+  reverse (xs ++ ys) ++ [ x ]          ≡⟨ cong (_++ [ x ]) (reverse-++ xs ys) ⟩
+  (reverse ys ++ reverse xs) ++ [ x ]  ≡⟨ ++-assoc (reverse ys) ⟩
+  reverse ys ++ (reverse xs ++ [ x ])  ≡⟨ refl ⟩
+  reverse ys ++ reverse (x ∷ xs)       ∎
 
 {-
 reverse-reverse : (xs : List A) → reverse (reverse xs) ≡ xs
