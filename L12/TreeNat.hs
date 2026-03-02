@@ -107,14 +107,14 @@ data SomeNat where
 -- However, the existential obscures the connection between input and output.
 
 sing :: Nat -> SomeNat
-sing Zero = SomeNat SZero
+sing Zero    = SomeNat SZero
 sing (Suc n) = case sing n of
   SomeNat k -> SomeNat (SSuc k)
 
 -- | Turn a list into a search tree.
 
 tree :: [Nat] -> Tree Bot Top
-tree [] = Leaf ()
+tree []       = Leaf ()
 tree (n : ns) = case sing n of
   SomeNat k -> insert k () () (tree ns)
 

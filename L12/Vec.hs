@@ -9,7 +9,7 @@
 
 module Vec where
 
-import Data.Bifunctor
+import Data.Bifunctor ( Bifunctor(first) )
 
 data Nat where
   Zero :: Nat
