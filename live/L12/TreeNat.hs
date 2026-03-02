@@ -10,7 +10,7 @@ module TreeNat where
 
 import Data.Kind (Type)
 
-import Vec ( Nat(Zero, Suc), SNat(..) )
+import Vec ( Nat(Zero, Suc), SNat( SZero, SSuc ) )
 
 ------------------------------------------------------------------------
 -- * Ordered binary trees for natural numbers
@@ -22,6 +22,9 @@ data Empty
 -- Truth is the unit type.  Absurdity the empty type.
 
 type family Le (l :: Nat) (r :: Nat) :: Type where
+  Le Zero    r       = ()
+  Le (Suc l) Zero    = Empty
+  Le (Suc l) (Suc r) = Le l r
 
 -- | Extending a type by a least and a greatest element.
 
@@ -32,11 +35,11 @@ data Ext a where
 
 -- | Lifting 'Le' to 'Ext Nat'.
 
-type family LE l r where
-  LE Bot r = ()
-  LE l Top = ()
-  LE l Bot = Empty
-  LE Top r = Empty
+type family LE (l :: Ext Nat) (r :: Ext Nat) where
+  LE Bot     r       = ()
+  LE l       Top     = ()
+  LE l       Bot     = Empty
+  LE Top     r       = Empty
   LE (Emb l) (Emb r) = Le l r
 
 -- | Search trees indexed by an interval of keys they can contain.
@@ -60,7 +63,11 @@ data Total x y where
 -- | Proving the totality of 'Le' means comparing numbers.
 
 comp :: SNat x -> SNat y -> Total x y
-comp = undefined
+comp SZero y = Leq ()
+comp (SSuc x) SZero = Geq ()
+comp (SSuc x) (SSuc y) = case comp x y of
+  Leq p -> Leq p
+  Geq p -> Geq p
 
 -- | Insert into ordered search tree.
 
@@ -98,13 +105,16 @@ data SomeNat where
 -- However, the existential obscures the connection between input and output.
 
 sing :: Nat -> SomeNat
-sing = undefined
+sing Zero = SomeNat SZero
+sing (Suc n) = case sing n of
+  SomeNat k -> SomeNat (SSuc k)
 
 -- | Turn a list into a search tree.
 
 tree :: [Nat] -> Tree Bot Top
-tree [] = undefined
-tree (n : ns) = undefined
+tree [] = Leaf ()
+tree (n : ns) = case sing n of
+  SomeNat k -> insert k () () (tree ns)
 
 -- | Convert a singleton back to a non-indexed value.
 

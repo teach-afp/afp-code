@@ -16,9 +16,9 @@ deriving instance Show a => Show (Tm a)
 -- Tagless interpreter
 
 eval :: Tm a -> a
-eval (TLit v)      = undefined
-eval (TPlus t1 t2) = undefined
-eval (TIf t t1 t2) = undefined
+eval (TLit v)      = v
+eval (TPlus t1 t2) = eval t1 + eval t2
+eval (TIf t t1 t2) = if eval t then eval t1 else eval t2
 
 -- Untyped user-level terms
 
@@ -28,6 +28,9 @@ data Exp where
   EPlus :: Exp -> Exp -> Exp
   EIf   :: Exp -> Exp -> Exp -> Exp
   deriving Show
+
+-- check' :: Exp -> Maybe (exists a. Tm a)
+-- check' (EInt i) = Just (TLit i)
 
 ------------------------------------------------------------------------
 -- Type inference
@@ -54,20 +57,34 @@ deriving instance Show TmX
 
 infer :: Exp -> Maybe TmX
 
-infer (EInt i)      = undefined
-infer (EBool b)     = undefined
-infer (EPlus e1 e2) = undefined
-infer (EIf e e1 e2) = undefined
+infer (EInt i)      = Just $ TLit i ::: RInt
+infer (EBool b)     = Just $ TLit b ::: RBool
+infer (EPlus e1 e2) = do
+  t1 <- check e1 RInt
+  t2 <- check e2 RInt
+  return $ TPlus t1 t2 ::: RInt
+infer (EIf e e1 e2) = do
+  t        <- check e RBool
+  t1 ::: a <- infer e1
+  t2       <- check e2 a
+  return $ TIf t t1 t2 ::: a
 
 -- Type checking
 
 check :: Exp -> RTy a -> Maybe (Tm a)
-check e a = undefined
+check e b = do
+  t ::: a <- infer e
+  Refl <- equal a b
+  return t
+  -- cast a b t
 
 -- Type conversion needs the runtime representation.
 
 cast :: RTy a -> RTy b -> Tm a -> Maybe (Tm b)
-cast = undefined
+cast RInt  RInt  t = return t
+cast RBool RBool t = return t
+cast _ _ _ = Nothing
+
 
 -- Erasing type information.
 --
@@ -84,7 +101,12 @@ data Equal a b where
   Refl :: Equal a a
 
 equal :: RTy a -> RTy b -> Maybe (Equal a b)
-equal = undefined
+equal RInt RInt = Just Refl
+equal RBool RBool = Just Refl
+equal _ _ = Nothing
 
 cast' :: RTy a -> RTy b -> Tm a -> Maybe (Tm b)
-cast' a b t = undefined
+cast' a b t = do
+  Refl <- equal a b
+  return t
+-- -}
